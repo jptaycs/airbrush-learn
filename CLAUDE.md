@@ -64,7 +64,7 @@ public/                      # logo.png, favicon.ico, apple-touch-icon.png, robo
 
 ## Conventions
 
-- **No CSS framework.** `global.css` uses CSS custom properties (`--color-accent`, etc.) at the top — change the palette there, not by hunting through components.
+- **Styling is Tailwind CSS.** Design tokens (colors, spacing, radius, fonts) live in `tailwind.config.mjs`, mapped from the original brand values — change the palette there, not by hunting through components. `global.css` only holds the three `@tailwind` directives plus genuinely global element resets (`html`, `img`, `body` font smoothing, and a base `a`/`a:hover` rule for anchors — like n8n's raw `content_html` — that can't carry utility classes directly). Article body content (`content_html`, rendered via `set:html`) is styled through the `@tailwindcss/typography` plugin's `prose` classes, not hand-written CSS.
 - **No client-side JS unless there's a real reason.** This is a static content site; keep it that way.
 - Astro components: frontmatter (`---`) does data/props only, no business logic beyond simple mapping — real logic belongs in `scripts/fetch-articles.mjs`.
 - Slugs are sanitized (`slugify()` in the fetch script) — don't assume the Data Table's `slug` column is already URL-safe; the script is the source of truth for what a slug looks like on the live site.
