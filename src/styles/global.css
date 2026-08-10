@@ -23,3 +23,12 @@ a {
 a:hover {
   @apply underline;
 }
+
+@layer components {
+  .prose-site {
+    @apply prose-neutral prose-headings:text-ink prose-p:text-body
+      prose-a:text-accent prose-a:no-underline prose-a:font-normal
+      prose-blockquote:border-accent prose-blockquote:text-muted
+      prose-code:before:content-none prose-code:after:content-none;
+  }
+}

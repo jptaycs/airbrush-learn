@@ -98,7 +98,8 @@ airbrush-learn-site/
 │   │   ├── posts/[slug].astro   # one page per article
 │   │   ├── terms-of-use.astro
 │   │   └── privacy-policy.astro
-│   └── styles/global.css        # design system (uses the Airbrush Learn logo colors)
+│   └── styles/global.css        # @tailwind directives + global resets; design tokens live in tailwind.config.mjs
+├── tailwind.config.mjs          # design tokens (colors, spacing, radius, fonts) — the palette lives here, not in global.css
 └── public/                      # logo, favicon, robots.txt, generated /images/<slug>.png
 ```
 

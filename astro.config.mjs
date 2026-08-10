@@ -4,6 +4,6 @@ import tailwind from '@astrojs/tailwind';
 
 export default defineConfig({
   site: 'https://airbrush.gallery',
-  integrations: [sitemap(), tailwind()],
+  integrations: [sitemap(), tailwind({ applyBaseStyles: false })],
   output: 'static',
 });
