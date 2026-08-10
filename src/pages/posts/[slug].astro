@@ -29,12 +29,15 @@ const siteUrl = Astro.site?.origin ?? 'https://airbrush.gallery';
     />
   </Fragment>
 
-  <article class="post-body container">
-    <div class="prose">
-      <p class="post-meta">{article.published_date}</p>
-      <h1>{article.title}</h1>
+  <article class="pt-6 pb-16 mx-auto max-w-wide px-5">
+    <div class="prose prose-neutral max-w-prose mx-auto
+      prose-headings:text-ink prose-p:text-body
+      prose-a:text-accent prose-a:no-underline prose-a:font-normal
+      prose-blockquote:border-accent prose-blockquote:text-muted">
+      <p class="text-muted text-[0.9rem] mb-2">{article.published_date}</p>
+      <h1 class="max-[640px]:text-[1.7rem]">{article.title}</h1>
       <img
-        class="post-hero-image"
+        class="w-full max-h-[420px] object-cover rounded mt-6 mb-2"
         src={`/images/${article.slug}.png`}
         alt={article.title}
         width="1536"
