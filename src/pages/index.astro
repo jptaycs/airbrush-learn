@@ -12,20 +12,20 @@ const sorted = [...articles].sort((a, b) =>
   description="Free airbrush tutorials, honest gear reviews, and buying guides written for painters who spray every day."
   canonicalPath="/"
 >
-  <section class="hero">
-    <div class="container">
-      <h1>Master Your Airbrush. Create Without Limits.</h1>
-      <p>Tutorials, gear reviews and troubleshooting guides written by painters who spray every day.</p>
+  <section class="text-center pt-14 pb-8">
+    <div class="mx-auto max-w-wide px-5">
+      <h1 class="text-[2.4rem] max-[640px]:text-[1.8rem] text-ink mb-3">Master Your Airbrush. Create Without Limits.</h1>
+      <p class="text-muted text-[1.1rem] max-w-[640px] mx-auto">Tutorials, gear reviews and troubleshooting guides written by painters who spray every day.</p>
     </div>
   </section>
 
-  <section id="latest" class="container">
+  <section id="latest" class="mx-auto max-w-wide px-5">
     {sorted.length === 0 ? (
-      <div class="empty-state">
+      <div class="text-center py-16 px-5 text-muted">
         <p>New articles are on the way — check back soon.</p>
       </div>
     ) : (
-      <div class="article-grid">
+      <div class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-7 pt-8 pb-16">
         {sorted.map((article) => (
           <ArticleCard
             slug={article.slug}

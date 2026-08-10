@@ -7,13 +7,13 @@ interface Props {
 }
 const { slug, title, excerpt, published_date } = Astro.props;
 ---
-<article class="article-card">
-  <a class="card-link" href={`/posts/${slug}`}>
-    <img src={`/images/${slug}.png`} alt={title} loading="lazy" width="600" height="400" />
-    <div class="card-body">
-      <span class="card-date">{published_date}</span>
-      <h2>{title}</h2>
-      <p>{excerpt}</p>
+<article class="border border-border rounded overflow-hidden bg-bg flex flex-col transition-[box-shadow,transform] duration-150 ease-[ease] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5">
+  <a class="text-inherit no-underline flex flex-col h-full" href={`/posts/${slug}`}>
+    <img src={`/images/${slug}.png`} alt={title} loading="lazy" width="600" height="400" class="aspect-[3/2] object-cover w-full" />
+    <div class="p-4 px-[18px] pb-5 flex flex-col flex-1">
+      <span class="text-[0.8rem] text-muted uppercase tracking-[0.04em]">{published_date}</span>
+      <h2 class="text-[1.1rem] text-ink mb-2">{title}</h2>
+      <p class="text-muted text-[0.92rem] mb-3 flex-1">{excerpt}</p>
     </div>
   </a>
 </article>
