@@ -1,0 +1,20 @@
+[
+  {
+    "slug": "single-vs-dual-action-airbrush",
+    "title": "Single-Action vs Dual-Action Airbrush: Which Should You Buy?",
+    "excerpt": "A clear, no-fluff breakdown of single-action and dual-action airbrushes so first-time buyers pick the right one.",
+    "content_html": "<p>This is sample placeholder content used only for local development and build verification. Real articles are fetched from the n8n Articles API at build time via <code>scripts/fetch-articles.mjs</code>.</p><h2>Sample Section</h2><p>Replace this file's contents automatically by running <code>npm run build</code> or <code>npm run dev</code> with <code>N8N_ARTICLES_WEBHOOK_URL</code> set.</p>",
+    "image_prompt": "",
+    "source_topic": "single vs dual action airbrush",
+    "published_date": "2026-08-01"
+  },
+  {
+    "slug": "how-to-clean-an-airbrush",
+    "title": "How to Clean an Airbrush: Ultimate Guide",
+    "excerpt": "Step-by-step cleaning routine to prevent clogging and extend the life of your airbrush.",
+    "content_html": "<p>Sample placeholder content — see note above.</p>",
+    "image_prompt": "",
+    "source_topic": "how to clean an airbrush",
+    "published_date": "2026-07-20"
+  }
+]

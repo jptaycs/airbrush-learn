@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleSchema from '../../components/ArticleSchema.astro';
+import articles from '../../data/articles.json';
+
+export async function getStaticPaths() {
+  return articles.map((article) => ({
+    params: { slug: article.slug },
+    props: { article },
+  }));
+}
+
+const { article } = Astro.props;
+const siteUrl = Astro.site?.origin ?? 'https://airbrush.gallery';
+---
+<BaseLayout
+  title={article.title}
+  description={article.excerpt}
+  canonicalPath={`/posts/${article.slug}`}
+  ogImage={`/images/${article.slug}.png`}
+>
+  <Fragment slot="head">
+    <ArticleSchema
+      title={article.title}
+      excerpt={article.excerpt}
+      slug={article.slug}
+      published_date={article.published_date}
+      siteUrl={siteUrl}
+    />
+  </Fragment>
+
+  <article class="post-body container">
+    <div class="prose">
+      <p class="post-meta">{article.published_date}</p>
+      <h1>{article.title}</h1>
+      <img
+        class="post-hero-image"
+        src={`/images/${article.slug}.png`}
+        alt={article.title}
+        width="1536"
+        height="1024"
+      />
+      <div set:html={article.content_html} />
+    </div>
+  </article>
+</BaseLayout>

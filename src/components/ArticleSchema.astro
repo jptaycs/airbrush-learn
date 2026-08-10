@@ -1,0 +1,38 @@
+---
+// JSON-LD Article schema for a single post page.
+interface Props {
+  title: string;
+  excerpt: string;
+  slug: string;
+  published_date: string;
+  siteUrl: string;
+}
+const { title, excerpt, slug, published_date, siteUrl } = Astro.props;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description: excerpt,
+  image: `${siteUrl}/images/${slug}.png`,
+  datePublished: published_date,
+  dateModified: published_date,
+  author: {
+    '@type': 'Organization',
+    name: 'Airbrush Learn',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'Airbrush Learn',
+    logo: {
+      '@type': 'ImageObject',
+      url: `${siteUrl}/logo.png`,
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': `${siteUrl}/posts/${slug}`,
+  },
+};
+---
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

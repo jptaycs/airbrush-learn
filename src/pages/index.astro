@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import articles from '../data/articles.json';
+
+const sorted = [...articles].sort((a, b) =>
+  a.published_date < b.published_date ? 1 : -1
+);
+---
+<BaseLayout
+  title="Airbrush Learn — Tutorials, Reviews & Buying Guides for Airbrush Artists"
+  description="Free airbrush tutorials, honest gear reviews, and buying guides written for painters who spray every day."
+  canonicalPath="/"
+>
+  <section class="hero">
+    <div class="container">
+      <h1>Master Your Airbrush. Create Without Limits.</h1>
+      <p>Tutorials, gear reviews and troubleshooting guides written by painters who spray every day.</p>
+    </div>
+  </section>
+
+  <section id="latest" class="container">
+    {sorted.length === 0 ? (
+      <div class="empty-state">
+        <p>New articles are on the way — check back soon.</p>
+      </div>
+    ) : (
+      <div class="article-grid">
+        {sorted.map((article) => (
+          <ArticleCard
+            slug={article.slug}
+            title={article.title}
+            excerpt={article.excerpt}
+            published_date={article.published_date}
+          />
+        ))}
+      </div>
+    )}
+  </section>
+</BaseLayout>
