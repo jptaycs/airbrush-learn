@@ -58,7 +58,8 @@ src/pages/
   posts/[slug].astro         # one page per article, getStaticPaths() over articles.json
   terms-of-use.astro
   privacy-policy.astro       # both real pages with placeholder copy — not stubs, but not final legal text either
-src/styles/global.css        # the entire design system lives in one file, no CSS-in-JS/Tailwind
+src/styles/global.css        # @tailwind directives + global resets; design tokens live in tailwind.config.mjs
+tailwind.config.mjs          # design tokens (colors, spacing, radius, fonts) — the palette lives here, not in global.css
 public/                      # logo.png, favicon.ico, apple-touch-icon.png, robots.txt, generated /images/
 ```
 
