@@ -1,3 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+a {
+  @apply text-accent no-underline;
+}
+
+a:hover {
+  @apply underline;
+}
+
 :root {
   --color-ink: #16181d;
   --color-body: #333844;
