@@ -16,7 +16,9 @@
 - Zero added runtime JavaScript — Tailwind is a build-time-only CSS compiler. Verify this explicitly in the final task.
 - Full cutover, not incremental — every component listed in the design doc is migrated in this plan, none deferred.
 - `package.json` has `"type": "module"` — `tailwind.config.mjs` must use ESM `import`/`export default`, not CommonJS `require`/`module.exports`.
-- **No automated test suite exists in this repo** (`CLAUDE.md`: "There is no test suite"). Per the approved design doc's Testing section, verification is manual: `npm run build` succeeding, `npx astro dev` visual comparison against current rendering, and `grep` checks confirming old class names are gone / new Tailwind markers are present. Each task's "verify" step is the substitute for an automated test — run it and read its output before moving to the next step, same as you would a test command.
+- **No automated test suite exists in this repo** (`CLAUDE.md`: "There is no test suite"). Per the approved design doc's Testing section, verification is manual: builds succeeding, `npx astro dev` visual comparison against current rendering, and `grep` checks confirming old class names are gone / new Tailwind markers are present. Each task's "verify" step is the substitute for an automated test — run it and read its output before moving to the next step, same as you would a test command.
+- **Always build with `npx astro build`, never `npm run build` or `npm run dev`.** This repo's `prebuild` npm script calls a live n8n webhook (`N8N_ARTICLES_WEBHOOK_URL`) that doesn't exist in this workspace and will hard-fail immediately — `npx astro build`/`npx astro dev` bypass that and build directly against the committed sample `src/data/articles.json`, exactly as `README.md`'s "Local development" section documents.
+- **Known pre-existing bug, out of scope:** `npx astro build` crashes at the very end with `Cannot read properties of undefined (reading 'reduce')` inside `@astrojs/sitemap`'s `astro:build:done` hook — an `astro`/`@astrojs/sitemap` version mismatch present on the unmodified codebase, unrelated to this migration. It fires *after* all pages are already written to `dist/`. Expect it, don't try to fix it, and verify the actual page output with `find dist -name '*.html' | sort` instead of relying on the process's exit code.
 - Every task must leave the site **visually rendering correctly** — old CSS rules in `global.css` are deleted only in the final task (Task 6), after every component has been migrated off them.
 
 ---
@@ -127,8 +129,15 @@ Leave every existing rule below this untouched for now (they still style the sit
 
 - [ ] **Step 6: Verify the build picks up Tailwind**
 
-Run: `npm run build`
-Expected: exits 0, no PostCSS/Tailwind errors in the output.
+This repo's `prebuild` step (`npm run build`/`npm run dev`) calls a live n8n webhook that isn't available in this workspace. Per `README.md`'s "Local development" section, build directly against the committed sample `src/data/articles.json` instead:
+
+Run: `npx astro build`
+Expected: the log shows `generating static routes` followed by all 4 routes (`/`, both `/posts/<slug>`, `/privacy-policy`, `/terms-of-use`).
+
+**Known pre-existing issue, unrelated to this task:** this build then prints a crash from `@astrojs/sitemap`, `Cannot read properties of undefined (reading 'reduce')`, in its `astro:build:done` hook. This happens on the unmodified codebase too (an `astro`/`@astrojs/sitemap` version mismatch) and is out of scope here — it fires *after* all pages are already written to `dist/`, so it doesn't affect what this task verifies. If you see this exact crash, ignore it and continue; do not attempt to fix it.
+
+Run: `find dist -name '*.html' | sort`
+Expected: `dist/index.html`, `dist/posts/single-vs-dual-action-airbrush/index.html`, `dist/posts/how-to-clean-an-airbrush/index.html`, `dist/privacy-policy/index.html`, `dist/terms-of-use/index.html` — all 5 present, confirming the crash above didn't stop page generation.
 
 Run: `grep -rl -- "--tw-" dist/_astro/*.css`
 Expected: at least one matching file printed. (Tailwind's Preflight reset sets `--tw-*` custom properties on every element regardless of which utilities are used — its presence confirms Tailwind actually compiled into the build, not just that the build didn't error.)
@@ -513,8 +522,7 @@ Replace it with:
 
 - [ ] **Step 4: Full build verification**
 
-Run: `npm run build`
-Expected: exits 0.
+Run: `npx astro build` (same reason as Task 1 Step 6: no live webhook in this workspace, and this bypasses the unrelated pre-existing `@astrojs/sitemap` crash's effect on the exit code — see that step for the full explanation. Confirm all 5 HTML pages are still written: `find dist -name '*.html' | sort`).
 
 Run: `ls dist/_astro/*.js 2>/dev/null; echo "exit: $?"`
 Expected: `exit: 1` (no match) — confirms zero JavaScript files in the build output, i.e. Tailwind added no runtime JS. If this ever prints a match, something introduced client-side JS and needs investigating before proceeding.
