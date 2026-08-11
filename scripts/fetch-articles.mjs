@@ -28,6 +28,18 @@ function slugify(input) {
     .replace(/^-+|-+$/g, '');
 }
 
+const VALID_CATEGORIES = new Set([
+  'how-to',
+  'reviews',
+  'buying-guides',
+  'troubleshooting',
+  'paints-colors',
+  'automotive',
+  'miniatures',
+  'cosplay-body-art',
+  'beginner',
+]);
+
 async function main() {
   if (!WEBHOOK_URL) {
     console.error(
@@ -82,6 +94,11 @@ async function main() {
       console.warn(`[fetch-articles] "${slug}" has no image_base64 — the page will render without a hero image.`);
     }
 
+    const category = VALID_CATEGORIES.has(row.category) ? row.category : '';
+    if (row.category && !category) {
+      console.warn(`[fetch-articles] "${slug}" has an unrecognized category "${row.category}" — building it without a category badge.`);
+    }
+
     cleaned.push({
       slug,
       title: row.title || 'Untitled',
@@ -91,6 +108,7 @@ async function main() {
       image_prompt: row.image_prompt || '',
       source_topic: row.source_topic || '',
       published_date: row.published_date || new Date().toISOString().slice(0, 10),
+      category,
     });
   }
 

@@ -43,6 +43,7 @@ Each article row (from n8n) has these fields — see `README.md` for the full JS
 | `image_base64` | decoded to a PNG file at build time, then discarded — never appears in `articles.json` |
 | `status` | only `"ready"` rows get built; anything else is silently skipped |
 | `published_date` | sort order (newest first) and displayed date |
+| `category` | category badge, `/category/<slug>` archive-page membership, mega-menu counts — one of 9 fixed slugs (see `src/data/categories.js`); missing/unrecognized values are treated as uncategorized |
 
 If you add a new field to the Data Table, update it in three places: the webhook workflow's output, `scripts/fetch-articles.mjs`'s `cleaned.push({...})`, and wherever it's consumed in `src/pages/`.
 

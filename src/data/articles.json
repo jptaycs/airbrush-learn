@@ -6,7 +6,8 @@
     "content_html": "<p>This is sample placeholder content used only for local development and build verification. Real articles are fetched from the n8n Articles API at build time via <code>scripts/fetch-articles.mjs</code>.</p><h2>Sample Section</h2><p>Replace this file's contents automatically by running <code>npm run build</code> or <code>npm run dev</code> with <code>N8N_ARTICLES_WEBHOOK_URL</code> set.</p>",
     "image_prompt": "",
     "source_topic": "single vs dual action airbrush",
-    "published_date": "2026-08-01"
+    "published_date": "2026-08-01",
+    "category": "buying-guides"
   },
   {
     "slug": "how-to-clean-an-airbrush",
@@ -15,6 +16,7 @@
     "content_html": "<p>Sample placeholder content — see note above.</p>",
     "image_prompt": "",
     "source_topic": "how to clean an airbrush",
-    "published_date": "2026-07-20"
+    "published_date": "2026-07-20",
+    "category": "how-to"
   }
 ]

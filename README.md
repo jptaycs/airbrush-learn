@@ -62,6 +62,7 @@ Expected response shape (this is what `scripts/fetch-articles.mjs` expects):
       "image_base64": "iVBORw0KG...",
       "image_prompt": "...",
       "status": "ready",
+      "category": "beginner",
       "source_topic": "...",
       "published_date": "2026-08-01"
     }
