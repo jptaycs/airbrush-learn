@@ -14,9 +14,9 @@ const { slug, title, excerpt, published_date, category, content_html } = Astro.p
 const cat = categories.find((c) => c.slug === category);
 const readMinutes = estimateReadMinutes(content_html);
 ---
-<article class="border border-border rounded overflow-hidden bg-bg flex flex-col transition-[box-shadow,transform] duration-150 ease-[ease] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5">
-  <a href={`/posts/${slug}`} class="relative block hover:no-underline">
-    <img src={`/images/${slug}.png`} alt={title} loading="lazy" width="600" height="400" class="aspect-[3/2] object-cover w-full" />
+<article data-reveal class="group border border-border rounded overflow-hidden bg-bg flex flex-col transition-[box-shadow,transform] duration-150 ease-[ease] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5">
+  <a href={`/posts/${slug}`} class="relative block overflow-hidden hover:no-underline">
+    <img src={`/images/${slug}.png`} alt={title} loading="lazy" width="600" height="400" class="aspect-[3/2] object-cover w-full transition-transform duration-300 group-hover:scale-105" />
     {cat && (
       <span class="absolute top-3 left-3 text-[0.65rem] text-white uppercase tracking-[0.05em] font-bold bg-black/75 rounded-full px-2.5 py-1">
         {cat.label}
