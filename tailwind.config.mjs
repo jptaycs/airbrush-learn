@@ -10,9 +10,11 @@ export default {
         body: '#333844',
         muted: '#6b7280',
         bg: '#ffffff',
-        'bg-alt': '#f5f5f7',
+        'bg-alt': '#f7f2ea',
         border: '#e5e7eb',
         accent: { DEFAULT: '#e2571f', dark: '#c9451a' },
+        'surface-dark': '#17140f',
+        teal: '#2f7d6c',
       },
       fontFamily: {
         sans: [
@@ -24,6 +26,7 @@ export default {
           'Arial',
           'sans-serif',
         ],
+        serif: ['"Playfair Display"', 'Georgia', '"Times New Roman"', 'serif'],
       },
       borderRadius: {
         DEFAULT: '18px',
