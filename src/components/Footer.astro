@@ -1,15 +1,56 @@
 ---
 const year = new Date().getFullYear();
+const readLinks = [
+  { label: 'How-to & Tutorials', href: '/category/how-to' },
+  { label: 'Airbrush Reviews', href: '/category/reviews' },
+  { label: 'Buying Guides', href: '/category/buying-guides' },
+  { label: 'Troubleshooting', href: '/category/troubleshooting' },
+  { label: 'Beginner', href: '/category/beginner' },
+];
+const topicLinks = [
+  { label: 'Automotive', href: '/category/automotive' },
+  { label: 'Miniatures', href: '/category/miniatures' },
+  { label: 'Cosplay & Body Art', href: '/category/cosplay-body-art' },
+  { label: 'Paints & Colors', href: '/category/paints-colors' },
+];
 ---
-<footer class="border-t border-border bg-bg-alt mt-16 py-9 text-muted text-[0.9rem]">
-  <div class="mx-auto max-w-wide px-5 flex flex-wrap gap-3 items-center justify-between">
-    <span>&copy; {year} SprayGunner. All rights reserved.</span>
-    <span>
-      <a href="/privacy-policy" class="text-muted">Privacy Policy</a>
-      &nbsp;&middot;&nbsp;
-      <a href="/terms-of-use" class="text-muted">Terms of Use</a>
-      &nbsp;&middot;&nbsp;
-      <a href="https://spraygunner.com/" target="_blank" rel="noopener" class="text-muted">SprayGunner Store</a>
-    </span>
+<footer class="bg-surface-dark pt-16 pb-8">
+  <div class="mx-auto max-w-wide px-5">
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-10 pb-12 border-b border-white/10">
+      <div class="max-w-[320px]">
+        <span class="font-bold text-[1.15rem]"><span class="text-white">Airbrush</span> <span class="text-accent">Learn</span></span>
+        <p class="text-gray-400 text-[0.85rem] mt-3">The definitive resource for airbrush artists at every level — from first-timers to competition painters.</p>
+      </div>
+      <div>
+        <span class="block text-gray-500 text-[0.72rem] font-semibold uppercase tracking-[0.06em] mb-4">Read</span>
+        <ul class="list-none m-0 p-0 grid gap-2.5">
+          {readLinks.map((l) => (
+            <li><a href={l.href} class="text-gray-300 hover:text-accent">{l.label}</a></li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <span class="block text-gray-500 text-[0.72rem] font-semibold uppercase tracking-[0.06em] mb-4">Topics</span>
+        <ul class="list-none m-0 p-0 grid gap-2.5">
+          {topicLinks.map((l) => (
+            <li><a href={l.href} class="text-gray-300 hover:text-accent">{l.label}</a></li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <span class="block text-gray-500 text-[0.72rem] font-semibold uppercase tracking-[0.06em] mb-4">Elsewhere</span>
+        <ul class="list-none m-0 p-0 grid gap-2.5">
+          <li><a href="https://spraygunner.com/" target="_blank" rel="noopener" class="text-gray-300 hover:text-accent">SprayGunner Store</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="pt-6 flex flex-wrap gap-3 items-center justify-between text-gray-500 text-[0.82rem]">
+      <span>&copy; {year} SprayGunner. All rights reserved.</span>
+      <span>
+        <a href="/privacy-policy" class="text-gray-400 hover:text-accent">Privacy Policy</a>
+        &nbsp;&middot;&nbsp;
+        <a href="/terms-of-use" class="text-gray-400 hover:text-accent">Terms of Use</a>
+      </span>
+    </div>
   </div>
 </footer>
