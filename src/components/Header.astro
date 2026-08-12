@@ -1,15 +1,40 @@
 ---
+import { categories } from '../data/categories.js';
+import articles from '../data/articles.json';
+
+const categoryCounts = categories.map((cat) => ({
+  ...cat,
+  count: articles.filter((a) => a.category === cat.slug).length,
+}));
 ---
-<header class="sticky top-0 z-20 border-b border-border bg-bg">
+<header class="sticky top-0 z-30 border-b border-border bg-bg/80 backdrop-blur">
   <div class="mx-auto max-w-wide px-5 flex items-center justify-between py-3.5">
-    <a href="/" class="flex items-center gap-2.5 font-bold text-[1.15rem] text-ink">
+    <a href="/" class="flex items-center gap-2.5 font-bold text-[1.15rem] text-ink hover:no-underline">
       <img src="/logo.png" alt="Airbrush Learn" class="h-[34px] w-auto" />
       <span>Airbrush Learn</span>
     </a>
     <nav>
-      <ul class="flex gap-6 max-[640px]:gap-3.5 list-none m-0 p-0">
+      <ul class="flex items-center gap-6 max-[640px]:gap-3.5 list-none m-0 p-0">
         <li><a href="/" class="text-body font-medium text-[0.95rem] hover:text-accent hover:no-underline">Home</a></li>
-        <li><a href="/#latest" class="text-body font-medium text-[0.95rem] hover:text-accent hover:no-underline">Latest Articles</a></li>
+        <li class="relative">
+          <details class="group">
+            <summary class="list-none cursor-pointer flex items-center gap-1.5 text-body font-medium text-[0.95rem] py-3.5 marker:content-none [&::-webkit-details-marker]:hidden hover:text-accent">
+              <span>Categories</span>
+              <span class="text-[0.6rem] text-muted">&#9662;</span>
+            </summary>
+            <div class="absolute top-full right-0 w-[min(640px,calc(100vw-40px))] bg-bg border border-border rounded shadow-[0_18px_48px_rgba(0,0,0,0.12)] p-4 grid grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-0.5 z-40">
+              {categoryCounts.map((cat) => (
+                <a href={`/category/${cat.slug}`} class="block p-3 rounded-xl hover:bg-bg-alt hover:no-underline">
+                  <span class="flex items-baseline gap-1.5 text-[0.9rem] font-semibold text-ink">
+                    {cat.label}
+                    <span class="font-mono text-[0.7rem] font-normal text-muted">{cat.count}</span>
+                  </span>
+                  <span class="block mt-0.5 text-[0.76rem] text-muted leading-snug">{cat.description}</span>
+                </a>
+              ))}
+            </div>
+          </details>
+        </li>
         <li><a href="https://spraygunner.com/?utm_source=airbrushlearn&utm_medium=nav" target="_blank" rel="noopener" class="text-body font-medium text-[0.95rem] hover:text-accent hover:no-underline">Shop SprayGunner</a></li>
       </ul>
     </nav>
