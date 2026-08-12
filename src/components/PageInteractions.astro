@@ -8,14 +8,25 @@
   // --- Scroll-reveal ---
   const revealEls = document.querySelectorAll('[data-reveal]');
   if (reduceMotion) {
-    revealEls.forEach((el) => el.classList.add('is-visible'));
+    revealEls.forEach((el) => {
+      el.classList.add('is-visible');
+      el.removeAttribute('data-reveal');
+    });
   } else if (revealEls.length) {
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            io.unobserve(entry.target);
+            const el = entry.target;
+            el.classList.add('is-visible');
+            io.unobserve(el);
+            el.addEventListener(
+              'transitionend',
+              () => {
+                el.removeAttribute('data-reveal');
+              },
+              { once: true }
+            );
           }
         });
       },
@@ -60,8 +71,6 @@
   // --- Cursor spray-trail (fine pointer + motion allowed only) ---
   if (finePointer && !reduceMotion) {
     const canvas = document.getElementById('cursor-canvas');
-    canvas.classList.remove('hidden');
-    document.documentElement.classList.add('cursor-none');
     const ctx = canvas.getContext('2d');
     let width, height;
     const resize = () => {
@@ -75,8 +84,14 @@
     let particles = [];
     let mouseX = -100;
     let mouseY = -100;
+    let started = false;
 
     window.addEventListener('mousemove', (e) => {
+      if (!started) {
+        started = true;
+        canvas.classList.remove('hidden');
+        document.documentElement.classList.add('cursor-none');
+      }
       mouseX = e.clientX;
       mouseY = e.clientY;
       for (let i = 0; i < 2; i++) {
@@ -104,7 +119,7 @@
         ctx.fill();
       });
       ctx.globalAlpha = 1;
-      if (mouseX > 0) {
+      if (started) {
         ctx.strokeStyle = '#16181d';
         ctx.lineWidth = 1.5;
         ctx.beginPath();
