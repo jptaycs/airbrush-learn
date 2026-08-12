@@ -39,7 +39,7 @@ const inCategory = articles
         <a href="/" class="inline-block mt-5 rounded-full bg-bg-alt text-ink px-5 py-2.5 text-[0.9rem] font-semibold hover:no-underline hover:bg-border">Browse all articles</a>
       </div>
     ) : (
-      <div class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-7">
+      <div data-reveal-group class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-7">
         {inCategory.map((article) => (
           <ArticleCard
             slug={article.slug}
