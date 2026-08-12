@@ -48,16 +48,16 @@ const galleryTiles = [
   <section class="bg-surface-dark py-20 max-[640px]:py-14">
     <div class="mx-auto max-w-wide px-5 grid grid-cols-[repeat(auto-fit,minmax(340px,1fr))] gap-12 items-center">
       <div>
-        <span class="text-accent text-[0.9rem] font-semibold uppercase tracking-[0.04em]">The Airbrush Learning Hub</span>
-        <h1 class="font-serif text-white text-[3.2rem] leading-[1.05] mt-4 max-[640px]:text-[2.1rem]">Master Your Airbrush. Create Without Limits.</h1>
-        <p class="text-gray-400 text-[1.1rem] mt-5 max-w-[480px]">Tutorials, gear reviews and troubleshooting guides written by painters who spray every day.</p>
-        <div class="flex flex-wrap gap-3 mt-8">
-          <a href="/category/beginner" class="inline-block rounded-full bg-accent text-white px-6 py-3 text-[0.95rem] font-semibold hover:no-underline hover:opacity-90">Start Learning</a>
-          <a href="/category/reviews" class="inline-block rounded-full border border-white/30 text-white px-6 py-3 text-[0.95rem] font-semibold hover:no-underline hover:bg-white/10">Browse Reviews</a>
+        <span data-hero-in class="text-accent text-[0.9rem] font-semibold uppercase tracking-[0.04em]">The Airbrush Learning Hub</span>
+        <h1 data-hero-in class="[animation-delay:100ms] font-serif text-white text-[3.2rem] leading-[1.05] mt-4 max-[640px]:text-[2.1rem]">Master Your Airbrush. Create Without Limits.</h1>
+        <p data-hero-in class="[animation-delay:200ms] text-gray-400 text-[1.1rem] mt-5 max-w-[480px]">Tutorials, gear reviews and troubleshooting guides written by painters who spray every day.</p>
+        <div data-hero-in class="[animation-delay:300ms] flex flex-wrap gap-3 mt-8">
+          <a href="/category/beginner" class="inline-block rounded-full bg-accent text-white px-6 py-3 text-[0.95rem] font-semibold hover:no-underline hover:opacity-90 active:scale-95 transition-transform">Start Learning</a>
+          <a href="/category/reviews" class="inline-block rounded-full border border-white/30 text-white px-6 py-3 text-[0.95rem] font-semibold hover:no-underline hover:bg-white/10 active:scale-95 transition-transform">Browse Reviews</a>
         </div>
       </div>
       {featured && (
-        <a href={`/posts/${featured.slug}`} class="block hover:no-underline">
+        <a href={`/posts/${featured.slug}`} data-hero-in class="[animation-delay:400ms] block hover:no-underline">
           <div class="rotate-2 bg-white p-3 pb-5 rounded shadow-[0_20px_50px_rgba(0,0,0,0.4)]">
             <div class="relative">
               <span class="absolute top-3 left-3 text-[0.65rem] text-white uppercase tracking-[0.05em] font-bold bg-accent rounded-full px-2.5 py-1">Featured</span>
@@ -80,9 +80,9 @@ const galleryTiles = [
         <h2 class="font-serif text-ink text-[2rem]">Nine ways in.</h2>
         <p class="mt-2 text-muted text-[1rem] max-w-[480px] mx-auto">Every article lives in exactly one category, so you always know where to look next.</p>
       </div>
-      <div class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-3.5">
+      <div data-reveal-group class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-3.5">
         {categoryCounts.map((cat) => (
-          <a href={`/category/${cat.slug}`} class="block p-7 rounded-xl bg-surface-dark hover:no-underline hover:opacity-90">
+          <a href={`/category/${cat.slug}`} data-reveal class="block p-7 rounded-xl bg-surface-dark hover:no-underline hover:opacity-90 hover:scale-[1.02] transition-transform">
             <span class="block font-serif text-white text-[1.2rem]">{cat.label}</span>
             <span class="block mt-2 text-gray-400 text-[0.9rem]">{cat.description}</span>
             <span class="block mt-4 font-mono text-[0.7rem] text-accent font-semibold">{cat.count} article{cat.count === 1 ? '' : 's'}</span>
@@ -100,7 +100,7 @@ const galleryTiles = [
           <p>New articles are on the way — check back soon.</p>
         </div>
       ) : (
-        <div class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-7">
+        <div data-reveal-group class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-7">
           {sorted.map((article) => (
             <ArticleCard
               slug={article.slug}
@@ -122,9 +122,9 @@ const galleryTiles = [
         <span class="text-accent text-[0.9rem] font-semibold italic">Start Here</span>
         <h2 class="font-serif text-white text-[2rem] mt-2">New to Airbrushing?</h2>
         <p class="text-gray-400 text-[1.05rem] mt-3 max-w-[480px] mx-auto">Follow these steps and you'll be painting like a pro.</p>
-        <div class="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-5 mt-10 text-left">
+        <div data-reveal-group class="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-5 mt-10 text-left">
           {beginnerArticles.map((article, i) => (
-            <a href={`/posts/${article.slug}`} class="block p-7 rounded-xl border border-white/10 bg-white/5 hover:no-underline hover:bg-white/10">
+            <a href={`/posts/${article.slug}`} data-reveal class="block p-7 rounded-xl border border-white/10 bg-white/5 hover:no-underline hover:bg-white/10 hover:-translate-y-0.5 transition-transform">
               <div class="flex items-start justify-between">
                 <span class="block font-mono text-[1.6rem] font-bold text-accent">0{i + 1}</span>
                 <span class="text-accent" set:html={stepIcons[i]} />
@@ -145,12 +145,12 @@ const galleryTiles = [
           <div class="mb-14">
             <div class="flex flex-wrap items-center justify-between gap-4 mb-2">
               <h2 class="font-serif text-ink text-[1.7rem]">Airbrush Reviews</h2>
-              <a href="/category/reviews" class="text-accent-dark font-semibold text-[0.9rem] hover:no-underline">View all &rarr;</a>
+              <a href="/category/reviews" class="link-underline text-accent-dark font-semibold text-[0.9rem] hover:no-underline">View all &rarr;</a>
             </div>
             <div class="h-[3px] bg-teal w-16 mb-7"></div>
-            <div class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-5">
+            <div data-reveal-group class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-5">
               {reviewArticles.map((article) => (
-                <a href={`/posts/${article.slug}`} class="flex gap-4 hover:no-underline">
+                <a href={`/posts/${article.slug}`} data-reveal class="flex gap-4 hover:no-underline">
                   <img src={`/images/${article.slug}.png`} alt={article.title} loading="lazy" width="200" height="140" class="w-28 aspect-[3/2] object-cover rounded flex-none" />
                   <span class="block">
                     <span class="block font-serif text-ink text-[1rem] leading-snug">{article.title}</span>
@@ -165,12 +165,12 @@ const galleryTiles = [
           <div>
             <div class="flex flex-wrap items-center justify-between gap-4 mb-2">
               <h2 class="font-serif text-ink text-[1.7rem]">How-to & Tutorials</h2>
-              <a href="/category/how-to" class="text-accent-dark font-semibold text-[0.9rem] hover:no-underline">View all &rarr;</a>
+              <a href="/category/how-to" class="link-underline text-accent-dark font-semibold text-[0.9rem] hover:no-underline">View all &rarr;</a>
             </div>
             <div class="h-[3px] bg-accent w-16 mb-7"></div>
-            <div class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-5">
+            <div data-reveal-group class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-5">
               {howToArticles.map((article) => (
-                <a href={`/posts/${article.slug}`} class="flex gap-4 hover:no-underline">
+                <a href={`/posts/${article.slug}`} data-reveal class="flex gap-4 hover:no-underline">
                   <img src={`/images/${article.slug}.png`} alt={article.title} loading="lazy" width="200" height="140" class="w-28 aspect-[3/2] object-cover rounded flex-none" />
                   <span class="block">
                     <span class="block font-serif text-ink text-[1rem] leading-snug">{article.title}</span>
@@ -191,7 +191,7 @@ const galleryTiles = [
       <h2 class="font-serif text-white text-[2rem] mt-2 max-w-[560px] mx-auto">Get airbrush tips, gear reviews &amp; tutorials in your inbox.</h2>
       <div class="flex flex-wrap justify-center gap-2 mt-7 max-w-[440px] mx-auto">
         <input type="email" placeholder="Enter your email address" class="flex-1 min-w-[220px] rounded-full px-5 py-3 text-[0.95rem] border-0" />
-        <button type="button" class="rounded-full bg-ink text-white px-6 py-3 text-[0.95rem] font-semibold">Subscribe</button>
+        <button type="button" class="rounded-full bg-ink text-white px-6 py-3 text-[0.95rem] font-semibold active:scale-95 transition-transform">Subscribe</button>
       </div>
       <p class="text-white/85 text-[0.78rem] mt-3">No spam. Unsubscribe anytime.</p>
     </div>
@@ -207,9 +207,9 @@ const galleryTiles = [
         </div>
         <span class="inline-block rounded-full border border-border text-ink px-5 py-2.5 text-[0.9rem] font-semibold">See Full Gallery &rarr;</span>
       </div>
-      <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3.5">
+      <div data-reveal-group class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3.5">
         {galleryTiles.map((tile) => (
-          <div class={`rounded-xl overflow-hidden bg-bg flex items-end p-4 ${tile.tall ? 'aspect-[3/4]' : 'aspect-[4/3]'}`} style="background-image:repeating-linear-gradient(135deg,rgba(23,20,15,0.08) 0 1px,transparent 1px 10px)">
+          <div data-reveal class={`rounded-xl overflow-hidden bg-bg flex items-end p-4 transition-transform duration-300 hover:scale-[1.03] ${tile.tall ? 'aspect-[3/4]' : 'aspect-[4/3]'}`} style="background-image:repeating-linear-gradient(135deg,rgba(23,20,15,0.08) 0 1px,transparent 1px 10px)">
             <span class="text-[0.85rem] font-semibold text-ink">{tile.label}</span>
           </div>
         ))}
@@ -222,11 +222,11 @@ const galleryTiles = [
   </section>
 
   <section class="bg-surface-dark py-20">
-    <div class="mx-auto max-w-wide px-5 text-center">
+    <div data-reveal class="mx-auto max-w-wide px-5 text-center">
       <span class="text-accent italic text-[0.9rem] font-semibold">Ready to Level Up?</span>
       <h2 class="font-serif text-white text-[2.2rem] mt-2">Shop the gear that pros trust.</h2>
       <p class="text-gray-400 text-[1.05rem] mt-3 max-w-[480px] mx-auto">Airbrushes, compressors, paints &amp; accessories — everything you need in one place.</p>
-      <a href="https://spraygunner.com/?utm_source=airbrushlearn&utm_medium=cta" target="_blank" rel="noopener" class="inline-block mt-7 rounded-full bg-accent text-white px-7 py-3.5 text-[0.95rem] font-semibold hover:no-underline hover:opacity-90">Shop the Gear at SprayGunner &rarr;</a>
+      <a href="https://spraygunner.com/?utm_source=airbrushlearn&utm_medium=cta" target="_blank" rel="noopener" class="inline-block mt-7 rounded-full bg-accent text-white px-7 py-3.5 text-[0.95rem] font-semibold hover:no-underline hover:opacity-90 active:scale-95 transition-transform">Shop the Gear at SprayGunner &rarr;</a>
     </div>
   </section>
 </BaseLayout>
