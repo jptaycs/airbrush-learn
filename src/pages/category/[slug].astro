@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { categories } from '../../data/categories.js';
+import articles from '../../data/articles.json';
+
+export async function getStaticPaths() {
+  return categories.map((cat) => ({
+    params: { slug: cat.slug },
+    props: { cat },
+  }));
+}
+
+const { cat } = Astro.props;
+const inCategory = articles
+  .filter((a) => a.category === cat.slug)
+  .sort((a, b) => (a.published_date < b.published_date ? 1 : -1));
+---
+<BaseLayout
+  title={`${cat.label} — Airbrush Learn`}
+  description={cat.description}
+  canonicalPath={`/category/${cat.slug}`}
+>
+  <section class="pt-14 pb-4 text-center">
+    <div class="mx-auto max-w-wide px-5">
+      <div class="text-[0.78rem] text-muted mb-4">
+        <a href="/" class="text-muted hover:text-accent">Home</a> / <span class="text-body">{cat.label}</span>
+      </div>
+      <h1 class="max-[640px]:text-[1.7rem] text-ink text-[2.25rem]">{cat.label}</h1>
+      <p class="mt-3 text-muted text-[1.05rem] max-w-[520px] mx-auto">{cat.description}</p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-wide px-5 pt-8 pb-16">
+    {inCategory.length === 0 ? (
+      <div class="text-center py-16 px-5 text-muted">
+        <p>New articles are on the way — check back soon.</p>
+        <a href="/" class="inline-block mt-5 rounded-full bg-bg-alt text-ink px-5 py-2.5 text-[0.9rem] font-semibold hover:no-underline hover:bg-border">Browse all articles</a>
+      </div>
+    ) : (
+      <div class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-7">
+        {inCategory.map((article) => (
+          <ArticleCard
+            slug={article.slug}
+            title={article.title}
+            excerpt={article.excerpt}
+            published_date={article.published_date}
+            category={article.category}
+          />
+        ))}
+      </div>
+    )}
+  </section>
+</BaseLayout>
