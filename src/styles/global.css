@@ -32,3 +32,70 @@ a:hover {
       prose-code:before:content-none prose-code:after:content-none;
   }
 }
+
+html.cursor-none,
+html.cursor-none * {
+  cursor: none;
+}
+
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 500ms ease, transform 500ms ease;
+}
+.js [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+[data-reveal-group] > *:nth-child(1) { transition-delay: 0ms; }
+[data-reveal-group] > *:nth-child(2) { transition-delay: 60ms; }
+[data-reveal-group] > *:nth-child(3) { transition-delay: 120ms; }
+[data-reveal-group] > *:nth-child(4) { transition-delay: 180ms; }
+[data-reveal-group] > *:nth-child(n+5) { transition-delay: 240ms; }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-hero-in] { animation: fadeInUp 700ms ease both; }
+}
+
+header > div {
+  transition: padding 250ms ease, box-shadow 250ms ease;
+}
+header.is-scrolled {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+header.is-scrolled > div {
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+}
+
+.menu-panel-open {
+  animation: fadeInUp 180ms ease both;
+}
+.menu-panel-closing {
+  animation: fadeInUp 150ms ease reverse both;
+}
+
+@layer components {
+  .link-underline {
+    position: relative;
+  }
+  .link-underline::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 250ms ease;
+  }
+  .link-underline:hover::after {
+    transform: scaleX(1);
+  }
+}

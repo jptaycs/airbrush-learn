@@ -6,4 +6,9 @@ export default defineConfig({
   site: 'https://airbrush.gallery',
   integrations: [sitemap(), tailwind({ applyBaseStyles: false })],
   output: 'static',
+  vite: {
+    build: {
+      assetsInlineLimit: 0,
+    },
+  },
 });

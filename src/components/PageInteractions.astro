@@ -1,0 +1,118 @@
+---
+---
+<canvas id="cursor-canvas" class="pointer-events-none fixed inset-0 z-[999] hidden" aria-hidden="true"></canvas>
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finePointer = window.matchMedia('(pointer: fine)').matches;
+
+  // --- Scroll-reveal ---
+  const revealEls = document.querySelectorAll('[data-reveal]');
+  if (reduceMotion) {
+    revealEls.forEach((el) => el.classList.add('is-visible'));
+  } else if (revealEls.length) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            io.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+    revealEls.forEach((el) => io.observe(el));
+  }
+
+  // --- Header scroll state ---
+  const header = document.querySelector('header');
+  if (header) {
+    const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 24);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  // --- Mega-menu open/close animation ---
+  const menuDetails = document.querySelector('header details');
+  if (menuDetails) {
+    const panel = menuDetails.querySelector(':scope > div');
+    menuDetails.addEventListener('toggle', () => {
+      if (menuDetails.open) {
+        panel?.classList.remove('menu-panel-closing');
+        panel?.classList.add('menu-panel-open');
+      } else {
+        panel?.classList.remove('menu-panel-open');
+      }
+    });
+    const summary = menuDetails.querySelector('summary');
+    summary?.addEventListener('click', (e) => {
+      if (menuDetails.open && !reduceMotion) {
+        e.preventDefault();
+        panel?.classList.add('menu-panel-closing');
+        panel?.classList.remove('menu-panel-open');
+        setTimeout(() => {
+          menuDetails.open = false;
+        }, 150);
+      }
+    });
+  }
+
+  // --- Cursor spray-trail (fine pointer + motion allowed only) ---
+  if (finePointer && !reduceMotion) {
+    const canvas = document.getElementById('cursor-canvas');
+    canvas.classList.remove('hidden');
+    document.documentElement.classList.add('cursor-none');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    const resize = () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    const colors = ['#e2571f', '#c9451a', '#2f7d6c'];
+    let particles = [];
+    let mouseX = -100;
+    let mouseY = -100;
+
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      for (let i = 0; i < 2; i++) {
+        if (particles.length > 150) particles.shift();
+        particles.push({
+          x: mouseX + (Math.random() - 0.5) * 10,
+          y: mouseY + (Math.random() - 0.5) * 10,
+          r: Math.random() * 2 + 1,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          life: 1,
+        });
+      }
+    });
+
+    const tick = () => {
+      ctx.clearRect(0, 0, width, height);
+      particles = particles.filter((p) => p.life > 0);
+      particles.forEach((p) => {
+        p.life -= 0.025;
+        p.y += 0.3;
+        ctx.globalAlpha = Math.max(p.life, 0);
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+      if (mouseX > 0) {
+        ctx.strokeStyle = '#16181d';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(mouseX, mouseY, 5, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+</script>
