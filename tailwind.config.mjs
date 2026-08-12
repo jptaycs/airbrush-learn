@@ -10,9 +10,9 @@ export default {
         body: '#333844',
         muted: '#6b7280',
         bg: '#ffffff',
-        'bg-alt': '#f6f7f9',
+        'bg-alt': '#f5f5f7',
         border: '#e5e7eb',
-        accent: { DEFAULT: '#1d4e89', dark: '#143a66' },
+        accent: { DEFAULT: '#e2571f', dark: '#c9451a' },
       },
       fontFamily: {
         sans: [
@@ -26,7 +26,7 @@ export default {
         ],
       },
       borderRadius: {
-        DEFAULT: '10px',
+        DEFAULT: '18px',
       },
       maxWidth: {
         prose: '760px',
