@@ -8,9 +8,10 @@ interface Props {
   description: string;
   canonicalPath: string; // e.g. "/" or "/posts/my-slug"
   ogImage?: string; // absolute path e.g. "/images/my-slug.png"
+  noindex?: boolean;
 }
 
-const { title, description, canonicalPath, ogImage } = Astro.props;
+const { title, description, canonicalPath, ogImage, noindex } = Astro.props;
 const siteUrl = Astro.site?.origin ?? 'https://airbrush.gallery';
 const canonicalUrl = new URL(canonicalPath, siteUrl).toString();
 const imageUrl = ogImage ? new URL(ogImage, siteUrl).toString() : new URL('/logo.png', siteUrl).toString();
@@ -22,6 +23,7 @@ const imageUrl = ogImage ? new URL(ogImage, siteUrl).toString() : new URL('/logo
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{title}</title>
   <meta name="description" content={description} />
+  {noindex && <meta name="robots" content="noindex" />}
   <link rel="canonical" href={canonicalUrl} />
 
   <link rel="icon" href="/favicon.ico" sizes="any" />

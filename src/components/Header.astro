@@ -8,17 +8,17 @@ const categoryCounts = categories.map((cat) => ({
 }));
 ---
 <header class="sticky top-0 z-30 border-b border-border bg-bg/80 backdrop-blur">
-  <div class="mx-auto max-w-wide px-5 flex items-center justify-between py-3.5">
+  <div class="relative mx-auto max-w-wide px-5 flex items-center justify-between py-3.5">
     <a href="/" class="flex items-center gap-2.5 font-bold text-[1.15rem] text-ink hover:no-underline">
       <img src="/logo.png" alt="Airbrush Learn" class="h-[34px] w-auto" />
       <span>Airbrush Learn</span>
     </a>
     <nav>
       <ul class="flex items-center gap-6 max-[640px]:gap-3.5 list-none m-0 p-0">
-        <li><a href="/" class="text-body font-medium text-[0.95rem] hover:text-accent hover:no-underline">Home</a></li>
-        <li class="relative">
-          <details class="group">
-            <summary class="list-none cursor-pointer flex items-center gap-1.5 text-body font-medium text-[0.95rem] py-3.5 marker:content-none [&::-webkit-details-marker]:hidden hover:text-accent">
+        <li><a href="/" class="text-body font-medium text-[0.95rem] hover:text-accent-dark hover:no-underline">Home</a></li>
+        <li>
+          <details>
+            <summary class="list-none cursor-pointer flex items-center gap-1.5 text-body font-medium text-[0.95rem] py-3.5 marker:content-none [&::-webkit-details-marker]:hidden hover:text-accent-dark">
               <span>Categories</span>
               <span class="text-[0.6rem] text-muted">&#9662;</span>
             </summary>
@@ -35,7 +35,7 @@ const categoryCounts = categories.map((cat) => ({
             </div>
           </details>
         </li>
-        <li><a href="https://spraygunner.com/?utm_source=airbrushlearn&utm_medium=nav" target="_blank" rel="noopener" class="text-body font-medium text-[0.95rem] hover:text-accent hover:no-underline">Shop SprayGunner</a></li>
+        <li><a href="https://spraygunner.com/?utm_source=airbrushlearn&utm_medium=nav" target="_blank" rel="noopener" class="text-body font-medium text-[0.95rem] hover:text-accent-dark hover:no-underline">Shop SprayGunner</a></li>
       </ul>
     </nav>
   </div>

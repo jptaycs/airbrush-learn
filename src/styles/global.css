@@ -17,7 +17,7 @@ body {
 }
 
 a {
-  @apply text-accent no-underline;
+  @apply text-accent-dark no-underline;
 }
 
 a:hover {
@@ -27,7 +27,7 @@ a:hover {
 @layer components {
   .prose-site {
     @apply prose-neutral prose-headings:text-ink prose-p:text-body
-      prose-a:text-accent prose-a:no-underline prose-a:font-normal
+      prose-a:text-accent-dark prose-a:no-underline prose-a:font-normal
       prose-blockquote:border-accent prose-blockquote:text-muted
       prose-code:before:content-none prose-code:after:content-none;
   }

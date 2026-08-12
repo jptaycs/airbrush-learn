@@ -60,14 +60,14 @@ const categoryCounts = categories.map((cat) => ({
       <div class="mx-auto max-w-wide px-5">
         <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
           <h2 class="text-[1.8rem] text-ink">Reviews from real studio time.</h2>
-          <a href="/category/reviews" class="text-accent font-semibold text-[0.9rem] hover:no-underline">View all reviews &rarr;</a>
+          <a href="/category/reviews" class="text-accent-dark font-semibold text-[0.9rem] hover:no-underline">View all reviews &rarr;</a>
         </div>
         <div class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-3.5">
           {reviewArticles.map((article) => (
             <a href={`/posts/${article.slug}`} class="flex gap-4 p-4 rounded-xl bg-bg hover:no-underline hover:bg-border">
               <span class="flex-none w-24 aspect-[3/2] rounded-xl bg-bg-alt bg-cover bg-center" style={`background-image:url(/images/${article.slug}.png)`}></span>
               <span class="block">
-                <span class="block text-[0.7rem] text-accent uppercase tracking-[0.05em] font-bold">Review</span>
+                <span class="block text-[0.7rem] text-accent-dark uppercase tracking-[0.05em] font-bold">Review</span>
                 <span class="block mt-1.5 text-[1rem] text-ink font-semibold leading-tight">{article.title}</span>
                 <span class="block mt-1.5 text-[0.78rem] text-muted">{article.published_date}</span>
               </span>
@@ -88,7 +88,7 @@ const categoryCounts = categories.map((cat) => ({
             <div class="mt-5 grid gap-0.5">
               {beginnerArticles.map((article, i) => (
                 <a href={`/posts/${article.slug}`} class="flex items-baseline gap-4 p-3.5 rounded-xl hover:no-underline hover:bg-bg">
-                  <span class="flex-none font-mono text-[0.78rem] font-bold text-accent">0{i + 1}</span>
+                  <span class="flex-none font-mono text-[0.78rem] font-bold text-accent-dark">0{i + 1}</span>
                   <span class="text-[0.95rem] text-ink">{article.title}</span>
                 </a>
               ))}
@@ -125,7 +125,7 @@ const categoryCounts = categories.map((cat) => ({
               <span class="block text-[1.05rem] text-ink font-semibold">{cat.label}</span>
               <span class="block mt-1.5 text-[0.88rem] text-muted">{cat.description}</span>
             </span>
-            <span class="flex-none font-mono text-[0.7rem] font-semibold text-accent">{cat.count}</span>
+            <span class="flex-none font-mono text-[0.7rem] font-semibold text-accent-dark">{cat.count}</span>
           </a>
         ))}
       </div>

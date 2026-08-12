@@ -12,6 +12,7 @@
 import { writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { categories } from '../src/data/categories.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -28,17 +29,7 @@ function slugify(input) {
     .replace(/^-+|-+$/g, '');
 }
 
-const VALID_CATEGORIES = new Set([
-  'how-to',
-  'reviews',
-  'buying-guides',
-  'troubleshooting',
-  'paints-colors',
-  'automotive',
-  'miniatures',
-  'cosplay-body-art',
-  'beginner',
-]);
+const VALID_CATEGORIES = new Set(categories.map((c) => c.slug));
 
 async function main() {
   if (!WEBHOOK_URL) {
@@ -94,7 +85,8 @@ async function main() {
       console.warn(`[fetch-articles] "${slug}" has no image_base64 — the page will render without a hero image.`);
     }
 
-    const category = VALID_CATEGORIES.has(row.category) ? row.category : '';
+    const normalizedCategory = String(row.category ?? '').trim().toLowerCase();
+    const category = VALID_CATEGORIES.has(normalizedCategory) ? normalizedCategory : '';
     if (row.category && !category) {
       console.warn(`[fetch-articles] "${slug}" has an unrecognized category "${row.category}" — building it without a category badge.`);
     }
