@@ -1,5 +1,6 @@
 ---
 import { categories } from '../data/categories.js';
+import { estimateReadMinutes } from '../lib/readTime.js';
 
 interface Props {
   slug: string;
@@ -7,26 +8,27 @@ interface Props {
   excerpt: string;
   published_date: string;
   category?: string;
+  content_html?: string;
 }
-const { slug, title, excerpt, published_date, category } = Astro.props;
+const { slug, title, excerpt, published_date, category, content_html } = Astro.props;
 const cat = categories.find((c) => c.slug === category);
+const readMinutes = estimateReadMinutes(content_html);
 ---
 <article class="border border-border rounded overflow-hidden bg-bg flex flex-col transition-[box-shadow,transform] duration-150 ease-[ease] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5">
-  <a href={`/posts/${slug}`} class="block hover:no-underline">
+  <a href={`/posts/${slug}`} class="relative block hover:no-underline">
     <img src={`/images/${slug}.png`} alt={title} loading="lazy" width="600" height="400" class="aspect-[3/2] object-cover w-full" />
+    {cat && (
+      <span class="absolute top-3 left-3 text-[0.65rem] text-white uppercase tracking-[0.05em] font-bold bg-black/75 rounded-full px-2.5 py-1">
+        {cat.label}
+      </span>
+    )}
   </a>
   <div class="pt-4 px-[18px] pb-5 flex flex-col flex-1">
-    <div class="flex items-center gap-2.5 mb-2">
-      {cat && (
-        <a href={`/category/${cat.slug}`} class="text-[0.7rem] text-accent-dark uppercase tracking-[0.05em] font-bold bg-accent/10 rounded-full px-2.5 py-1 hover:no-underline">
-          {cat.label}
-        </a>
-      )}
-      <span class="text-[0.8rem] text-muted uppercase tracking-[0.04em]">{published_date}</span>
-    </div>
+    <span class="text-[0.8rem] text-muted uppercase tracking-[0.04em] mb-2">{published_date} · {readMinutes} min read</span>
     <a href={`/posts/${slug}`} class="text-inherit no-underline hover:no-underline flex flex-col flex-1">
-      <h2 class="text-[1.1rem] text-ink mb-2">{title}</h2>
+      <h2 class="font-serif text-[1.15rem] text-ink mb-2">{title}</h2>
       <p class="text-muted text-[0.92rem] mb-3 flex-1">{excerpt}</p>
+      <span class="text-accent-dark font-semibold text-[0.85rem]">Read &rarr;</span>
     </a>
   </div>
 </article>
