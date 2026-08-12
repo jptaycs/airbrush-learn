@@ -1,11 +1,23 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ArticleCard from '../components/ArticleCard.astro';
+import { categories } from '../data/categories.js';
 import articles from '../data/articles.json';
 
 const sorted = [...articles].sort((a, b) =>
   a.published_date < b.published_date ? 1 : -1
 );
+
+const byCategory = (slug) => sorted.filter((a) => a.category === slug);
+
+const reviewArticles = byCategory('reviews').slice(0, 3);
+const beginnerArticles = byCategory('beginner').slice(0, 3);
+const troubleshootingArticles = byCategory('troubleshooting').slice(0, 3);
+
+const categoryCounts = categories.map((cat) => ({
+  ...cat,
+  count: sorted.filter((a) => a.category === cat.slug).length,
+}));
 ---
 <BaseLayout
   title="Airbrush Learn — Tutorials, Reviews & Buying Guides for Airbrush Artists"
@@ -16,6 +28,10 @@ const sorted = [...articles].sort((a, b) =>
     <div class="mx-auto max-w-wide px-5">
       <h1 class="text-[2.4rem] max-[640px]:text-[1.8rem] text-ink mb-3">Master Your Airbrush. Create Without Limits.</h1>
       <p class="text-muted text-[1.1rem] max-w-[640px] mx-auto">Tutorials, gear reviews and troubleshooting guides written by painters who spray every day.</p>
+      <div class="flex justify-center gap-3 mt-8">
+        <a href="/category/beginner" class="inline-block rounded-full bg-accent text-white px-6 py-3 text-[0.95rem] font-semibold hover:no-underline hover:opacity-90">Start learning</a>
+        <a href="/category/reviews" class="inline-block rounded-full bg-bg-alt text-ink px-6 py-3 text-[0.95rem] font-semibold hover:no-underline hover:bg-border">Browse reviews</a>
+      </div>
     </div>
   </section>
 
@@ -37,5 +53,82 @@ const sorted = [...articles].sort((a, b) =>
         ))}
       </div>
     )}
+  </section>
+
+  {reviewArticles.length > 0 && (
+    <section class="bg-bg-alt py-16">
+      <div class="mx-auto max-w-wide px-5">
+        <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
+          <h2 class="text-[1.8rem] text-ink">Reviews from real studio time.</h2>
+          <a href="/category/reviews" class="text-accent font-semibold text-[0.9rem] hover:no-underline">View all reviews &rarr;</a>
+        </div>
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-3.5">
+          {reviewArticles.map((article) => (
+            <a href={`/posts/${article.slug}`} class="flex gap-4 p-4 rounded-xl bg-bg hover:no-underline hover:bg-border">
+              <span class="flex-none w-24 aspect-[3/2] rounded-xl bg-bg-alt bg-cover bg-center" style={`background-image:url(/images/${article.slug}.png)`}></span>
+              <span class="block">
+                <span class="block text-[0.7rem] text-accent uppercase tracking-[0.05em] font-bold">Review</span>
+                <span class="block mt-1.5 text-[1rem] text-ink font-semibold leading-tight">{article.title}</span>
+                <span class="block mt-1.5 text-[0.78rem] text-muted">{article.published_date}</span>
+              </span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {(beginnerArticles.length > 0 || troubleshootingArticles.length > 0) && (
+    <section class="py-16">
+      <div class="mx-auto max-w-wide px-5 grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-3.5">
+        {beginnerArticles.length > 0 && (
+          <div class="p-9 rounded-xl bg-bg-alt">
+            <h2 class="text-[1.5rem] text-ink">New to airbrushing? Start here.</h2>
+            <p class="mt-2 text-muted text-[0.95rem]">Start with these before anything else.</p>
+            <div class="mt-5 grid gap-0.5">
+              {beginnerArticles.map((article, i) => (
+                <a href={`/posts/${article.slug}`} class="flex items-baseline gap-4 p-3.5 rounded-xl hover:no-underline hover:bg-bg">
+                  <span class="flex-none font-mono text-[0.78rem] font-bold text-accent">0{i + 1}</span>
+                  <span class="text-[0.95rem] text-ink">{article.title}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+        {troubleshootingArticles.length > 0 && (
+          <div class="p-9 rounded-xl bg-bg-alt">
+            <h2 class="text-[1.5rem] text-ink">Something going wrong mid-spray?</h2>
+            <p class="mt-2 text-muted text-[0.95rem]">The problems people search for most.</p>
+            <div class="mt-5 grid gap-0.5">
+              {troubleshootingArticles.map((article) => (
+                <a href={`/posts/${article.slug}`} class="flex items-baseline justify-between gap-4 p-3.5 rounded-xl hover:no-underline hover:bg-bg">
+                  <span class="text-[0.95rem] text-ink">{article.title}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+
+  <section class="py-16">
+    <div class="mx-auto max-w-wide px-5">
+      <div class="text-center mb-10">
+        <h2 class="text-[1.8rem] text-ink">Nine ways in.</h2>
+        <p class="mt-2 text-muted text-[1rem] max-w-[480px] mx-auto">Every article lives in exactly one category, so you always know where to look next.</p>
+      </div>
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-3.5">
+        {categoryCounts.map((cat) => (
+          <a href={`/category/${cat.slug}`} class="flex items-start justify-between gap-4 p-6 rounded-xl bg-bg-alt hover:no-underline hover:bg-border">
+            <span class="block">
+              <span class="block text-[1.05rem] text-ink font-semibold">{cat.label}</span>
+              <span class="block mt-1.5 text-[0.88rem] text-muted">{cat.description}</span>
+            </span>
+            <span class="flex-none font-mono text-[0.7rem] font-semibold text-accent">{cat.count}</span>
+          </a>
+        ))}
+      </div>
+    </div>
   </section>
 </BaseLayout>
