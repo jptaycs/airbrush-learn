@@ -24,7 +24,7 @@ const categoryCounts = categories.map((cat) => ({
             </summary>
             <div class="absolute top-full right-0 w-[min(640px,calc(100vw-40px))] bg-bg border border-border rounded shadow-[0_18px_48px_rgba(0,0,0,0.12)] p-4 grid grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-0.5 z-40">
               {categoryCounts.map((cat) => (
-                <a href={`/category/${cat.slug}`} class="block p-3 rounded-xl hover:bg-bg-alt hover:no-underline">
+                <a href={`/category/${cat.slug}`} class="block p-3 rounded-xl hover:bg-bg-alt hover:no-underline hover:translate-x-1 transition-transform">
                   <span class="flex items-baseline gap-1.5 text-[0.9rem] font-semibold text-ink">
                     {cat.label}
                     <span class="font-mono text-[0.7rem] font-normal text-muted">{cat.count}</span>
