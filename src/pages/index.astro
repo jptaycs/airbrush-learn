@@ -130,7 +130,7 @@ const galleryTiles = [
                 <span class="text-accent" set:html={stepIcons[i]} />
               </div>
               <span class="block mt-3 font-serif text-white text-[1.05rem] leading-snug">{article.title}</span>
-              <span class="block mt-3 text-accent-dark font-semibold text-[0.85rem]">Read &rarr;</span>
+              <span class="block mt-3 text-accent font-semibold text-[0.85rem]">Read &rarr;</span>
             </a>
           ))}
         </div>
@@ -139,7 +139,7 @@ const galleryTiles = [
   )}
 
   {(reviewArticles.length > 0 || howToArticles.length > 0) && (
-    <section class="bg-bg-alt pb-16">
+    <section class="bg-bg-alt py-16">
       <div class="mx-auto max-w-wide px-5">
         {reviewArticles.length > 0 && (
           <div class="mb-14">
@@ -185,15 +185,15 @@ const galleryTiles = [
     </section>
   )}
 
-  <section class="bg-accent py-16">
+  <section class="bg-accent-dark py-16">
     <div class="mx-auto max-w-wide px-5 text-center">
-      <span class="text-white/90 italic text-[0.9rem] font-semibold">Stay Sharp</span>
+      <span class="text-white/95 italic text-[0.9rem] font-semibold">Stay Sharp</span>
       <h2 class="font-serif text-white text-[2rem] mt-2 max-w-[560px] mx-auto">Get airbrush tips, gear reviews &amp; tutorials in your inbox.</h2>
       <div class="flex flex-wrap justify-center gap-2 mt-7 max-w-[440px] mx-auto">
         <input type="email" placeholder="Enter your email address" class="flex-1 min-w-[220px] rounded-full px-5 py-3 text-[0.95rem] border-0" />
         <button type="button" class="rounded-full bg-ink text-white px-6 py-3 text-[0.95rem] font-semibold">Subscribe</button>
       </div>
-      <p class="text-white/70 text-[0.78rem] mt-3">No spam. Unsubscribe anytime.</p>
+      <p class="text-white/85 text-[0.78rem] mt-3">No spam. Unsubscribe anytime.</p>
     </div>
   </section>
 
@@ -201,7 +201,7 @@ const galleryTiles = [
     <div class="mx-auto max-w-wide px-5">
       <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
         <div>
-          <span class="text-accent italic text-[0.9rem] font-semibold">Community Gallery</span>
+          <span class="text-accent-dark italic text-[0.9rem] font-semibold">Community Gallery</span>
           <h2 class="font-serif text-ink text-[2rem] mt-2">Airbrush Art Gallery</h2>
           <p class="text-muted text-[1rem] mt-2 max-w-[480px]">Real work from real airbrush artists — automotive, miniatures, cosplay &amp; more.</p>
         </div>
