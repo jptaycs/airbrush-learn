@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ArticleSchema from '../../components/ArticleSchema.astro';
+import { categories } from '../../data/categories.js';
 import articles from '../../data/articles.json';
 
 export async function getStaticPaths() {
@@ -12,6 +13,7 @@ export async function getStaticPaths() {
 
 const { article } = Astro.props;
 const siteUrl = Astro.site?.origin ?? 'https://airbrush.gallery';
+const cat = categories.find((c) => c.slug === article.category);
 ---
 <BaseLayout
   title={article.title}
@@ -31,7 +33,14 @@ const siteUrl = Astro.site?.origin ?? 'https://airbrush.gallery';
 
   <article class="pt-6 pb-16 mx-auto max-w-wide px-5">
     <div class="prose prose-site max-w-prose mx-auto">
-      <p class="not-prose text-muted text-[0.9rem] mb-2">{article.published_date}</p>
+      <div class="not-prose flex items-center gap-2.5 mb-2">
+        {cat && (
+          <a href={`/category/${cat.slug}`} class="text-[0.7rem] text-accent uppercase tracking-[0.05em] font-bold bg-accent/10 rounded-full px-2.5 py-1 hover:no-underline">
+            {cat.label}
+          </a>
+        )}
+        <p class="text-muted text-[0.9rem] m-0">{article.published_date}</p>
+      </div>
       <h1 class="max-[640px]:text-[1.7rem]">{article.title}</h1>
       <img
         class="w-full max-h-[420px] object-cover rounded mt-6 mb-2"
