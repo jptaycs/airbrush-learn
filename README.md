@@ -92,11 +92,13 @@ airbrush-learn-site/
 ├── scripts/fetch-articles.mjs   # prebuild: fetch + decode images + write local JSON
 ├── src/
 │   ├── data/articles.json       # generated at build time (gitignored) — sample data committed for local preview
+│   ├── data/categories.js       # fixed 9-category taxonomy (label/description) — not from n8n
 │   ├── layouts/BaseLayout.astro # shared <head>, header, footer, SEO/OG meta
 │   ├── components/              # Header, Footer, ArticleCard, ArticleSchema (JSON-LD)
 │   ├── pages/
 │   │   ├── index.astro          # homepage / article grid
 │   │   ├── posts/[slug].astro   # one page per article
+│   │   ├── category/[slug].astro # one page per category, getStaticPaths() over categories.js
 │   │   ├── terms-of-use.astro
 │   │   └── privacy-policy.astro
 │   └── styles/global.css        # @tailwind directives + global resets; design tokens live in tailwind.config.mjs
