@@ -53,6 +53,7 @@ If you add a new field to the Data Table, update it in three places: the webhook
 scripts/fetch-articles.mjs   # the only place that talks to n8n
 src/data/articles.json       # generated; sample data committed for local preview
 src/data/categories.js       # fixed 9-category taxonomy (label/description) — not from n8n
+src/lib/readTime.js          # estimateReadMinutes(html) — computed from content_html word count
 src/layouts/BaseLayout.astro # <head>, SEO/OG meta, header, footer — every page uses this
 src/components/              # Header, Footer, ArticleCard, ArticleSchema (JSON-LD)
 src/pages/
