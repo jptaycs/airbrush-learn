@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ArticleCard from '../components/ArticleCard.astro';
+import ArticleCarousel from '../components/ArticleCarousel.astro';
 import { categories } from '../data/categories.js';
 import { estimateReadMinutes } from '../lib/readTime.js';
 import articles from '../data/articles.json';
@@ -15,13 +16,18 @@ const featuredReadMinutes = featured ? estimateReadMinutes(featured.content_html
 
 const byCategory = (slug) => sorted.filter((a) => a.category === slug);
 
-const reviewArticles = byCategory('reviews').slice(0, 3);
-const howToArticles = byCategory('how-to').slice(0, 3);
 const beginnerArticles = byCategory('beginner').slice(0, 3);
 
 const categoryCounts = categories.map((cat) => ({
   ...cat,
   count: sorted.filter((a) => a.category === cat.slug).length,
+}));
+
+const carouselAccents = ['bg-accent', 'bg-teal'];
+const categoryArticles = categories.map((cat, i) => ({
+  ...cat,
+  articles: byCategory(cat.slug),
+  accentClass: carouselAccents[i % carouselAccents.length],
 }));
 
 const stepIcons = [
@@ -148,52 +154,25 @@ const galleryTiles = [
     </section>
   )}
 
-  {(reviewArticles.length > 0 || howToArticles.length > 0) && (
-    <section class="bg-bg-alt py-16">
-      <div class="mx-auto max-w-wide px-5">
-        {reviewArticles.length > 0 && (
-          <div class="mb-14">
-            <div class="flex flex-wrap items-center justify-between gap-4 mb-2">
-              <h2 class="font-serif text-ink text-[1.7rem]">Airbrush Reviews</h2>
-              <a href="/category/reviews" class="link-underline text-accent-dark font-semibold text-[0.9rem] hover:no-underline">View all &rarr;</a>
-            </div>
-            <div class="h-[3px] bg-teal w-16 mb-7"></div>
-            <div data-reveal-group class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-5">
-              {reviewArticles.map((article) => (
-                <a href={`/posts/${article.slug}`} data-reveal class="flex gap-4 hover:no-underline">
-                  <img src={`/images/${article.slug}.png`} alt={article.title} loading="lazy" width="200" height="140" class="w-28 aspect-[3/2] object-cover rounded flex-none" />
-                  <span class="block">
-                    <span class="block font-serif text-ink text-[1rem] leading-snug">{article.title}</span>
-                    <span class="block mt-2 text-muted text-[0.78rem]">{article.published_date}</span>
-                  </span>
-                </a>
-              ))}
-            </div>
-          </div>
-        )}
-        {howToArticles.length > 0 && (
-          <div>
-            <div class="flex flex-wrap items-center justify-between gap-4 mb-2">
-              <h2 class="font-serif text-ink text-[1.7rem]">How-to & Tutorials</h2>
-              <a href="/category/how-to" class="link-underline text-accent-dark font-semibold text-[0.9rem] hover:no-underline">View all &rarr;</a>
-            </div>
-            <div class="h-[3px] bg-accent w-16 mb-7"></div>
-            <div data-reveal-group class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-5">
-              {howToArticles.map((article) => (
-                <a href={`/posts/${article.slug}`} data-reveal class="flex gap-4 hover:no-underline">
-                  <img src={`/images/${article.slug}.png`} alt={article.title} loading="lazy" width="200" height="140" class="w-28 aspect-[3/2] object-cover rounded flex-none" />
-                  <span class="block">
-                    <span class="block font-serif text-ink text-[1rem] leading-snug">{article.title}</span>
-                    <span class="block mt-2 text-muted text-[0.78rem]">{article.published_date}</span>
-                  </span>
-                </a>
-              ))}
-            </div>
-          </div>
-        )}
+  <section class="bg-bg-alt py-16">
+    <div class="mx-auto max-w-wide px-5">
+      <div class="text-center mb-12">
+        <h2 class="font-serif text-ink text-[2rem]">Browse by Category</h2>
+        <p class="mt-2 text-muted text-[1rem] max-w-[480px] mx-auto">Scroll each row or jump straight to a category's full archive.</p>
       </div>
-    </section>
-  )}
+      <div class="space-y-14">
+        {categoryArticles.map((cat) => (
+          <ArticleCarousel
+            title={cat.label}
+            description={cat.description}
+            viewAllHref={`/category/${cat.slug}`}
+            articles={cat.articles}
+            accentClass={cat.accentClass}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
 
   <section class="bg-accent-dark py-16">
     <div class="mx-auto max-w-wide px-5 text-center">

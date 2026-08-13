@@ -1,0 +1,52 @@
+---
+import ArticleCard from './ArticleCard.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  viewAllHref: string;
+  articles: Array<{
+    slug: string;
+    title: string;
+    excerpt: string;
+    published_date: string;
+    category?: string;
+    content_html?: string;
+  }>;
+  accentClass?: string;
+}
+
+const { title, description, viewAllHref, articles, accentClass = 'bg-accent' } = Astro.props;
+---
+{articles.length > 0 && (
+  <div data-carousel>
+    <div class="flex flex-wrap items-end justify-between gap-4 mb-2">
+      <div>
+        <h2 class="font-serif text-ink text-[1.7rem]">{title}</h2>
+        {description && <p class="text-muted text-[0.9rem] mt-1 max-w-[480px]">{description}</p>}
+      </div>
+      <div class="flex items-center gap-4">
+        <a href={viewAllHref} class="link-underline text-accent-dark font-semibold text-[0.9rem] hover:no-underline">View all &rarr;</a>
+        <div class="flex gap-2">
+          <button type="button" data-carousel-prev aria-label={`Scroll ${title} left`} class="w-9 h-9 rounded-full border border-border flex items-center justify-center text-ink hover:bg-bg-alt active:scale-95 transition-transform disabled:opacity-30 disabled:pointer-events-none">&larr;</button>
+          <button type="button" data-carousel-next aria-label={`Scroll ${title} right`} class="w-9 h-9 rounded-full border border-border flex items-center justify-center text-ink hover:bg-bg-alt active:scale-95 transition-transform disabled:opacity-30 disabled:pointer-events-none">&rarr;</button>
+        </div>
+      </div>
+    </div>
+    <div class={`h-[3px] ${accentClass} w-16 mb-7`}></div>
+    <div data-carousel-track class="flex gap-5 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 -mx-5 px-5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+      {articles.map((article) => (
+        <div class="snap-start flex-none w-[270px]">
+          <ArticleCard
+            slug={article.slug}
+            title={article.title}
+            excerpt={article.excerpt}
+            published_date={article.published_date}
+            category={article.category}
+            content_html={article.content_html}
+          />
+        </div>
+      ))}
+    </div>
+  </div>
+)}
