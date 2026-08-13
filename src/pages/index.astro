@@ -31,13 +31,13 @@ const stepIcons = [
 ];
 
 const galleryTiles = [
-  { label: 'Automotive', tall: true },
-  { label: 'Fine Art', tall: false },
-  { label: 'Miniatures', tall: false },
-  { label: 'Cosplay', tall: false },
-  { label: 'Fabric', tall: true },
-  { label: 'Scale Models', tall: false },
-  { label: 'Body Art', tall: false },
+  { label: 'Automotive', slug: 'automotive', tall: true },
+  { label: 'Fine Art', slug: 'fine-art', tall: false },
+  { label: 'Miniatures', slug: 'miniatures', tall: false },
+  { label: 'Cosplay', slug: 'cosplay', tall: false },
+  { label: 'Fabric', slug: 'fabric', tall: true },
+  { label: 'Scale Models', slug: 'scale-models', tall: false },
+  { label: 'Body Art', slug: 'body-art', tall: false },
 ];
 ---
 <BaseLayout
@@ -209,8 +209,10 @@ const galleryTiles = [
       </div>
       <div data-reveal-group class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3.5">
         {galleryTiles.map((tile) => (
-          <div data-reveal class={`rounded-xl overflow-hidden bg-bg flex items-end p-4 transition-transform duration-300 hover:scale-[1.03] ${tile.tall ? 'aspect-[3/4]' : 'aspect-[4/3]'}`} style="background-image:repeating-linear-gradient(135deg,rgba(23,20,15,0.08) 0 1px,transparent 1px 10px)">
-            <span class="text-[0.85rem] font-semibold text-ink">{tile.label}</span>
+          <div data-reveal class={`relative rounded-xl overflow-hidden bg-bg flex items-end p-4 transition-transform duration-300 hover:scale-[1.03] ${tile.tall ? 'aspect-[3/4]' : 'aspect-[4/3]'}`}>
+            <img src={`/images/gallery/${tile.slug}.jpg`} alt={tile.label} loading="lazy" class="absolute inset-0 w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent"></div>
+            <span class="relative text-[0.85rem] font-semibold text-white">{tile.label}</span>
           </div>
         ))}
       </div>
