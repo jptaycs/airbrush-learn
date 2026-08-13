@@ -4,34 +4,33 @@ Guidance for Claude Code (or any AI agent) working in this repo.
 
 ## What this project is
 
-A plain static site for **Airbrush Learn** (airbrush.gallery) — an SEO blog about airbrushing (buying guides, techniques, comparisons, maintenance), owned by SprayGunner. It replaces a previous WordPress + n8n setup. No CMS, no server-side runtime — every deploy is a static build that auto-publishes on git push (Cloudflare Pages).
+A plain static site for **Airbrush Learn** (airbrush.gallery) — an SEO blog about airbrushing (buying guides, techniques, comparisons, maintenance), owned by SprayGunner. It replaces a previous WordPress setup. No CMS, no server-side runtime — every deploy is a static build that auto-publishes on git push (Netlify).
 
-Article content itself is **not written here**. It's produced by a separate n8n multi-agent pipeline and stored in an n8n Data Table called `articles`. This repo only turns that data into pages.
+Article content itself is **not written here**. It's produced by a separate n8n multi-agent pipeline, which — as its last step — commits the finished article and its hero image directly into this repo via the GitHub Contents API. This repo only turns whatever's already committed into pages; it never fetches anything from n8n itself.
 
 ## Commands
 
 ```bash
 npm install
-npm run dev      # runs prebuild (fetch script) then astro dev
-npm run build    # runs prebuild then astro build -> dist/
-npx astro dev    # skip the fetch step, preview using whatever's already in src/data/articles.json
+npm run dev      # astro dev — reads whatever's already in src/data/articles.json
+npm run build    # astro build -> dist/
 ```
 
 There is no test suite. There is no lint step configured yet.
 
 ## How a build actually works (read this before changing the pipeline)
 
-1. `npm run build` / `npm run dev` first run `scripts/fetch-articles.mjs` via the `prebuild` npm script.
-2. That script calls the n8n "Articles API" webhook (`N8N_ARTICLES_WEBHOOK_URL` env var), keeps only rows where `status === "ready"`, decodes each row's `image_base64` to `public/images/<slug>.png`, and writes cleaned metadata (no base64 blob) to `src/data/articles.json`.
-3. Astro then builds normally. `src/pages/index.astro` and `src/pages/posts/[slug].astro` both `import articles from '../data/articles.json'` — they never fetch anything themselves.
+1. n8n's content pipeline generates an article, then — as its last two steps — commits `src/data/articles.json` (with the new article merged in) and `public/images/<slug>.png` (the hero image) straight to this repo's `main` branch via the GitHub API.
+2. That commit triggers Netlify's normal git-push auto-deploy. There is no prebuild fetch step and no build-time network dependency on n8n — by the time a build runs, the content is already sitting in the repo.
+3. Astro builds normally. `src/pages/index.astro` and `src/pages/posts/[slug].astro` both `import articles from '../data/articles.json'` — they never fetch anything themselves.
 
-**Why it's split this way:** keeping the network call in one script means a data problem surfaces as one clear error message (`[fetch-articles] ...`) instead of a confusing failure deep inside Astro's build. If you're debugging "why isn't article X showing up," start in `scripts/fetch-articles.mjs`'s console output, not in the page templates.
+**Why it's built this way:** committing content directly means a build never depends on a live external service being reachable — if n8n or its webhook is down, existing content still builds and deploys fine. It also means every article change has full git history and is trivially revertible (`git revert`) if something publishes wrong.
 
-`src/data/articles.json` is gitignored — it's regenerated on every build. A small sample (2 articles) is committed there anyway so the site can be previewed with `npx astro dev` before any real webhook is wired up. Don't treat that sample data as real content.
+`src/data/articles.json` is a normal tracked file, not generated at build time — n8n's commits are the only thing that update it in production. Don't manually edit it and expect it to survive the next n8n run without conflict; treat n8n as its source of truth going forward.
 
 ## Data contract
 
-Each article row (from n8n) has these fields — see `README.md` for the full JSON shape the webhook must return:
+Each article object in `src/data/articles.json` has these fields:
 
 | field | used for |
 |---|---|
@@ -39,19 +38,19 @@ Each article row (from n8n) has these fields — see `README.md` for the full JS
 | `title` | `<title>`, `<h1>`, OG/Twitter meta, card heading |
 | `excerpt` | meta description, OG description, card blurb |
 | `content_html` | article body — inserted via `set:html` in `[slug].astro`. **This is the field the templates actually render.** |
-| `page_html` | a complete standalone pre-baked page from the pipeline — intentionally **unused** by the templates, kept only as a fallback/reference so every page shares this repo's design instead of the pipeline's unstyled output |
-| `image_base64` | decoded to a PNG file at build time, then discarded — never appears in `articles.json` |
-| `status` | only `"ready"` rows get built; anything else is silently skipped |
+| `image_prompt` | the prompt used to generate the hero image; carried through for reference, not rendered anywhere |
+| `source_topic` | the target SEO keyword from the content brief; carried through for reference, not rendered anywhere |
 | `published_date` | sort order (newest first) and displayed date |
 | `category` | category badge, `/category/<slug>` archive-page membership, mega-menu counts — one of 9 fixed slugs (see `src/data/categories.js`); missing/unrecognized values are treated as uncategorized |
 
-If you add a new field to the Data Table, update it in three places: the webhook workflow's output, `scripts/fetch-articles.mjs`'s `cleaned.push({...})`, and wherever it's consumed in `src/pages/`.
+There's no `status` field and no filtering step — every object present in `articles.json` gets built into a page. The n8n workflow's `Publish Guard (block fallback)` node is what decides whether an article reaches the commit step at all; nothing here re-checks that.
+
+If you add a new field, update it in two places: the n8n workflow's "Build Article Entry" node (where the JSON object is constructed) and wherever it should be consumed in `src/pages/`.
 
 ## Project structure
 
 ```
-scripts/fetch-articles.mjs   # the only place that talks to n8n
-src/data/articles.json       # generated; sample data committed for local preview
+src/data/articles.json       # real content, committed directly by n8n via the GitHub API
 src/data/categories.js       # fixed 9-category taxonomy (label/description) — not from n8n
 src/lib/readTime.js          # estimateReadMinutes(html) — computed from content_html word count
 src/layouts/BaseLayout.astro # <head>, SEO/OG meta, header, footer — every page uses this
@@ -71,16 +70,17 @@ public/                      # logo.png, favicon.ico, apple-touch-icon.png, robo
 
 - **Styling is Tailwind CSS.** Design tokens (colors, spacing, radius, fonts) live in `tailwind.config.mjs`, mapped from the original brand values — change the palette there, not by hunting through components. `global.css` only holds the three `@tailwind` directives plus genuinely global element resets (`html`, `img`, `body` font smoothing, and a base `a`/`a:hover` rule for anchors — like n8n's raw `content_html` — that can't carry utility classes directly). Article body content (`content_html`, rendered via `set:html`) is styled through the `@tailwindcss/typography` plugin's `prose` classes, not hand-written CSS.
 - **Client-side JS is scoped to one file.** `src/components/PageInteractions.astro` carries the site's only client-side script — a cursor spray-trail effect, scroll-reveal animations, and header/mega-menu polish, included once via `BaseLayout.astro`. It's a deliberate, narrow exception to this site's static-first default: progressive enhancement (see its `.js`-scoped CSS in `global.css`), `prefers-reduced-motion` support, and fine-pointer-only gating are all load-bearing, not optional polish. This isn't a green light for JS generally — don't add more of it elsewhere without the same rigor.
-- Astro components: frontmatter (`---`) does data/props only, no business logic beyond simple mapping — real logic belongs in `scripts/fetch-articles.mjs`.
-- Slugs are sanitized (`slugify()` in the fetch script) — don't assume the Data Table's `slug` column is already URL-safe; the script is the source of truth for what a slug looks like on the live site.
+- Astro components: frontmatter (`---`) does data/props only, no business logic beyond simple mapping.
+- Slugs are sanitized (`slugify()` inside the n8n workflow's "Build Article Entry" Code node, mirroring the same rules the old fetch script used) — don't assume a title-derived slug is already URL-safe without checking that node.
 
 ## Deployment
 
-Cloudflare Pages, connected to this repo. Build command `npm run build`, output directory `dist`. Required env var in the Pages project settings: `N8N_ARTICLES_WEBHOOK_URL`. Every push to `main` re-fetches the Data Table and re-deploys — there is no manual "export" step. Domain: `airbrush.gallery` (currently WordPress; cut over only after verifying a build on the `*.pages.dev` preview URL).
+Netlify, connected to this repo. Build command `astro build`, output directory `dist` (see `netlify.toml`). No environment variables are required for the build itself. Every push to `main` — from n8n's automated commits or a manual commit — triggers a deploy; there is no manual "export" step. Domain: `airbrush.gallery` (currently WordPress; cut over only after verifying a build on the Netlify preview URL).
 
 ## Known gaps / things not to assume are done
 
 - Terms of Use / Privacy Policy pages exist and are real Astro pages (not 404s), but the copy is placeholder — don't ship without a real review.
-- No image optimization pipeline yet (hero images are written as-is from the pipeline's base64 PNG). If page weight becomes an issue, add `astro:assets` or `sharp` resizing in `fetch-articles.mjs`.
+- No image optimization pipeline yet (hero images are committed as-is from the pipeline's generated PNG). If page weight becomes an issue, add `astro:assets` or `sharp` resizing — there's no single fetch script anymore, so this would need to happen either in the n8n workflow before it commits, or as an Astro build-time transform.
 - No pagination on the homepage — fine at low article counts, will need addressing once the archive grows.
-- The n8n "Articles API" webhook workflow (the thing this site's build depends on) lives in n8n, not this repo — see `README.md` for its spec. If builds start failing with a fetch/timeout error, check that workflow's execution history first, not this codebase.
+- No review/staging gate before an article goes live — n8n commits straight to `main` on its weekly schedule, and Netlify deploys it immediately. A bad article is only caught after the fact; recover with `git revert` on the offending commit(s), then push.
+- The n8n workflow this site's content depends on lives in n8n, not this repo. If new articles stop appearing, check that workflow's execution history first (specifically the `Publish Guard`, `Get Current articles.json`, `Commit articles.json`, and `Commit Hero Image` nodes) before assuming this codebase is broken.

@@ -4,9 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "prebuild": "node scripts/fetch-articles.mjs",
-    "build": "npm run prebuild && astro build",
-    "dev": "npm run prebuild && astro dev",
+    "build": "astro build",
+    "dev": "astro dev",
     "preview": "astro preview"
   },
   "dependencies": {
