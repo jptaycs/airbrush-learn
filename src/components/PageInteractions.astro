@@ -99,7 +99,7 @@
         particles.push({
           x: mouseX + (Math.random() - 0.5) * 10,
           y: mouseY + (Math.random() - 0.5) * 10,
-          r: Math.random() * 2 + 1,
+          r: Math.random() * 1 + 0.5,
           color: colors[Math.floor(Math.random() * colors.length)],
           life: 1,
         });
@@ -121,9 +121,9 @@
       ctx.globalAlpha = 1;
       if (started) {
         ctx.strokeStyle = '#16181d';
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.arc(mouseX, mouseY, 5, 0, Math.PI * 2);
+        ctx.arc(mouseX, mouseY, 9, 0, Math.PI * 2);
         ctx.stroke();
       }
       requestAnimationFrame(tick);

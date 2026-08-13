@@ -18,5 +18,135 @@
     "source_topic": "how to clean an airbrush",
     "published_date": "2026-07-20",
     "category": "how-to"
+  },
+  {
+    "slug": "iwata-vs-harder-steenbeck-comparison",
+    "title": "Iwata vs Harder & Steenbeck Airbrush Comparison",
+    "excerpt": "Two shop favorites, tested side by side under the same paint and pressure.",
+    "content_html": "<p>Sample placeholder content used only for local development and build verification — see note on the first sample article for details.</p>",
+    "image_prompt": "",
+    "source_topic": "iwata vs harder steenbeck airbrush comparison",
+    "published_date": "2026-07-15",
+    "category": "reviews"
+  },
+  {
+    "slug": "ultimate-airbrush-psi-guide",
+    "title": "Ultimate Airbrush PSI Guide: Master Your Pressure Settings",
+    "excerpt": "Dial in the right pressure for every paint type and technique.",
+    "content_html": "<p>Sample placeholder content used only for local development and build verification — see note on the first sample article for details.</p>",
+    "image_prompt": "",
+    "source_topic": "airbrush psi pressure guide",
+    "published_date": "2026-07-10",
+    "category": "how-to"
+  },
+  {
+    "slug": "prevent-airbrush-clogging",
+    "title": "Prevent Airbrush Clogging: Ultimate Guide",
+    "excerpt": "The most common causes of clogging and how to fix each one fast.",
+    "content_html": "<p>Sample placeholder content used only for local development and build verification — see note on the first sample article for details.</p>",
+    "image_prompt": "",
+    "source_topic": "prevent airbrush clogging",
+    "published_date": "2026-07-05",
+    "category": "troubleshooting"
+  },
+  {
+    "slug": "compressor-tank-sizes-compared",
+    "title": "Compressor Tank Sizes Compared: 3L, 6L and Tankless",
+    "excerpt": "Where a tank actually helps, and where it just takes up bench space.",
+    "content_html": "<p>Sample placeholder content used only for local development and build verification — see note on the first sample article for details.</p>",
+    "image_prompt": "",
+    "source_topic": "airbrush compressor tank sizes",
+    "published_date": "2026-06-28",
+    "category": "buying-guides"
+  },
+  {
+    "slug": "nozzle-sizes-explained",
+    "title": "Nozzle Sizes Explained: 0.2, 0.35 and 0.5mm",
+    "excerpt": "What each nozzle size is genuinely good for, tested with the same three paints.",
+    "content_html": "<p>Sample placeholder content used only for local development and build verification — see note on the first sample article for details.</p>",
+    "image_prompt": "",
+    "source_topic": "airbrush nozzle sizes explained",
+    "published_date": "2026-06-20",
+    "category": "reviews"
+  },
+  {
+    "slug": "candy-fades-car-panel",
+    "title": "Candy Fades on a Car Panel, Step by Step",
+    "excerpt": "Layering candy color over base and flake for a real automotive fade.",
+    "content_html": "<p>Sample placeholder content used only for local development and build verification — see note on the first sample article for details.</p>",
+    "image_prompt": "",
+    "source_topic": "candy fade automotive airbrush",
+    "published_date": "2026-06-15",
+    "category": "automotive"
+  },
+  {
+    "slug": "nmm-basics-painting-metal",
+    "title": "NMM Basics: Painting Metal That Isn't Metallic",
+    "excerpt": "Non-metallic metal fundamentals for 28mm tabletop miniatures.",
+    "content_html": "<p>Sample placeholder content used only for local development and build verification — see note on the first sample article for details.</p>",
+    "image_prompt": "",
+    "source_topic": "non-metallic metal miniature painting",
+    "published_date": "2026-06-08",
+    "category": "miniatures"
+  },
+  {
+    "slug": "getting-started-first-airbrush-project",
+    "title": "Getting Started: Your First Airbrush Project",
+    "excerpt": "A realistic first project and what to expect the first time you pull the trigger.",
+    "content_html": "<p>Sample placeholder content used only for local development and build verification — see note on the first sample article for details.</p>",
+    "image_prompt": "",
+    "source_topic": "first airbrush project for beginners",
+    "published_date": "2026-06-01",
+    "category": "beginner"
+  },
+  {
+    "slug": "thinning-ratios-that-stop-tip-dry",
+    "title": "Thinning Ratios That Stop Tip Dry",
+    "excerpt": "A repeatable ratio for acrylics, plus how to tell when you have gone too far.",
+    "content_html": "<p>Sample placeholder content used only for local development and build verification — see note on the first sample article for details.</p>",
+    "image_prompt": "",
+    "source_topic": "airbrush paint thinning ratios",
+    "published_date": "2026-05-25",
+    "category": "reviews"
+  },
+  {
+    "slug": "color-theory-for-airbrush-artists",
+    "title": "Understanding Color Theory for Airbrush Artists",
+    "excerpt": "The color relationships that actually matter once paint hits the gun.",
+    "content_html": "<p>Sample placeholder content used only for local development and build verification — see note on the first sample article for details.</p>",
+    "image_prompt": "",
+    "source_topic": "color theory for airbrush artists",
+    "published_date": "2026-05-18",
+    "category": "paints-colors"
+  },
+  {
+    "slug": "choosing-your-first-compressor",
+    "title": "Choosing Your First Compressor",
+    "excerpt": "What actually matters — PSI, noise, and tank size — when you're buying your very first setup.",
+    "content_html": "<p>Sample placeholder content used only for local development and build verification — see note on the first sample article for details.</p>",
+    "image_prompt": "",
+    "source_topic": "first airbrush compressor for beginners",
+    "published_date": "2026-05-10",
+    "category": "beginner"
+  },
+  {
+    "slug": "airbrush-safety-basics",
+    "title": "Airbrush Safety Basics: Respirators and Ventilation",
+    "excerpt": "The gear and habits that keep overspray out of your lungs, from day one.",
+    "content_html": "<p>Sample placeholder content used only for local development and build verification — see note on the first sample article for details.</p>",
+    "image_prompt": "",
+    "source_topic": "airbrush safety respirator ventilation",
+    "published_date": "2026-05-02",
+    "category": "beginner"
+  },
+  {
+    "slug": "airbrush-body-paint-beginners-guide",
+    "title": "Airbrush Body Paint: A Beginner's Guide",
+    "excerpt": "Skin-safe pigments, prep, and sealing for convention-ready finishes.",
+    "content_html": "<p>Sample placeholder content used only for local development and build verification — see note on the first sample article for details.</p>",
+    "image_prompt": "",
+    "source_topic": "airbrush body paint beginner guide",
+    "published_date": "2026-04-25",
+    "category": "cosplay-body-art"
   }
 ]
