@@ -84,3 +84,7 @@ Netlify, connected to this repo. Build command `astro build`, output directory `
 - No pagination on the homepage — fine at low article counts, will need addressing once the archive grows.
 - No review/staging gate before an article goes live — n8n commits straight to `main` on its weekly schedule, and Netlify deploys it immediately. A bad article is only caught after the fact; recover with `git revert` on the offending commit(s), then push.
 - The n8n workflow this site's content depends on lives in n8n, not this repo. If new articles stop appearing, check that workflow's execution history first (specifically the `Publish Guard`, `Get Current articles.json`, `Commit articles.json`, and `Commit Hero Image` nodes) before assuming this codebase is broken.
+
+## To Do
+
+- **Verify the `Update row in sheet` fix actually works.** That node used to fail silently (wrong matching column, mismatched field names), so the same topic — "How to Airbrush Freehand" — got reprocessed multiple times, producing duplicate articles under different auto-generated slugs (cleaned up in commit `d114f41`). A fix was applied on the n8n side (explicit `" #"` match + literal `Status: Published` write) but has **not yet been confirmed** by an actual run. Before trusting the pipeline to run unattended: trigger it manually at least twice in a row and confirm (a) the Google Sheet row it processes gets `Status` flipped to `Published`, and (b) the second run picks a genuinely different topic rather than repeating. If duplicate articles show up again, this is the first place to look.
