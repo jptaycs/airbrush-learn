@@ -1,0 +1,12 @@
+[build]
+  command = "astro build"
+  publish = "dist"
+
+# This build command intentionally skips the `prebuild` step (which fetches real
+# article content from the n8n webhook and requires N8N_ARTICLES_WEBHOOK_URL to be
+# set). Building with plain `astro build` instead uses the two sample articles
+# already committed in src/data/articles.json, so this deploys as a demo without
+# needing that webhook configured in Netlify's environment variables.
+#
+# To deploy with real content instead: change `command` above to `npm run build`
+# and set N8N_ARTICLES_WEBHOOK_URL in Netlify's Site settings → Environment variables.
