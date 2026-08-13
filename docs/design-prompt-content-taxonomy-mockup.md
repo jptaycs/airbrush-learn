@@ -12,8 +12,10 @@ brand, in context** — no separate reference material required.
 reviews, and buying guides for airbrush artists — owned by SprayGunner. It replaces a
 previous WordPress site of the same purpose (see §7 for what that looked like).
 
-- **Stack:** Astro, statically generated. No CMS, no server-side runtime, effectively
-  zero client-side JavaScript.
+- **Stack:** Astro, statically generated, styled with **Tailwind CSS** (`tailwind.config.mjs`
+  holds every design token; `@tailwindcss/typography`'s `prose`/`prose-site` classes style
+  the raw article HTML). No CMS, no server-side runtime, effectively zero client-side
+  JavaScript — Tailwind is a build-time-only compiler, it doesn't change that.
 - **Content source:** articles are written by a separate n8n pipeline and pulled in at
   build time — this design work does not touch that pipeline, only how the site
   presents what it receives.
@@ -28,59 +30,80 @@ previous WordPress site of the same purpose (see §7 for what that looked like).
 
 ## 2. Brand system (use these exact values — do not invent new ones)
 
+These are Tailwind theme tokens, defined in `tailwind.config.mjs` — use the utility
+class names directly (`text-ink`, `bg-bg`, `border-border`, etc.), not raw hex, so a
+mockup drops straight into the real components.
+
 ### 2.1 Color tokens
 
-```css
---color-ink:          #16181d;  /* headings, primary text */
---color-body:         #333844;  /* paragraph/body text */
---color-muted:        #6b7280;  /* secondary text, dates, meta */
---color-bg:           #ffffff;  /* page background */
---color-bg-alt:       #f6f7f9;  /* section/footer background */
---color-border:       #e5e7eb;  /* hairline borders, card outlines */
---color-accent:       #1d4e89;  /* links, primary CTA, badges */
---color-accent-dark:  #143a66;  /* hover/active state of accent */
+```js
+colors: {
+  ink:    '#16181d',  // text-ink    — headings, primary text
+  body:   '#333844',  // text-body   — paragraph/body text
+  muted:  '#6b7280',  // text-muted  — secondary text, dates, meta
+  bg:     '#ffffff',  // bg-bg       — page background
+  'bg-alt': '#f6f7f9', // bg-bg-alt  — section/footer background
+  border: '#e5e7eb',  // border-border — hairline borders, card outlines
+  accent: {
+    DEFAULT: '#1d4e89', // text-accent / bg-accent — links, primary CTA, badges
+    dark:    '#143a66', // accent-dark — hover/active state of accent
+  },
+}
 ```
 
 No dark mode exists on this site today — design for light theme only.
 
 ### 2.2 Typography
 
-```css
---font-sans:  -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
---font-serif: Georgia, "Times New Roman", serif;  /* defined but not currently used anywhere */
+```js
+fontFamily: {
+  sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+}
 ```
 
-Body text uses `--font-sans` at `line-height: 1.6`, color `--color-body`, on
-`--color-bg`, with `-webkit-font-smoothing: antialiased`.
+This is the only font stack registered in the Tailwind config (no serif token exists
+in the live config — ignore any earlier mention of one). It's the default `sans`
+family, so it applies automatically via Tailwind's Preflight reset — no `font-sans`
+class needed anywhere. Body text: `text-body`, `bg-bg`, `antialiased` (applied on
+`<body>` in `BaseLayout.astro`); line-height is the browser default (Tailwind
+Preflight doesn't set one), roughly `1.5`.
 
-Established heading sizes (from the article-prose styles — reuse this scale rather
-than introducing new sizes):
+Established heading sizes (from the live components — reuse this scale rather than
+introducing new sizes; sizes with no matching Tailwind default use arbitrary-value
+syntax, e.g. `text-[2.4rem]`):
 
-| element | size | color | notes |
-|---|---|---|---|
-| Homepage `<h1>` (hero) | `2.4rem` (mobile: `1.8rem` under 640px) | `--color-ink` | centered |
-| Article prose `<h1>` | `2.25rem` (mobile: `1.7rem`) | `--color-ink` | |
-| Prose `<h2>` | `1.5rem` | `--color-ink` | `margin-top: 2em` |
-| Prose `<h3>` | `1.2rem` | `--color-ink` | |
-| Card `<h2>` (title) | `1.1rem` | `--color-ink` | |
-| Card excerpt `<p>` | `0.92rem` | `--color-muted` | |
-| Card date | `0.8rem`, uppercase, `letter-spacing: 0.04em` | `--color-muted` | |
-| Nav links | `0.95rem`, weight `500` | `--color-body`, hover `--color-accent` | |
+| element | Tailwind classes | notes |
+|---|---|---|
+| Homepage `<h1>` (hero) | `text-[2.4rem] max-[640px]:text-[1.8rem] text-ink` | centered |
+| Article/legal-page prose `<h1>` | `max-[640px]:text-[1.7rem]` (desktop size comes free from the `prose` plugin's default `2.25rem` — no extra class needed) | inside `.prose` wrapper |
+| Prose `<h2>`/`<h3>` | handled automatically by the `prose`/`prose-site` classes (§2.5) | don't hand-style these |
+| Card `<h2>` (title) | `text-[1.1rem] text-ink mb-2` | |
+| Card excerpt `<p>` | `text-muted text-[0.92rem] mb-3` | |
+| Card date | `text-[0.8rem] text-muted uppercase tracking-[0.04em]` | |
+| Nav links | `text-body font-medium text-[0.95rem] hover:text-accent hover:no-underline` | |
 
-Links: `color: var(--color-accent)`, no underline by default, underline on hover.
+Links: a sitewide base rule in `global.css` gives every `<a>` `text-accent
+no-underline` by default and `underline` on hover — this exists specifically so
+n8n's raw, unclassed article HTML still gets correct link styling. Only override it
+(as the nav links above do) when a link needs different hover behavior.
 
 ### 2.3 Layout tokens
 
-```css
---max-width:      760px;   /* prose / narrow single-column content */
---max-width-wide: 1100px;  /* header, footer, homepage grid container */
---radius:         10px;    /* cards, images, all rounded corners */
+```js
+borderRadius: { DEFAULT: '10px' },   // `rounded` — cards, images, all rounded corners
+maxWidth: {
+  prose: '760px',   // `max-w-prose` — narrow single-column content (article body, legal pages)
+  wide:  '1100px',  // `max-w-wide`  — header, footer, homepage grid container
+}
 ```
 
-Page content sits inside `.container` (`max-width: 1100px`, centered, `20px`
-horizontal padding).
+Page content sits inside `mx-auto max-w-wide px-5` (1100px, centered, 20px
+horizontal padding) for wide sections, or nested inside an outer `max-w-wide px-5`
+wrapper with an inner `max-w-prose mx-auto` for narrow prose content (this exact
+nesting is how the article page and both legal pages get a consistent 760px reading
+column — see §2.5).
 
-### 2.5 Art direction
+### 2.4 Art direction
 
 Push the composition toward a **modern, clean, Apple-style white aesthetic**, using
 the tokens in §2.1–2.3 as the palette, not as a ceiling:
@@ -88,10 +111,10 @@ the tokens in §2.1–2.3 as the palette, not as a ceiling:
 - **Generous whitespace.** More breathing room than the current implementation —
   larger section padding, more gap between grid items, let content sit rather than
   pack tight.
-- **Restrained color.** `--color-accent` used sparingly, as a precise highlight
-  (an active state, a badge, a link) — never as a large fill or background block.
-  The page should read as almost entirely white/near-white with ink-colored text and
-  one accent color used with intention.
+- **Restrained color.** `accent` used sparingly, as a precise highlight (an active
+  state, a badge, a link) — never as a large fill or background block. The page
+  should read as almost entirely white/near-white with ink-colored text and one
+  accent color used with intention.
 - **Refined, quiet borders and shadows.** Thin `1px` hairlines over heavy outlines;
   soft, diffuse shadows (like the existing card hover shadow) over hard drop shadows.
   Nothing should look boxed-in.
@@ -105,44 +128,67 @@ the tokens in §2.1–2.3 as the palette, not as a ceiling:
   should feel calm, not busy — this is the opposite direction from the old
   WordPress site's denser, more marketing-heavy layout (§7).
 
-### 2.6 Existing component patterns (match these, don't redesign them)
+### 2.5 Existing component patterns (match these, don't redesign them)
 
-**Header** — sticky (`position: sticky; top: 0`), white background, `1px solid
---color-border` bottom edge, `14px` vertical padding. Logo + wordmark on the left
-(`34px` tall logo), nav links on the right, flex `justify-content: space-between`.
+These are the actual current component markups (post-Tailwind-migration) — extend
+them, don't replace their structure or class vocabulary with something new.
 
-**Article card** (`.article-card`) — bordered box, `10px` radius, white background,
-image at `3:2` aspect ratio (`object-fit: cover`) on top, body padding `16px 18px
-20px`. On hover: `box-shadow: 0 8px 24px rgba(0,0,0,0.08)` and lifts `translateY(-2px)`.
-Current internal structure (extend, don't replace):
+**Header** (`src/components/Header.astro`) — sticky, white background, bottom
+border, logo + wordmark left, nav right:
 
 ```html
-<article class="article-card">
-  <a class="card-link" href="/posts/<slug>">
-    <img src="/images/<slug>.png" alt="<title>" />
-    <div class="card-body">
-      <span class="card-date">Aug 1, 2026</span>
-      <h2><title></h2>
-      <p><excerpt></p>
+<header class="sticky top-0 z-20 border-b border-border bg-bg">
+  <div class="mx-auto max-w-wide px-5 flex items-center justify-between py-3.5">
+    <a href="/" class="flex items-center gap-2.5 font-bold text-[1.15rem] text-ink">
+      <img src="/logo.png" alt="Airbrush Learn" class="h-[34px] w-auto" />
+      <span>Airbrush Learn</span>
+    </a>
+    <nav>
+      <ul class="flex gap-6 max-[640px]:gap-3.5 list-none m-0 p-0">
+        <li><a href="/" class="text-body font-medium text-[0.95rem] hover:text-accent hover:no-underline">Home</a></li>
+        <!-- more nav items follow this same class pattern -->
+      </ul>
+    </nav>
+  </div>
+</header>
+```
+
+**Article card** (`src/components/ArticleCard.astro`) — bordered box, `rounded`,
+white background, `3:2` image, lifts + shadows on hover:
+
+```html
+<article class="border border-border rounded overflow-hidden bg-bg flex flex-col transition-[box-shadow,transform] duration-150 ease-[ease] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5">
+  <a class="text-inherit no-underline hover:no-underline flex flex-col h-full" href="/posts/<slug>">
+    <img src="/images/<slug>.png" alt="<title>" class="aspect-[3/2] object-cover w-full" />
+    <div class="pt-4 px-[18px] pb-5 flex flex-col flex-1">
+      <span class="text-[0.8rem] text-muted uppercase tracking-[0.04em]">Aug 1, 2026</span>
+      <h2 class="text-[1.1rem] text-ink mb-2"><title></h2>
+      <p class="text-muted text-[0.92rem] mb-3 flex-1"><excerpt></p>
     </div>
   </a>
 </article>
 ```
 
-**Homepage grid** (`.article-grid`) — CSS grid, `repeat(auto-fill, minmax(280px,
-1fr))`, `28px` gap.
+**Homepage grid** — `grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-7`.
 
-**Empty state** (`.empty-state`) — centered text block, `64px 20px` padding,
-`--color-muted` color, currently reads: *"New articles are on the way — check back
-soon."*
+**Empty state** — `text-center py-16 px-5 text-muted`, currently reads: *"New
+articles are on the way — check back soon."*
 
-**Footer** — `--color-bg-alt` background, `1px solid --color-border` top edge, `36px`
-vertical padding, `0.9rem` `--color-muted` text, flex row spread between copyright and
-links. **Not in scope for this mockup — leave as-is.**
+**Prose content** (article body, legal pages — `src/styles/global.css`'s
+`.prose-site` class, layered on top of `@tailwindcss/typography`'s `prose` class):
+handles all heading/paragraph/link/blockquote/code styling for raw HTML content
+automatically (this is how n8n's unclassed `content_html` gets styled). A category
+archive page's article grid should look identical to the homepage grid — same
+`ArticleCard` component, just filtered — but the archive page's own header text (if
+mocking §5's View B) is plain `text-ink`/`text-muted`, not wrapped in `prose`.
 
-**Mobile breakpoint:** `640px` is the only breakpoint currently defined in the
-codebase. Design mobile behavior around that single breakpoint, not a multi-tier
-system.
+**Footer** — `border-t border-border bg-bg-alt mt-16 py-9 text-muted text-[0.9rem]`,
+flex row spread between copyright and links. **Not in scope for this mockup — leave
+as-is.**
+
+**Mobile breakpoint:** `640px` (Tailwind's arbitrary `max-[640px]:` variant) is the
+only breakpoint currently used in the codebase. Design mobile behavior around that
+single breakpoint, not a multi-tier system.
 
 ---
 
@@ -202,7 +248,7 @@ the way they would on a real site.
 - Keep the existing hero block as-is (centered `<h1>` + subtext, no CTA buttons —
   none exist in the current design and adding them is out of scope here).
 - Below the hero: the existing flat "latest articles" grid, **but every card now
-  shows a category badge** (see §6.1).
+  shows a category badge** (see §5.1).
 - No per-category preview rows, no "Start Here" onboarding block, no featured/hero
   article treatment — those are explicitly a separate, not-yet-scoped project (see
   §7). Do not add them.
@@ -210,11 +256,11 @@ the way they would on a real site.
 ### View B — Category archive page (`/category/reviews` as the example)
 
 - Small header area above the grid: category label as an `<h1>` (reuse the
-  `2.25rem`/`1.7rem`-mobile prose `<h1>` scale, `--color-ink`), the category's
-  one-line description beneath it in `--color-muted`.
-- Below that: the same `.article-grid` of cards, filtered to that category, in the
-  same visual style as the homepage grid — this should feel like the *same site*, not
-  a different template.
+  `2.25rem`/`1.7rem`-mobile prose `<h1>` scale — see §2.2 — `text-ink`), the
+  category's one-line description beneath it in `text-muted`.
+- Below that: the same `grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-7`
+  of `ArticleCard`s, filtered to that category, in the same visual style as the
+  homepage grid — this should feel like the *same site*, not a different template.
 - Also mock the **empty state** version of this page (use `/category/cosplay-body-art`
   or `/category/paints-colors`): header renders identically, grid area replaced by the
   existing centered empty-state message.
@@ -224,23 +270,23 @@ the way they would on a real site.
 - Same sticky header as today, logo + wordmark unchanged.
 - Add a "Categories" nav item that reveals **all 9 categories** on hover/focus (CSS
   only — no JavaScript dependency, this must degrade to a plain link list if CSS
-  hover isn't available). Style the disclosure panel using existing tokens: white
-  background, `--color-border` outline, `--radius` corners, subtle shadow consistent
-  with the card hover shadow (`0 8px 24px rgba(0,0,0,0.08)`).
+  hover isn't available). Style the disclosure panel using existing tokens: `bg-bg`,
+  `border-border` outline, `rounded` corners, subtle shadow consistent with the
+  card hover shadow (`shadow-[0_8px_24px_rgba(0,0,0,0.08)]`).
 - Keep "Home" and the external "Shop SprayGunner" link exactly where they are today.
 - Show both the closed state and the open/hovered state of the Categories dropdown.
 
-### 6.1 — Shared component: category badge
+### 5.1 — Shared component: category badge
 
 New small element added to `ArticleCard`, positioned above the title (between the
 image and the `<h2>`, replacing/joining the existing date line). Suggested treatment:
-a small pill/label, `--color-accent` text or background-tint, uppercase or
+a small pill/label, `text-accent` text or an `accent`-tinted background, uppercase or
 sentence-case (designer's call), linking to that category's archive page. Must not
 overpower the title — it's a secondary/eyebrow element, same visual weight class as
-the existing `.card-date`.
+the existing `text-[0.8rem] text-muted uppercase tracking-[0.04em]` date span.
 
 Also apply this same badge to the article detail page (`/posts/<slug>`), positioned
-near `.post-meta`, linking back to the category archive.
+near the published-date line, linking back to the category archive.
 
 ---
 
@@ -305,7 +351,7 @@ the old site as market/content research, not a design reference.
 - Desktop-width canvas, ~1200–1400px, but make it reasonably responsive down to
   mobile using the existing `640px` breakpoint — this is a browser-opened prototype,
   not a flat image, so it should hold up if the window is resized.
-- Apply the **art direction in §2.5** throughout — modern, clean, Apple-style white
+- Apply the **art direction in §2.4** throughout — modern, clean, Apple-style white
   aesthetic — while keeping every color/type/spacing value traceable back to a token
   in §2.1–2.3 (or explicitly flagged as new, per §6).
 - Hover/focus states and transitions should actually work in the browser (real CSS

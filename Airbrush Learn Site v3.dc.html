@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;-webkit-font-smoothing:antialiased;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#333844;background:#ffffff}
+a{color:#e2571f;text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,p,ul{margin:0}
+input{font-family:inherit}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+<div style="--ac:{{ ac }};--acsoft:{{ acSoft }};--gap:{{ gap }};--cbd:{{ cbd }};--bdgbg:{{ bdgBg }};--bdgbd:{{ bdgBd }};min-height:100vh;background:#ffffff">
+
+  <header style="position:sticky;top:0;z-index:40;background:rgba(255,255,255,0.78);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(0,0,0,0.06)">
+    <div style="margin:0 auto;max-width:1100px;padding:0 20px;height:48px;display:flex;align-items:center;justify-content:space-between;gap:20px">
+      <a href="#" onClick="{{ goHome }}" style="display:flex;align-items:center;gap:9px;font-weight:600;font-size:.95rem;color:#16181d;text-decoration:none;letter-spacing:-0.01em" style-hover="text-decoration:none">
+        <span style="display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:8px;background:#f5f5f7;font:500 7px ui-monospace,Menlo,monospace;color:#6b7280">LOGO</span>
+        <span>Airbrush Learn</span>
+      </a>
+      <nav>
+        <ul style="display:flex;align-items:center;gap:28px;list-style:none;margin:0;padding:0">
+          <li><a href="#" onClick="{{ goHome }}" style="color:#333844;font-size:.8rem;font-weight:500;letter-spacing:.01em;text-decoration:none;transition:color 200ms ease" style-hover="color:var(--ac);text-decoration:none">Home</a></li>
+          <li style="position:relative" onMouseEnter="{{ openMenu }}" onMouseLeave="{{ closeMenu }}">
+            <a href="#" onClick="{{ toggleMenu }}" style="display:flex;align-items:center;gap:5px;color:#333844;font-size:.8rem;font-weight:500;letter-spacing:.01em;text-decoration:none;padding:14px 0;transition:color 200ms ease" style-hover="color:var(--ac);text-decoration:none">
+              <span>Categories</span><span style="font-size:.55rem;color:#9aa0aa">&#9662;</span>
+            </a>
+            <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;top:100%;right:-20px;width:min(660px, calc(100vw - 40px));max-width:calc(100vw - 40px);box-sizing:border-box;background:rgba(255,255,255,0.92);backdrop-filter:saturate(180%) blur(20px);border:1px solid rgba(0,0,0,0.06);border-radius:18px;box-shadow:0 18px 48px rgba(0,0,0,0.12);padding:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:2px;animation:fadeUp 220ms ease both">
+                <sc-for list="{{ categories }}" as="cat" hint-placeholder-count="9">
+                  <a href="#" onClick="{{ cat.open }}" style="display:block;padding:11px 13px;border-radius:12px;text-decoration:none;transition:background 200ms ease" style-hover="background:#f5f5f7;text-decoration:none">
+                    <span style="display:flex;align-items:baseline;gap:7px;font-size:.9rem;font-weight:600;color:#16181d;letter-spacing:-0.01em">{{ cat.label }}<span style="font:400 .7rem ui-monospace,Menlo,monospace;color:#9aa0aa">{{ cat.count }}</span></span>
+                    <span style="display:block;margin-top:3px;font-size:.76rem;color:#6b7280;line-height:1.4">{{ cat.short }}</span>
+                  </a>
+                </sc-for>
+              </div>
+            </sc-if>
+          </li>
+          <li><a href="https://spraygunner.com" target="_blank" rel="noopener" style="color:#333844;font-size:.8rem;font-weight:500;letter-spacing:.01em;text-decoration:none;transition:color 200ms ease" style-hover="color:var(--ac);text-decoration:none">Shop SprayGunner</a></li>
+          <li>
+            <label style="display:flex;align-items:center;gap:7px;border-radius:999px;background:#f5f5f7;padding:6px 12px;transition:background 200ms ease" style-hover="background:#ececf0">
+              <span style="font-size:.75rem;color:#9aa0aa">&#9906;</span>
+              <input value="{{ query }}" onChange="{{ onQuery }}" placeholder="Search" style="border:0;outline:0;background:transparent;font-size:.8rem;color:#16181d;width:104px" />
+            </label>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <main>
+      <section style="padding:120px 20px 104px;text-align:center;background:#ffffff">
+        <div style="margin:0 auto;max-width:900px;animation:fadeUp 700ms ease both">
+          <span style="display:inline-block;font-size:.9rem;font-weight:600;letter-spacing:.01em;color:var(--ac)">The airbrush learning hub</span>
+          <h1 style="margin-top:14px;font-size:5rem;line-height:1.02;letter-spacing:-0.04em;font-weight:700;color:#16181d;text-wrap:balance">Learn the airbrush, one clean pass at a time.</h1>
+          <p style="margin:26px auto 0;max-width:600px;font-size:1.3rem;line-height:1.45;color:#6b7280;text-wrap:pretty">Tutorials, gear reviews and troubleshooting guides written by painters who spray every day.</p>
+          <div style="display:flex;justify-content:center;gap:12px;margin-top:34px">
+            <a href="#" onClick="{{ goBeginner }}" style="display:inline-block;padding:12px 24px;border-radius:999px;background:var(--ac);color:#ffffff;font-size:.95rem;font-weight:600;text-decoration:none;transition:opacity 220ms ease,transform 220ms ease" style-hover="text-decoration:none;opacity:.88;transform:translateY(-1px)">Start learning</a>
+            <a href="#" onClick="{{ goReviews }}" style="display:inline-block;padding:12px 24px;border-radius:999px;background:#f5f5f7;color:#16181d;font-size:.95rem;font-weight:600;text-decoration:none;transition:background 220ms ease,transform 220ms ease" style-hover="text-decoration:none;background:#ececf0;transform:translateY(-1px)">Browse reviews</a>
+          </div>
+        </div>
+      </section>
+
+      <section style="background:#f5f5f7;padding:96px 20px">
+        <div style="margin:0 auto;max-width:1100px">
+          <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:44px">
+            <div>
+              <h2 style="font-size:2.6rem;line-height:1.08;letter-spacing:-0.03em;font-weight:700;color:#16181d">{{ homeHeading }}</h2>
+              <p style="margin-top:10px;font-size:1.05rem;color:#6b7280">{{ homeCount }} · filter by category below</p>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;max-width:640px;justify-content:flex-end">
+              <sc-for list="{{ chips }}" as="chip" hint-placeholder-count="10">
+                <a href="#" onClick="{{ chip.pick }}" style="text-decoration:none;font-size:.82rem;font-weight:600;padding:7px 14px;border-radius:999px;transition:background 200ms ease,color 200ms ease;background:{{ chip.bg }};color:{{ chip.fg }}" style-hover="text-decoration:none;opacity:.82">{{ chip.label }}</a>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:var(--gap)">
+            <sc-for list="{{ homeCards }}" as="a" hint-placeholder-count="6">
+              <article style="border:var(--cbd);border-radius:18px;overflow:hidden;background:#ffffff;display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(0,0,0,0.04);transition:box-shadow 300ms ease,transform 300ms ease" style-hover="box-shadow:0 18px 40px rgba(0,0,0,0.10);transform:translateY(-4px)">
+                <a href="#" onClick="{{ a.open }}" style="color:inherit;text-decoration:none;display:flex;flex-direction:column;height:100%" style-hover="text-decoration:none">
+                  <div style="box-sizing:border-box;aspect-ratio:3/2;width:100%;background-color:#f5f5f7;background-image:repeating-linear-gradient(135deg,rgba(107,114,128,0.08) 0 1px,transparent 1px 10px);display:flex;align-items:flex-end;padding:10px">
+                    <span style="font:400 9px ui-monospace,Menlo,monospace;color:#9aa0aa;letter-spacing:.04em">{{ a.imgNote }}</span>
+                  </div>
+                  <div style="box-sizing:border-box;padding:22px 22px 26px;display:flex;flex-direction:column;flex:1">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+                      <sc-if value="{{ a.hasCat }}" hint-placeholder-val="{{ true }}">
+                        <span onClick="{{ a.openCat }}" style="font-size:.7rem;color:var(--ac);text-transform:uppercase;letter-spacing:.07em;font-weight:700;border:var(--bdgbd);border-radius:999px;padding:4px 10px;background:var(--bdgbg);transition:opacity 200ms ease" style-hover="opacity:.7">{{ a.catLabel }}</span>
+                      </sc-if>
+                      <span style="font-size:.78rem;color:#9aa0aa;letter-spacing:.02em">{{ a.date }}</span>
+                    </div>
+                    <h2 style="font-size:1.22rem;line-height:1.28;color:#16181d;font-weight:600;letter-spacing:-0.02em;margin-bottom:10px;text-wrap:pretty">{{ a.title }}</h2>
+                    <p style="color:#6b7280;font-size:.94rem;line-height:1.55;flex:1;text-wrap:pretty">{{ a.excerpt }}</p>
+                    <span style="margin-top:16px;font-size:.85rem;font-weight:600;color:var(--ac)">Read article &#8594;</span>
+                  </div>
+                </a>
+              </article>
+            </sc-for>
+          </div>
+          <sc-if value="{{ homeNoResults }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align:center;padding:88px 20px;color:#6b7280;font-size:1.05rem">Nothing matched that search. Try a different term or clear the filter.</div>
+          </sc-if>
+        </div>
+      </section>
+
+      <section style="padding:112px 20px;background:#ffffff">
+        <div style="margin:0 auto;max-width:1100px">
+          <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:40px">
+            <div>
+              <h2 style="font-size:2.6rem;line-height:1.08;letter-spacing:-0.03em;font-weight:700;color:#16181d">Reviews from real studio time.</h2>
+              <p style="margin-top:10px;font-size:1.05rem;color:#6b7280;max-width:520px;text-wrap:pretty">Every gun tested with the same paint, the same pressure and the same tired hands.</p>
+            </div>
+            <a href="#" onClick="{{ goReviews }}" style="flex:none;font-size:.9rem;font-weight:600;color:var(--ac);text-decoration:none" style-hover="text-decoration:none;opacity:.7">View all reviews &#8594;</a>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px">
+            <sc-for list="{{ reviewCards }}" as="r" hint-placeholder-count="3">
+              <a href="#" onClick="{{ r.open }}" style="display:flex;gap:18px;padding:18px;border-radius:18px;background:#f5f5f7;text-decoration:none;transition:background 260ms ease,transform 260ms ease" style-hover="text-decoration:none;background:#ececf0;transform:translateY(-2px)">
+                <span style="flex:none;box-sizing:border-box;width:104px;aspect-ratio:3/2;border-radius:12px;background-color:#ffffff;background-image:repeating-linear-gradient(135deg,rgba(107,114,128,0.08) 0 1px,transparent 1px 10px)"></span>
+                <span style="display:block">
+                  <span style="display:block;font-size:.7rem;color:var(--ac);text-transform:uppercase;letter-spacing:.07em;font-weight:700">Review</span>
+                  <span style="display:block;margin-top:7px;font-size:1rem;line-height:1.3;color:#16181d;font-weight:600;letter-spacing:-0.015em">{{ r.title }}</span>
+                  <span style="display:block;margin-top:7px;font-size:.78rem;color:#9aa0aa">{{ r.date }}</span>
+                </span>
+              </a>
+            </sc-for>
+          </div>
+        </div>
+      </section>
+
+      <section style="background:#f5f5f7;padding:96px 20px">
+        <div style="margin:0 auto;max-width:1100px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div style="box-sizing:border-box;padding:36px;border-radius:18px;background:#ffffff;box-shadow:0 1px 2px rgba(0,0,0,0.04)">
+            <h2 style="font-size:1.7rem;line-height:1.15;letter-spacing:-0.025em;font-weight:700;color:#16181d">New to airbrushing? Start here.</h2>
+            <p style="margin-top:10px;font-size:.98rem;line-height:1.55;color:#6b7280;text-wrap:pretty">Three articles, in order, from an unopened box to a finished first project.</p>
+            <div style="display:grid;gap:2px;margin-top:22px">
+              <sc-for list="{{ startHere }}" as="s" hint-placeholder-count="3">
+                <a href="#" onClick="{{ s.open }}" style="display:flex;align-items:baseline;gap:16px;padding:14px;border-radius:12px;text-decoration:none;transition:background 200ms ease" style-hover="background:#f5f5f7;text-decoration:none">
+                  <span style="flex:none;font:700 .78rem ui-monospace,Menlo,monospace;color:var(--ac)">{{ s.n }}</span>
+                  <span style="font-size:.98rem;line-height:1.4;color:#16181d">{{ s.title }}</span>
+                </a>
+              </sc-for>
+            </div>
+          </div>
+          <div style="box-sizing:border-box;padding:36px;border-radius:18px;background:#ffffff;box-shadow:0 1px 2px rgba(0,0,0,0.04)">
+            <h2 style="font-size:1.7rem;line-height:1.15;letter-spacing:-0.025em;font-weight:700;color:#16181d">Something going wrong mid-spray?</h2>
+            <p style="margin-top:10px;font-size:.98rem;line-height:1.55;color:#6b7280;text-wrap:pretty">The problems people search for most, straight to the diagnosis.</p>
+            <div style="display:grid;gap:2px;margin-top:22px">
+              <sc-for list="{{ fixes }}" as="f" hint-placeholder-count="3">
+                <a href="#" onClick="{{ f.open }}" style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:14px;border-radius:12px;text-decoration:none;transition:background 200ms ease" style-hover="background:#f5f5f7;text-decoration:none">
+                  <span style="font-size:.98rem;line-height:1.4;color:#16181d">{{ f.title }}</span>
+                  <span style="flex:none;font-size:.76rem;color:#9aa0aa;text-transform:uppercase;letter-spacing:.05em">{{ f.catLabel }}</span>
+                </a>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section style="padding:112px 20px;background:#ffffff">
+        <div style="margin:0 auto;max-width:1100px">
+          <div style="text-align:center;margin-bottom:48px">
+            <h2 style="font-size:2.6rem;line-height:1.08;letter-spacing:-0.03em;font-weight:700;color:#16181d">Nine ways in.</h2>
+            <p style="margin:12px auto 0;max-width:520px;font-size:1.05rem;color:#6b7280;text-wrap:pretty">Every article lives in exactly one category, so you always know where to look next.</p>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px">
+            <sc-for list="{{ categories }}" as="cat" hint-placeholder-count="9">
+              <a href="#" onClick="{{ cat.open }}" style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:26px;border-radius:18px;background:#f5f5f7;text-decoration:none;transition:background 260ms ease,transform 260ms ease" style-hover="text-decoration:none;background:#ececf0;transform:translateY(-2px)">
+                <span style="display:block">
+                  <span style="display:block;font-size:1.1rem;font-weight:600;color:#16181d;letter-spacing:-0.02em">{{ cat.label }}</span>
+                  <span style="display:block;margin-top:8px;font-size:.9rem;line-height:1.5;color:#6b7280;text-wrap:pretty">{{ cat.desc }}</span>
+                </span>
+                <span style="flex:none;font:600 .72rem ui-monospace,Menlo,monospace;color:var(--ac)">{{ cat.count }}</span>
+              </a>
+            </sc-for>
+          </div>
+        </div>
+      </section>
+    </main>
+  </sc-if>
+
+  <sc-if value="{{ isCategory }}" hint-placeholder-val="{{ false }}">
+    <main>
+      <section style="padding:88px 20px 0;background:#ffffff">
+        <div style="margin:0 auto;max-width:1100px;text-align:center">
+          <div style="display:flex;align-items:center;justify-content:center;gap:8px;font-size:.78rem;color:#9aa0aa;letter-spacing:.02em;margin-bottom:22px">
+            <a href="#" onClick="{{ goHome }}" style="color:#9aa0aa;text-decoration:none" style-hover="color:var(--ac);text-decoration:none">Home</a>
+            <span>/</span><span style="color:#6b7280">{{ catLabel }}</span>
+          </div>
+          <h1 style="font-size:3.6rem;line-height:1.05;letter-spacing:-0.035em;font-weight:700;color:#16181d">{{ catLabel }}</h1>
+          <p style="margin:16px auto 0;max-width:560px;font-size:1.2rem;line-height:1.45;color:#6b7280;text-wrap:pretty">{{ catDesc }}</p>
+        </div>
+      </section>
+      <section style="padding:56px 20px 112px;background:#ffffff">
+        <div style="margin:0 auto;max-width:1100px">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding-bottom:28px">
+            <span style="font-size:.85rem;color:#9aa0aa;letter-spacing:.02em">{{ catCount }}</span>
+            <div style="display:flex;gap:6px">
+              <sc-for list="{{ sorts }}" as="s" hint-placeholder-count="2">
+                <a href="#" onClick="{{ s.pick }}" style="text-decoration:none;font-size:.8rem;font-weight:600;padding:7px 14px;border-radius:999px;background:{{ s.bg }};color:{{ s.fg }};transition:opacity 200ms ease" style-hover="text-decoration:none;opacity:.8">{{ s.label }}</a>
+              </sc-for>
+            </div>
+          </div>
+          <sc-if value="{{ catHasArticles }}" hint-placeholder-val="{{ true }}">
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:var(--gap)">
+              <sc-for list="{{ catCards }}" as="a" hint-placeholder-count="3">
+                <article style="border:var(--cbd);border-radius:18px;overflow:hidden;background:#ffffff;display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(0,0,0,0.04);transition:box-shadow 300ms ease,transform 300ms ease" style-hover="box-shadow:0 18px 40px rgba(0,0,0,0.10);transform:translateY(-4px)">
+                  <a href="#" onClick="{{ a.open }}" style="color:inherit;text-decoration:none;display:flex;flex-direction:column;height:100%" style-hover="text-decoration:none">
+                    <div style="box-sizing:border-box;aspect-ratio:3/2;width:100%;background-color:#f5f5f7;background-image:repeating-linear-gradient(135deg,rgba(107,114,128,0.08) 0 1px,transparent 1px 10px);display:flex;align-items:flex-end;padding:10px">
+                      <span style="font:400 9px ui-monospace,Menlo,monospace;color:#9aa0aa;letter-spacing:.04em">{{ a.imgNote }}</span>
+                    </div>
+                    <div style="box-sizing:border-box;padding:22px 22px 26px;display:flex;flex-direction:column;flex:1">
+                      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+                        <span onClick="{{ a.openCat }}" style="font-size:.7rem;color:var(--ac);text-transform:uppercase;letter-spacing:.07em;font-weight:700;border:var(--bdgbd);border-radius:999px;padding:4px 10px;background:var(--bdgbg);transition:opacity 200ms ease" style-hover="opacity:.7">{{ a.catLabel }}</span>
+                        <span style="font-size:.78rem;color:#9aa0aa">{{ a.date }}</span>
+                      </div>
+                      <h2 style="font-size:1.22rem;line-height:1.28;color:#16181d;font-weight:600;letter-spacing:-0.02em;margin-bottom:10px;text-wrap:pretty">{{ a.title }}</h2>
+                      <p style="color:#6b7280;font-size:.94rem;line-height:1.55;flex:1;text-wrap:pretty">{{ a.excerpt }}</p>
+                      <span style="margin-top:16px;font-size:.85rem;font-weight:600;color:var(--ac)">Read article &#8594;</span>
+                    </div>
+                  </a>
+                </article>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ catIsEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align:center;padding:112px 20px;border-radius:18px;background:#f5f5f7">
+              <p style="font-size:1.15rem;color:#6b7280">New articles are on the way — check back soon.</p>
+              <a href="#" onClick="{{ goHome }}" style="display:inline-block;margin-top:20px;padding:11px 22px;border-radius:999px;background:#ffffff;font-size:.9rem;font-weight:600;color:#16181d;text-decoration:none;transition:transform 220ms ease" style-hover="text-decoration:none;transform:translateY(-1px)">Browse all articles</a>
+            </div>
+          </sc-if>
+        </div>
+      </section>
+    </main>
+  </sc-if>
+
+  <sc-if value="{{ isPost }}" hint-placeholder-val="{{ false }}">
+    <main style="background:#ffffff">
+      <div style="margin:0 auto;max-width:1100px;padding:0 20px">
+        <div style="max-width:760px;margin:0 auto;padding:72px 0 112px">
+          <div style="display:flex;align-items:center;gap:8px;font-size:.78rem;color:#9aa0aa;margin-bottom:26px">
+            <a href="#" onClick="{{ goHome }}" style="color:#9aa0aa;text-decoration:none" style-hover="color:var(--ac);text-decoration:none">Home</a>
+            <span>/</span>
+            <sc-if value="{{ postHasCat }}" hint-placeholder-val="{{ true }}">
+              <a href="#" onClick="{{ postOpenCat }}" style="color:#9aa0aa;text-decoration:none" style-hover="color:var(--ac);text-decoration:none">{{ postCatLabel }}</a>
+            </sc-if>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
+            <sc-if value="{{ postHasCat }}" hint-placeholder-val="{{ true }}">
+              <span onClick="{{ postOpenCat }}" style="font-size:.7rem;color:var(--ac);text-transform:uppercase;letter-spacing:.07em;font-weight:700;border:var(--bdgbd);border-radius:999px;padding:4px 10px;background:var(--bdgbg);transition:opacity 200ms ease" style-hover="opacity:.7">{{ postCatLabel }}</span>
+            </sc-if>
+            <span style="font-size:.78rem;color:#9aa0aa">{{ postDate }}</span>
+            <span style="font-size:.78rem;color:#9aa0aa">{{ postRead }}</span>
+          </div>
+          <h1 style="font-size:3rem;line-height:1.08;letter-spacing:-0.035em;font-weight:700;color:#16181d;text-wrap:balance">{{ postTitle }}</h1>
+          <div style="box-sizing:border-box;margin:40px 0;aspect-ratio:3/2;width:100%;border-radius:18px;background-color:#f5f5f7;background-image:repeating-linear-gradient(135deg,rgba(107,114,128,0.08) 0 1px,transparent 1px 10px);display:flex;align-items:flex-end;padding:12px">
+            <span style="font:400 10px ui-monospace,Menlo,monospace;color:#9aa0aa;letter-spacing:.04em">hero image — /images/&lt;slug&gt;.png</span>
+          </div>
+          <p style="font-size:1.16rem;line-height:1.72;color:#333844;text-wrap:pretty">{{ postExcerpt }}</p>
+          <p style="margin-top:22px;font-size:.85rem;line-height:1.6;color:#9aa0aa;font-family:ui-monospace,Menlo,monospace">Article body renders here from content_html inside the existing .prose .prose-site wrapper — unchanged by this design.</p>
+          <div style="margin-top:64px;padding:32px;border-radius:18px;background:#f5f5f7">
+            <h2 style="font-size:1.3rem;font-weight:700;letter-spacing:-0.02em;color:#16181d">More in {{ postCatLabel }}</h2>
+            <div style="display:grid;gap:2px;margin-top:16px">
+              <sc-for list="{{ related }}" as="r" hint-placeholder-count="2">
+                <a href="#" onClick="{{ r.open }}" style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:14px;border-radius:12px;text-decoration:none;transition:background 200ms ease" style-hover="background:#ffffff;text-decoration:none">
+                  <span style="font-size:1rem;color:#16181d">{{ r.title }}</span>
+                  <span style="flex:none;font-size:.78rem;color:#9aa0aa">{{ r.date }}</span>
+                </a>
+              </sc-for>
+            </div>
+            <sc-if value="{{ noRelated }}" hint-placeholder-val="{{ false }}">
+              <p style="margin-top:12px;font-size:.95rem;color:#6b7280">This is the only article in the category so far.</p>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+    </main>
+  </sc-if>
+
+  <footer style="background:#f5f5f7;padding:44px 0;border-top:1px solid rgba(0,0,0,0.06)">
+    <div style="margin:0 auto;max-width:1100px;padding:0 20px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;color:#9aa0aa;font-size:.82rem">
+      <span>© 2026 Airbrush Learn, a SprayGunner project.</span>
+      <div style="display:flex;gap:24px">
+        <a href="#" onClick="{{ goHome }}" style="color:#6b7280;text-decoration:none" style-hover="color:var(--ac);text-decoration:none">Home</a>
+        <a href="https://spraygunner.com" target="_blank" rel="noopener" style="color:#6b7280;text-decoration:none" style-hover="color:var(--ac);text-decoration:none">Shop SprayGunner</a>
+      </div>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320,&quot;height&quot;:900},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#e2571f&quot;,&quot;options&quot;:[&quot;#e2571f&quot;,&quot;#c9451a&quot;,&quot;#1d4e89&quot;,&quot;#2b2f38&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;badgeStyle&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;tinted&quot;,&quot;outlined&quot;,&quot;plain&quot;],&quot;default&quot;:&quot;tinted&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;cardStyle&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;plain&quot;,&quot;bordered&quot;],&quot;default&quot;:&quot;plain&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;density&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;comfortable&quot;,&quot;compact&quot;],&quot;default&quot;:&quot;comfortable&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Layout&quot;}}">
+class Component extends DCLogic {
+  state = { view: 'home', slug: 'reviews', postId: 0, menu: false, q: '', chip: 'all', sort: 'new' };
+
+  cats = [
+    ['how-to','How-to','Tutorials that walk you through every pass, from setup to cleanup.','Setup to cleanup'],
+    ['reviews','Reviews','Honest gear reviews from real studio time.','Honest gear reviews'],
+    ['buying-guides','Buying Guides','Compare specs that actually matter before you spend a dollar.','Specs that matter'],
+    ['troubleshooting','Troubleshooting','Diagnose the problem fast and get back to painting.','Fix it, keep painting'],
+    ['paints-colors','Paints & Colors',"Understand what's actually in the bottle before it goes through your gun.","What\u2019s in the bottle"],
+    ['automotive','Automotive','Flake, candy fades & custom paneling.','Flake, candy, paneling'],
+    ['miniatures','Miniatures','NMM, OSL & 28mm tabletop finishes.','NMM, OSL & 28mm'],
+    ['cosplay-body-art','Cosplay & Body Art','Convention-ready finishes that hold up under stage lights.','Convention-ready'],
+    ['beginner','Beginner','Everything you need to make your first project a success.','Your first project']
+  ].map(c => ({ slug: c[0], label: c[1], desc: c[2], short: c[3] }));
+
+  posts = [
+    ['Single-Action vs Dual-Action Airbrush: Which Should You Buy?','buying-guides','A clear, no-fluff breakdown of single-action and dual-action airbrushes so first-time buyers pick the right one.','Aug 1, 2026'],
+    ['How to Clean an Airbrush: Ultimate Guide','how-to','Step-by-step cleaning routine to prevent clogging and extend the life of your airbrush.','Jul 20, 2026'],
+    ['Iwata vs Harder & Steenbeck Airbrush Comparison','reviews','Two shop favorites, tested side by side under the same paint and pressure.','Jun 23, 2026'],
+    ['Prevent Airbrush Clogging: Ultimate Guide','troubleshooting','The most common causes of clogging and how to fix each one fast.','Jun 23, 2026'],
+    ['Ultimate Airbrush PSI Guide: Master Your Pressure Settings','how-to','Dial in the right pressure for every paint type and technique.','Jun 23, 2026'],
+    ['NMM Basics: Painting Metal That Isn\u2019t Metallic','miniatures','Non-metallic metal fundamentals for 28mm tabletop miniatures.','Jun 10, 2026'],
+    ['Getting Started: Your First Airbrush Project','beginner','A realistic first project and what to expect the first time you pull the trigger.','Jun 1, 2026'],
+    ['Candy Fades on a Car Panel, Step by Step','automotive','Layering candy color over base and flake for a real automotive fade.','May 28, 2026'],
+    ['Compressor Tank Sizes Compared: 3L, 6L and Tankless','Gear Roundup','Where a tank actually helps, and where it just takes up bench space.','May 12, 2026'],
+    ['Nozzle Sizes Explained: 0.2, 0.35 and 0.5 mm','reviews','What each nozzle size is genuinely good for, tested with the same three paints.','May 4, 2026'],
+    ['Thinning Ratios That Stop Tip Dry','reviews','A repeatable ratio for acrylics, plus how to tell when you have gone too far.','Apr 22, 2026']
+  ].map((p, i) => ({ id: i, title: p[0], cat: p[1], excerpt: p[2], date: p[3], t: Date.parse(p[3]) }));
+
+  go = (view, extra) => e => { if (e) e.preventDefault(); this.setState(Object.assign({ view: view, menu: false }, extra || {})); window.scrollTo(0, 0); };
+
+  card(p) {
+    const cat = this.cats.find(c => c.slug === p.cat);
+    return {
+      title: p.title, excerpt: p.excerpt, date: p.date,
+      hasCat: !!cat, catLabel: cat ? cat.label : '',
+      imgNote: 'image 3:2 — /images/<slug>.png',
+      open: this.go('post', { postId: p.id }),
+      openCat: cat ? (e => { e.stopPropagation(); e.preventDefault(); this.setState({ view: 'category', slug: cat.slug, menu: false }); window.scrollTo(0, 0); }) : (e => e.preventDefault())
+    };
+  }
+
+  renderVals() {
+    const s = this.state, P = this.props;
+    const q = s.q.trim().toLowerCase();
+    const match = p => !q || (p.title + ' ' + p.excerpt).toLowerCase().indexOf(q) > -1;
+    const cat = this.cats.find(c => c.slug === s.slug) || this.cats[1];
+    let inCat = this.posts.filter(p => p.cat === cat.slug && match(p));
+    inCat = inCat.slice().sort((a, b) => s.sort === 'old' ? a.t - b.t : b.t - a.t);
+    const post = this.posts[s.postId] || this.posts[0];
+    const postCat = this.cats.find(c => c.slug === post.cat);
+    const related = this.posts.filter(p => p.cat === post.cat && p.id !== post.id).slice(0, 3);
+
+    let home = this.posts.filter(match);
+    if (s.chip !== 'all') home = home.filter(p => p.cat === s.chip);
+    home = home.slice().sort((a, b) => b.t - a.t);
+
+    const ac = P.accent || '#e2571f';
+    const soft = h => {
+      const n = parseInt(h.slice(1), 16);
+      return 'rgba(' + [(n >> 16) & 255, (n >> 8) & 255, n & 255].join(',') + ',0.10)';
+    };
+    const badge = P.badgeStyle || 'tinted';
+    const pill = a => ({ bg: a ? ac : '#ffffff', fg: a ? '#ffffff' : '#333844' });
+
+    const chips = [{ slug: 'all', label: 'All' }].concat(this.cats.map(c => ({ slug: c.slug, label: c.label })))
+      .map(c => Object.assign({ label: c.label, pick: e => { e.preventDefault(); this.setState({ chip: c.slug }); } }, pill(s.chip === c.slug)));
+
+    const sorts = [{ k: 'new', label: 'Newest' }, { k: 'old', label: 'Oldest' }]
+      .map(o => Object.assign({ label: o.label, pick: e => { e.preventDefault(); this.setState({ sort: o.k }); } }, pill(s.sort === o.k)));
+
+    const chipLabel = s.chip === 'all' ? null : (this.cats.find(c => c.slug === s.chip) || {}).label;
+
+    return {
+      ac: ac, acSoft: soft(ac),
+      gap: (P.density || 'comfortable') === 'compact' ? '18px' : '28px',
+      cbd: (P.cardStyle || 'plain') === 'bordered' ? '1px solid rgba(0,0,0,0.07)' : '1px solid transparent',
+      bdgBg: badge === 'tinted' ? soft(ac) : 'transparent',
+      bdgBd: badge === 'outlined' ? '1px solid rgba(0,0,0,0.10)' : '1px solid transparent',
+      categories: this.cats.map(c => Object.assign({}, c, {
+        count: String(this.posts.filter(p => p.cat === c.slug).length),
+        open: this.go('category', { slug: c.slug, sort: 'new' })
+      })),
+      chips: chips, sorts: sorts,
+      isHome: s.view === 'home', isCategory: s.view === 'category', isPost: s.view === 'post',
+      menuOpen: s.menu,
+      openMenu: () => this.setState({ menu: true }),
+      closeMenu: () => this.setState({ menu: false }),
+      toggleMenu: e => { e.preventDefault(); this.setState(st => ({ menu: !st.menu })); },
+      goHome: this.go('home'),
+      goReviews: this.go('category', { slug: 'reviews', sort: 'new' }),
+      goBeginner: this.go('category', { slug: 'beginner', sort: 'new' }),
+      query: s.q,
+      onQuery: e => this.setState({ q: e.target.value }),
+      homeCards: home.map(p => this.card(p)),
+      homeHeading: chipLabel ? chipLabel : (q ? 'Search results' : 'Latest articles'),
+      homeCount: home.length + (home.length === 1 ? ' article' : ' articles'),
+      homeNoResults: home.length === 0,
+      reviewCards: this.posts.filter(p => p.cat === 'reviews').slice(0, 3)
+        .map(p => ({ title: p.title, date: p.date, open: this.go('post', { postId: p.id }) })),
+      startHere: [6, 1, 4].map((id, i) => ({ n: '0' + (i + 1), title: this.posts[id].title, open: this.go('post', { postId: id }) })),
+      fixes: [3, 10, 4].map(id => ({
+        title: this.posts[id].title,
+        catLabel: (this.cats.find(c => c.slug === this.posts[id].cat) || {}).label || '',
+        open: this.go('post', { postId: id })
+      })),
+      catLabel: cat.label, catDesc: cat.desc,
+      catCount: inCat.length + (inCat.length === 1 ? ' article' : ' articles'),
+      catHasArticles: inCat.length > 0, catIsEmpty: inCat.length === 0,
+      catCards: inCat.map(p => this.card(p)),
+      postTitle: post.title, postExcerpt: post.excerpt, postDate: post.date,
+      postRead: '7 min read',
+      postCatLabel: postCat ? postCat.label : '', postHasCat: !!postCat,
+      postOpenCat: this.go('category', { slug: post.cat }),
+      related: related.map(p => ({ title: p.title, date: p.date, open: this.go('post', { postId: p.id }) })),
+      noRelated: related.length === 0
+    };
+  }
+}
+</script>
+</body>
+</html>
