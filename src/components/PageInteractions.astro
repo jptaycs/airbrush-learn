@@ -80,7 +80,7 @@
     resize();
     window.addEventListener('resize', resize);
 
-    const colors = ['#e2571f', '#c9451a', '#2f7d6c'];
+    const colors = ['#e2571f', '#c9451a'];
     let particles = [];
     let mouseX = -100;
     let mouseY = -100;
@@ -94,8 +94,8 @@
       }
       mouseX = e.clientX;
       mouseY = e.clientY;
-      for (let i = 0; i < 2; i++) {
-        if (particles.length > 150) particles.shift();
+      for (let i = 0; i < 6; i++) {
+        if (particles.length > 300) particles.shift();
         particles.push({
           x: mouseX + (Math.random() - 0.5) * 10,
           y: mouseY + (Math.random() - 0.5) * 10,
