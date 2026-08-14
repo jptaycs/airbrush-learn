@@ -91,7 +91,7 @@ const compressorOptions = [
   let currentStep = 1;
   const totalSteps = steps.length;
 
-  const showStep = (n) => {
+  const showStep = (n, { focusHeading = true } = {}) => {
     steps.forEach((el) => {
       el.classList.toggle('hidden', Number(el.dataset.quizStep) !== n);
     });
@@ -100,6 +100,12 @@ const compressorOptions = [
     stepCounter.textContent = `Step ${n} of ${totalSteps}`;
     backBtn.classList.toggle('hidden', n === 1);
     currentStep = n;
+
+    if (focusHeading) {
+      const heading = steps.find((el) => Number(el.dataset.quizStep) === n)?.querySelector('h2');
+      heading?.setAttribute('tabindex', '-1');
+      heading?.focus();
+    }
   };
 
   const scoreGear = () => {
@@ -174,6 +180,10 @@ const compressorOptions = [
     stepCounter.classList.add('hidden');
     backBtn.classList.add('hidden');
     resultsPanel.classList.remove('hidden');
+
+    const resultsHeading = resultsPanel.querySelector('h2');
+    resultsHeading?.setAttribute('tabindex', '-1');
+    resultsHeading?.focus();
   };
 
   document.querySelectorAll('[data-answer]').forEach((btn) => {
@@ -196,5 +206,5 @@ const compressorOptions = [
     showStep(1);
   });
 
-  showStep(1);
+  showStep(1, { focusHeading: false });
 </script>
