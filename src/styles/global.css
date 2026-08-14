@@ -89,6 +89,18 @@ header.is-scrolled > div {
   animation: fadeInUp 150ms ease reverse both;
 }
 
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@layer components {
+  @media (prefers-reduced-motion: no-preference) {
+    .marquee-track {
+      animation: marquee 38s linear infinite;
+    }
+  }
+}
+
 @layer components {
   .link-underline {
     position: relative;

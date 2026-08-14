@@ -86,15 +86,22 @@ const homeGalleryTiles = [
     </div>
   </section>
 
-  <section class="py-16">
+  <section class="py-16 overflow-hidden">
     <div class="mx-auto max-w-wide px-5">
       <div class="text-center mb-10">
         <h2 class="font-serif text-ink text-[2rem]">Nine ways in.</h2>
         <p class="mt-2 text-muted text-[1rem] max-w-[480px] mx-auto">Every article lives in exactly one category, so you always know where to look next.</p>
       </div>
-      <div data-reveal-group class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-3.5">
-        {categoryCounts.map((cat) => (
-          <a href={`/category/${cat.slug}`} data-reveal class="block p-7 rounded-xl bg-surface-dark hover:no-underline hover:opacity-90 hover:scale-[1.02] transition-transform">
+    </div>
+    <div data-reveal class="relative [mask-image:linear-gradient(to_right,transparent,black_64px,black_calc(100%-64px),transparent)] max-[640px]:[mask-image:linear-gradient(to_right,transparent,black_24px,black_calc(100%-24px),transparent)]">
+      <div class="marquee-track flex w-max gap-3.5 hover:[animation-play-state:paused]">
+        {[...categoryCounts, ...categoryCounts].map((cat, i) => (
+          <a
+            href={`/category/${cat.slug}`}
+            aria-hidden={i >= categoryCounts.length ? 'true' : undefined}
+            tabindex={i >= categoryCounts.length ? -1 : undefined}
+            class="block w-[280px] flex-none p-7 rounded-xl bg-surface-dark hover:no-underline hover:opacity-90 hover:scale-[1.02] transition-transform"
+          >
             <span class="block font-serif text-white text-[1.2rem]">{cat.label}</span>
             <span class="block mt-2 text-gray-400 text-[0.9rem]">{cat.description}</span>
             <span class="block mt-4 font-mono text-[0.7rem] text-accent font-semibold">{cat.count} article{cat.count === 1 ? '' : 's'}</span>
