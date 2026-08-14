@@ -2,29 +2,48 @@
 import { galleryCategories } from '../data/galleryCategories.js';
 import gearItems from '../data/gearAdvisor.json';
 
+const dollarIcon = '<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>';
+const starIcon = '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>';
+
 const budgetOptions = [
-  { value: 'budget', label: 'Under $100' },
-  { value: 'mid', label: '$100–300' },
-  { value: 'pro', label: '$300+' },
+  { value: 'budget', label: 'Under $100', tier: 1 },
+  { value: 'mid', label: '$100–300', tier: 2 },
+  { value: 'pro', label: '$300+', tier: 3 },
 ];
 const experienceOptions = [
-  { value: 'beginner', label: 'Beginner' },
-  { value: 'intermediate', label: 'Intermediate' },
-  { value: 'advanced', label: 'Advanced' },
+  { value: 'beginner', label: 'Beginner', tier: 1 },
+  { value: 'intermediate', label: 'Intermediate', tier: 2 },
+  { value: 'advanced', label: 'Advanced', tier: 3 },
 ];
 const compressorOptions = [
-  { value: 'have-one', label: 'I already have one' },
-  { value: 'need-everything', label: 'I need the full setup' },
+  {
+    value: 'have-one',
+    label: 'I already have one',
+    icon: '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 17.01"/>',
+  },
+  {
+    value: 'need-everything',
+    label: 'I need the full setup',
+    icon: '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>',
+  },
 ];
+
+const buttonClass = 'rounded-xl border border-border p-4 text-center font-medium text-ink hover:border-accent hover:bg-bg-alt transition-colors disabled:opacity-60 disabled:cursor-not-allowed';
+const iconButtonClass = `${buttonClass} flex flex-col items-center gap-2`;
 ---
 <div class="max-w-3xl mx-auto">
-  <p data-step-counter class="text-center text-muted text-[0.85rem] font-semibold uppercase tracking-[0.05em] mb-6">Step 1 of 4</p>
+  <div data-progress-bar class="flex gap-1.5 mb-8" aria-hidden="true">
+    {[1, 2, 3, 4].map((n) => (
+      <div data-progress-segment={n} class="flex-1 h-1.5 rounded-full bg-border transition-colors duration-300"></div>
+    ))}
+  </div>
+  <p data-step-counter class="sr-only">Step 1 of 4</p>
 
   <div data-quiz-step="1">
     <h2 class="font-serif text-ink text-[1.6rem] text-center mb-6">What do you want to paint?</h2>
     <div class="grid grid-cols-[repeat(auto-fill,minmax(140px,1fr))] gap-3">
       {galleryCategories.map((d) => (
-        <button type="button" data-answer="subject" data-value={d.slug} class="rounded-xl border border-border p-4 text-center font-medium text-ink hover:border-accent hover:bg-bg-alt transition-colors">
+        <button type="button" data-answer="subject" data-value={d.slug} class={buttonClass}>
           {d.label}
         </button>
       ))}
@@ -35,7 +54,12 @@ const compressorOptions = [
     <h2 class="font-serif text-ink text-[1.6rem] text-center mb-6">What's your budget?</h2>
     <div class="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-3 max-w-xl mx-auto">
       {budgetOptions.map((o) => (
-        <button type="button" data-answer="budget" data-value={o.value} class="rounded-xl border border-border p-4 text-center font-medium text-ink hover:border-accent hover:bg-bg-alt transition-colors">
+        <button type="button" data-answer="budget" data-value={o.value} class={iconButtonClass}>
+          <span class="flex gap-0.5 text-accent">
+            {Array.from({ length: o.tier }).map(() => (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={dollarIcon} />
+            ))}
+          </span>
           {o.label}
         </button>
       ))}
@@ -46,7 +70,12 @@ const compressorOptions = [
     <h2 class="font-serif text-ink text-[1.6rem] text-center mb-6">What's your experience level?</h2>
     <div class="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-3 max-w-xl mx-auto">
       {experienceOptions.map((o) => (
-        <button type="button" data-answer="experience" data-value={o.value} class="rounded-xl border border-border p-4 text-center font-medium text-ink hover:border-accent hover:bg-bg-alt transition-colors">
+        <button type="button" data-answer="experience" data-value={o.value} class={iconButtonClass}>
+          <span class="flex gap-0.5 text-accent">
+            {Array.from({ length: o.tier }).map(() => (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={starIcon} />
+            ))}
+          </span>
           {o.label}
         </button>
       ))}
@@ -57,7 +86,8 @@ const compressorOptions = [
     <h2 class="font-serif text-ink text-[1.6rem] text-center mb-6">Do you have a compressor?</h2>
     <div class="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-3 max-w-xl mx-auto">
       {compressorOptions.map((o) => (
-        <button type="button" data-answer="compressor" data-value={o.value} class="rounded-xl border border-border p-4 text-center font-medium text-ink hover:border-accent hover:bg-bg-alt transition-colors">
+        <button type="button" data-answer="compressor" data-value={o.value} class={iconButtonClass}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent" set:html={o.icon} />
           {o.label}
         </button>
       ))}
@@ -79,7 +109,11 @@ const compressorOptions = [
 </div>
 
 <script define:vars={{ gearItems }}>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   const steps = Array.from(document.querySelectorAll('[data-quiz-step]'));
+  const progressBar = document.querySelector('[data-progress-bar]');
+  const progressSegments = Array.from(document.querySelectorAll('[data-progress-segment]'));
   const stepCounter = document.querySelector('[data-step-counter]');
   const backBtn = document.querySelector('[data-quiz-back]');
   const resultsPanel = document.querySelector('[data-quiz-results]');
@@ -90,13 +124,24 @@ const compressorOptions = [
   const answers = {};
   let currentStep = 1;
   const totalSteps = steps.length;
+  const selectedClasses = ['bg-accent', 'text-white', 'border-accent'];
 
-  const showStep = (n, { focusHeading = true } = {}) => {
+  const showStep = (n, { focusHeading = true, animateIn = true } = {}) => {
     steps.forEach((el) => {
-      el.classList.toggle('hidden', Number(el.dataset.quizStep) !== n);
+      const isTarget = Number(el.dataset.quizStep) === n;
+      el.classList.toggle('hidden', !isTarget);
+      if (isTarget && animateIn && !reduceMotion) {
+        el.classList.remove('menu-panel-open');
+        void el.offsetWidth;
+        el.classList.add('menu-panel-open');
+      }
+    });
+    progressBar.classList.remove('hidden');
+    progressSegments.forEach((seg, i) => {
+      seg.classList.toggle('bg-accent', i < n);
+      seg.classList.toggle('bg-border', i >= n);
     });
     resultsPanel.classList.add('hidden');
-    stepCounter.classList.remove('hidden');
     stepCounter.textContent = `Step ${n} of ${totalSteps}`;
     backBtn.classList.toggle('hidden', n === 1);
     currentStep = n;
@@ -149,8 +194,8 @@ const compressorOptions = [
     return { airbrushPick, compressorPick, accessoryPick, usedFallback };
   };
 
-  const cardHtml = (label, item) => `
-    <div class="rounded-xl border border-border p-5">
+  const cardHtml = (label, item, index) => `
+    <div class="rounded-xl border border-border p-5${reduceMotion ? '' : ' menu-panel-open'}"${reduceMotion ? '' : ` style="animation-delay:${index * 60}ms"`}>
       <span class="block text-[0.7rem] text-accent-dark uppercase tracking-[0.05em] font-bold mb-1.5">${label}</span>
       <h3 class="font-serif text-ink text-[1.15rem]">${item.name}</h3>
       <p class="mt-1.5 text-muted text-[0.9rem]">${item.blurb}</p>
@@ -164,9 +209,9 @@ const compressorOptions = [
   const showResults = () => {
     const { airbrushPick, compressorPick, accessoryPick, usedFallback } = scoreGear();
     const cards = [];
-    if (airbrushPick) cards.push(cardHtml('Your airbrush', airbrushPick));
-    if (compressorPick) cards.push(cardHtml('Your compressor', compressorPick));
-    if (accessoryPick) cards.push(cardHtml('A nice extra', accessoryPick));
+    if (airbrushPick) cards.push(cardHtml('Your airbrush', airbrushPick, cards.length));
+    if (compressorPick) cards.push(cardHtml('Your compressor', compressorPick, cards.length));
+    if (accessoryPick) cards.push(cardHtml('A nice extra', accessoryPick, cards.length));
     resultsList.innerHTML = cards.join('') || '<p class="text-center text-muted">No matches yet — check back as we add more gear.</p>';
 
     if (usedFallback && airbrushPick) {
@@ -177,7 +222,7 @@ const compressorOptions = [
     }
 
     steps.forEach((el) => el.classList.add('hidden'));
-    stepCounter.classList.add('hidden');
+    progressBar.classList.add('hidden');
     backBtn.classList.add('hidden');
     resultsPanel.classList.remove('hidden');
 
@@ -188,12 +233,38 @@ const compressorOptions = [
 
   document.querySelectorAll('[data-answer]').forEach((btn) => {
     btn.addEventListener('click', () => {
-      answers[btn.dataset.answer] = btn.dataset.value;
-      if (currentStep < totalSteps) {
-        showStep(currentStep + 1);
-      } else {
-        showResults();
+      if (btn.disabled) return;
+      const groupButtons = btn.closest('[data-quiz-step]').querySelectorAll('[data-answer]');
+
+      const advance = () => {
+        answers[btn.dataset.answer] = btn.dataset.value;
+        if (currentStep < totalSteps) {
+          showStep(currentStep + 1);
+        } else {
+          showResults();
+        }
+      };
+
+      if (reduceMotion) {
+        advance();
+        return;
       }
+
+      groupButtons.forEach((b) => (b.disabled = true));
+      btn.classList.add(...selectedClasses);
+      const leavingStep = btn.closest('[data-quiz-step]');
+
+      setTimeout(() => {
+        leavingStep.classList.add('menu-panel-closing');
+        setTimeout(() => {
+          leavingStep.classList.remove('menu-panel-closing');
+          groupButtons.forEach((b) => {
+            b.disabled = false;
+            b.classList.remove(...selectedClasses);
+          });
+          advance();
+        }, 150);
+      }, 300);
     });
   });
 
@@ -206,5 +277,5 @@ const compressorOptions = [
     showStep(1);
   });
 
-  showStep(1, { focusHeading: false });
+  showStep(1, { focusHeading: false, animateIn: false });
 </script>
