@@ -14,7 +14,7 @@ const sorted = [...articles].sort((a, b) =>
 const featured = sorted[0];
 const featuredCat = featured ? categories.find((c) => c.slug === featured.category) : null;
 const featuredReadMinutes = featured ? estimateReadMinutes(featured.content_html) : 0;
-const latestArticles = sorted.slice(1, 4);
+const latestArticles = sorted.slice(0, 3);
 
 const byCategory = (slug) => sorted.filter((a) => a.category === slug);
 
