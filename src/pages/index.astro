@@ -40,24 +40,16 @@ const stepIcons = [
   '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 1 0-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2-2 2.5-2.5z"/></svg>',
 ];
 
-const galleryTiles = [
-  { label: 'Automotive', slug: 'automotive', tall: true },
-  { label: 'Fine Art', slug: 'fine-art', tall: false },
-  { label: 'Miniatures', slug: 'miniatures', tall: false },
-  { label: 'Cosplay', slug: 'cosplay', tall: false },
-  { label: 'Fabric', slug: 'fabric', tall: true },
-  { label: 'Scale Models', slug: 'scale-models', tall: false },
-  { label: 'Body Art', slug: 'body-art', tall: false },
-  { label: 'Guitars', slug: 'guitars', tall: true },
-  { label: 'Murals', slug: 'murals', tall: false },
-  { label: 'Nail Art', slug: 'nail-art', tall: false },
-  { label: 'Helmets', slug: 'helmets', tall: false },
-  { label: 'Skateboards', slug: 'skateboards', tall: true },
-  { label: 'Diecast Cars', slug: 'diecast-cars', tall: true },
-  { label: 'Toy Soldiers', slug: 'toy-soldiers', tall: false },
-  { label: 'Wooden Toys', slug: 'wooden-toys', tall: false },
-  { label: 'Nesting Dolls', slug: 'nesting-dolls', tall: false },
-  { label: 'Carousel Figures', slug: 'carousel-figures', tall: true },
+// Curated highlight set for the homepage bento grid — a fixed 7-tile layout.
+// The full 17-discipline breakdown lives at /gallery.
+const homeGalleryTiles = [
+  { label: 'Automotive', slug: 'automotive', class: 'col-start-1 row-start-1 row-span-3' },
+  { label: 'Fine Art', slug: 'fine-art', class: 'col-start-2 col-span-2 row-start-1' },
+  { label: 'Fabric', slug: 'fabric', class: 'col-start-4 row-start-1 row-span-2' },
+  { label: 'Miniatures', slug: 'miniatures', class: 'col-start-2 row-start-2' },
+  { label: 'Cosplay', slug: 'cosplay', class: 'col-start-3 row-start-2' },
+  { label: 'Scale Models', slug: 'scale-models', class: 'col-start-2 col-span-2 row-start-3' },
+  { label: 'Body Art', slug: 'body-art', class: 'col-start-4 row-start-3' },
 ];
 ---
 <BaseLayout
@@ -200,9 +192,9 @@ const galleryTiles = [
         </div>
         <a href="/gallery" class="inline-block rounded-full border border-border text-ink px-5 py-2.5 text-[0.9rem] font-semibold hover:no-underline hover:bg-bg-alt">See Full Gallery &rarr;</a>
       </div>
-      <div data-reveal-group class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3.5">
-        {galleryTiles.map((tile) => (
-          <a href={`/gallery/${tile.slug}`} data-reveal class={`relative rounded-xl overflow-hidden bg-bg flex items-end p-4 transition-transform duration-300 hover:scale-[1.03] hover:no-underline ${tile.tall ? 'aspect-[3/4]' : 'aspect-[4/3]'}`}>
+      <div data-reveal-group class="grid grid-cols-4 [grid-template-rows:repeat(3,1fr)] aspect-[21/8] gap-3.5 max-[768px]:grid-cols-2 max-[768px]:aspect-auto max-[768px]:[grid-template-rows:none]">
+        {homeGalleryTiles.map((tile) => (
+          <a href={`/gallery/${tile.slug}`} data-reveal class={`relative rounded-xl overflow-hidden bg-bg flex items-end p-4 transition-transform duration-300 hover:scale-[1.03] hover:no-underline ${tile.class} max-[768px]:col-span-1 max-[768px]:row-span-1 max-[768px]:col-start-auto max-[768px]:row-start-auto max-[768px]:aspect-[4/3]`}>
             <img src={`/images/gallery/${tile.slug}.jpg`} alt={tile.label} loading="lazy" class="absolute inset-0 w-full h-full object-cover" />
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent"></div>
             <span class="relative text-[0.85rem] font-semibold text-white">{tile.label}</span>
