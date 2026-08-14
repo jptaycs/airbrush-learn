@@ -34,5 +34,8 @@ const schema = {
     '@id': `${siteUrl}/posts/${slug}`,
   },
 };
+
+// Escape '<' so a literal "</script>" inside any field can't close the tag early.
+const schemaJson = JSON.stringify(schema).replace(/</g, '\\u003c');
 ---
-<script type="application/ld+json" set:html={JSON.stringify(schema)} />
+<script type="application/ld+json" set:html={schemaJson} />
