@@ -68,6 +68,43 @@
     });
   }
 
+  // --- Article reading-progress bar ---
+  const progressBar = document.querySelector('[data-progress-bar]');
+  if (progressBar) {
+    const articleEl = document.querySelector('article');
+    const updateProgress = () => {
+      if (!articleEl) return;
+      const total = articleEl.offsetHeight - window.innerHeight;
+      const scrolled = -articleEl.getBoundingClientRect().top;
+      const progress = total > 0 ? Math.min(Math.max(scrolled / total, 0), 1) : 0;
+      progressBar.style.transform = `scaleX(${progress})`;
+    };
+    updateProgress();
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    window.addEventListener('resize', updateProgress);
+  }
+
+  // --- Article share: copy link ---
+  document.querySelectorAll('[data-share-copy]').forEach((btn) => {
+    const icon = btn.querySelector('svg');
+    const originalIcon = icon?.innerHTML;
+    const originalLabel = btn.getAttribute('aria-label');
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(btn.getAttribute('data-share-copy'));
+      } catch {
+        return;
+      }
+      if (!icon) return;
+      icon.innerHTML = '<polyline points="20 6 9 17 4 12"/>';
+      btn.setAttribute('aria-label', 'Copied!');
+      setTimeout(() => {
+        icon.innerHTML = originalIcon;
+        btn.setAttribute('aria-label', originalLabel);
+      }, 1500);
+    });
+  });
+
   // --- Mobile nav toggle ---
   const mobileToggle = document.querySelector('[data-mobile-nav-toggle]');
   const mobileNav = document.querySelector('[data-mobile-nav]');
