@@ -52,18 +52,22 @@ If you add a new field, update it in two places: the n8n workflow's "Build Artic
 ```
 src/data/articles.json       # real content, committed directly by n8n via the GitHub API
 src/data/categories.js       # fixed 9-category taxonomy (label/description) — not from n8n
+src/data/gallery.json        # curated gallery pieces (slug/title/category/image/credit) — not from n8n
+src/data/galleryCategories.js # fixed gallery discipline taxonomy (slug/label) — separate from article categories.js
 src/lib/readTime.js          # estimateReadMinutes(html) — computed from content_html word count
 src/layouts/BaseLayout.astro # <head>, SEO/OG meta, header, footer — every page uses this
-src/components/              # Header, Footer, ArticleCard, ArticleSchema (JSON-LD)
+src/components/              # Header, Footer, ArticleCard, ArticleSchema (JSON-LD), GalleryGrid
 src/pages/
-  index.astro                # homepage / article grid
+  index.astro                # homepage / article grid + gallery preview
   posts/[slug].astro         # one page per article, getStaticPaths() over articles.json
   category/[slug].astro      # one page per category, getStaticPaths() over categories.js
+  gallery/index.astro        # gallery landing page — all pieces, filterable by discipline
+  gallery/[category].astro   # one page per gallery discipline, getStaticPaths() over galleryCategories.js
   terms-of-use.astro
   privacy-policy.astro       # both real pages with placeholder copy — not stubs, but not final legal text either
 src/styles/global.css        # @tailwind directives + global resets; design tokens live in tailwind.config.mjs
 tailwind.config.mjs          # design tokens (colors, spacing, radius, fonts) — the palette lives here, not in global.css
-public/                      # logo.png, favicon.ico, apple-touch-icon.png, robots.txt, generated /images/
+public/                      # logo.png, favicon.ico, apple-touch-icon.png, robots.txt, generated /images/, /images/gallery/*.jpg
 ```
 
 ## Conventions

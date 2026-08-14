@@ -52,13 +52,17 @@ airbrush-learn-site/
 ├── src/
 │   ├── data/articles.json       # real content, committed directly by n8n via the GitHub API
 │   ├── data/categories.js       # fixed 9-category taxonomy (label/description) — not from n8n
+│   ├── data/gallery.json        # curated gallery pieces (slug/title/category/image/credit) — not from n8n
+│   ├── data/galleryCategories.js # fixed gallery discipline taxonomy (slug/label) — separate from article categories.js
 │   ├── lib/readTime.js          # estimateReadMinutes(html) — computed from content_html word count
 │   ├── layouts/BaseLayout.astro # shared <head>, header, footer, SEO/OG meta
-│   ├── components/              # Header, Footer, ArticleCard, ArticleCarousel, ArticleSchema (JSON-LD), PageInteractions
+│   ├── components/              # Header, Footer, ArticleCard, ArticleCarousel, ArticleSchema (JSON-LD), GalleryGrid, PageInteractions
 │   ├── pages/
-│   │   ├── index.astro          # homepage / article grid + per-category carousels
+│   │   ├── index.astro          # homepage / article grid + per-category carousels + gallery preview
 │   │   ├── posts/[slug].astro   # one page per article
 │   │   ├── category/[slug].astro # one page per category, getStaticPaths() over categories.js
+│   │   ├── gallery/index.astro  # gallery landing page — all pieces, filterable by discipline
+│   │   ├── gallery/[category].astro # one page per gallery discipline, getStaticPaths() over galleryCategories.js
 │   │   ├── terms-of-use.astro
 │   │   └── privacy-policy.astro
 │   └── styles/global.css        # @tailwind directives + global resets; design tokens live in tailwind.config.mjs
