@@ -1,0 +1,200 @@
+---
+import { galleryCategories } from '../data/galleryCategories.js';
+import gearItems from '../data/gearAdvisor.json';
+
+const budgetOptions = [
+  { value: 'budget', label: 'Under $100' },
+  { value: 'mid', label: '$100–300' },
+  { value: 'pro', label: '$300+' },
+];
+const experienceOptions = [
+  { value: 'beginner', label: 'Beginner' },
+  { value: 'intermediate', label: 'Intermediate' },
+  { value: 'advanced', label: 'Advanced' },
+];
+const compressorOptions = [
+  { value: 'have-one', label: 'I already have one' },
+  { value: 'need-everything', label: 'I need the full setup' },
+];
+---
+<div class="max-w-3xl mx-auto">
+  <p data-step-counter class="text-center text-muted text-[0.85rem] font-semibold uppercase tracking-[0.05em] mb-6">Step 1 of 4</p>
+
+  <div data-quiz-step="1">
+    <h2 class="font-serif text-ink text-[1.6rem] text-center mb-6">What do you want to paint?</h2>
+    <div class="grid grid-cols-[repeat(auto-fill,minmax(140px,1fr))] gap-3">
+      {galleryCategories.map((d) => (
+        <button type="button" data-answer="subject" data-value={d.slug} class="rounded-xl border border-border p-4 text-center font-medium text-ink hover:border-accent hover:bg-bg-alt transition-colors">
+          {d.label}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <div data-quiz-step="2" class="hidden">
+    <h2 class="font-serif text-ink text-[1.6rem] text-center mb-6">What's your budget?</h2>
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-3 max-w-xl mx-auto">
+      {budgetOptions.map((o) => (
+        <button type="button" data-answer="budget" data-value={o.value} class="rounded-xl border border-border p-4 text-center font-medium text-ink hover:border-accent hover:bg-bg-alt transition-colors">
+          {o.label}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <div data-quiz-step="3" class="hidden">
+    <h2 class="font-serif text-ink text-[1.6rem] text-center mb-6">What's your experience level?</h2>
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-3 max-w-xl mx-auto">
+      {experienceOptions.map((o) => (
+        <button type="button" data-answer="experience" data-value={o.value} class="rounded-xl border border-border p-4 text-center font-medium text-ink hover:border-accent hover:bg-bg-alt transition-colors">
+          {o.label}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <div data-quiz-step="4" class="hidden">
+    <h2 class="font-serif text-ink text-[1.6rem] text-center mb-6">Do you have a compressor?</h2>
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-3 max-w-xl mx-auto">
+      {compressorOptions.map((o) => (
+        <button type="button" data-answer="compressor" data-value={o.value} class="rounded-xl border border-border p-4 text-center font-medium text-ink hover:border-accent hover:bg-bg-alt transition-colors">
+          {o.label}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <div class="text-center mt-8">
+    <button type="button" data-quiz-back class="hidden text-muted text-[0.85rem] font-semibold hover:text-accent">&larr; Back</button>
+  </div>
+
+  <div data-quiz-results class="hidden">
+    <h2 class="font-serif text-ink text-[1.6rem] text-center mb-8">Your gear picks</h2>
+    <div data-results-list class="grid gap-5"></div>
+    <p data-results-fallback-note class="hidden text-center text-muted text-[0.85rem] mt-2"></p>
+    <div class="text-center mt-8">
+      <button type="button" data-quiz-restart class="rounded-full border border-border text-ink px-5 py-2.5 text-[0.9rem] font-semibold hover:bg-bg-alt">Start Over</button>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ gearItems }}>
+  const steps = Array.from(document.querySelectorAll('[data-quiz-step]'));
+  const stepCounter = document.querySelector('[data-step-counter]');
+  const backBtn = document.querySelector('[data-quiz-back]');
+  const resultsPanel = document.querySelector('[data-quiz-results]');
+  const resultsList = document.querySelector('[data-results-list]');
+  const fallbackNote = document.querySelector('[data-results-fallback-note]');
+  const restartBtn = document.querySelector('[data-quiz-restart]');
+
+  const answers = {};
+  let currentStep = 1;
+  const totalSteps = steps.length;
+
+  const showStep = (n) => {
+    steps.forEach((el) => {
+      el.classList.toggle('hidden', Number(el.dataset.quizStep) !== n);
+    });
+    resultsPanel.classList.add('hidden');
+    stepCounter.classList.remove('hidden');
+    stepCounter.textContent = `Step ${n} of ${totalSteps}`;
+    backBtn.classList.toggle('hidden', n === 1);
+    currentStep = n;
+  };
+
+  const scoreGear = () => {
+    const isAirbrushOrKit = (item) => item.type === 'airbrush' || item.type === 'kit';
+    const passesSubject = (item) => !item.subjects || item.subjects.includes(answers.subject);
+
+    const score = (item) => {
+      let s = 0;
+      if (item.budgetTier === answers.budget) s += 1;
+      if (item.experience?.includes(answers.experience)) s += 1;
+      return s;
+    };
+
+    const pool = gearItems.filter((item) => {
+      if (answers.compressor === 'have-one' && item.type === 'compressor') return false;
+      return true;
+    });
+
+    let airbrushCandidates = pool.filter((item) => isAirbrushOrKit(item) && passesSubject(item));
+    let usedFallback = false;
+    if (airbrushCandidates.length === 0) {
+      airbrushCandidates = pool.filter(isAirbrushOrKit);
+      usedFallback = true;
+    }
+    airbrushCandidates.sort((a, b) => score(b) - score(a));
+    const airbrushPick = airbrushCandidates[0] || null;
+
+    let compressorPick = null;
+    if (answers.compressor === 'need-everything') {
+      const compressorCandidates = pool
+        .filter((item) => item.type === 'compressor')
+        .sort((a, b) => score(b) - score(a));
+      compressorPick = compressorCandidates[0] || null;
+    }
+
+    const accessoryCandidates = pool
+      .filter((item) => item.type === 'accessory' && passesSubject(item) && score(item) > 0)
+      .sort((a, b) => score(b) - score(a));
+    const accessoryPick = accessoryCandidates[0] || null;
+
+    return { airbrushPick, compressorPick, accessoryPick, usedFallback };
+  };
+
+  const cardHtml = (label, item) => `
+    <div class="rounded-xl border border-border p-5">
+      <span class="block text-[0.7rem] text-accent-dark uppercase tracking-[0.05em] font-bold mb-1.5">${label}</span>
+      <h3 class="font-serif text-ink text-[1.15rem]">${item.name}</h3>
+      <p class="mt-1.5 text-muted text-[0.9rem]">${item.blurb}</p>
+      <div class="mt-3 flex items-center justify-between">
+        <span class="font-mono text-[0.85rem] text-ink font-semibold">$${item.price}</span>
+        <a href="${item.url}" target="_blank" rel="noopener" class="inline-block rounded-full bg-accent text-white px-4 py-2 text-[0.82rem] font-semibold hover:no-underline hover:opacity-90">Shop at SprayGunner &rarr;</a>
+      </div>
+    </div>
+  `;
+
+  const showResults = () => {
+    const { airbrushPick, compressorPick, accessoryPick, usedFallback } = scoreGear();
+    const cards = [];
+    if (airbrushPick) cards.push(cardHtml('Your airbrush', airbrushPick));
+    if (compressorPick) cards.push(cardHtml('Your compressor', compressorPick));
+    if (accessoryPick) cards.push(cardHtml('A nice extra', accessoryPick));
+    resultsList.innerHTML = cards.join('') || '<p class="text-center text-muted">No matches yet — check back as we add more gear.</p>';
+
+    if (usedFallback && airbrushPick) {
+      fallbackNote.textContent = 'Airbrushes are versatile — this pick works well across most subjects.';
+      fallbackNote.classList.remove('hidden');
+    } else {
+      fallbackNote.classList.add('hidden');
+    }
+
+    steps.forEach((el) => el.classList.add('hidden'));
+    stepCounter.classList.add('hidden');
+    backBtn.classList.add('hidden');
+    resultsPanel.classList.remove('hidden');
+  };
+
+  document.querySelectorAll('[data-answer]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      answers[btn.dataset.answer] = btn.dataset.value;
+      if (currentStep < totalSteps) {
+        showStep(currentStep + 1);
+      } else {
+        showResults();
+      }
+    });
+  });
+
+  backBtn.addEventListener('click', () => {
+    if (currentStep > 1) showStep(currentStep - 1);
+  });
+
+  restartBtn.addEventListener('click', () => {
+    for (const key in answers) delete answers[key];
+    showStep(1);
+  });
+
+  showStep(1);
+</script>
