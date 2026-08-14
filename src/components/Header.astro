@@ -12,17 +12,28 @@ const categoryCounts = categories.map((cat) => ({
     <a href="/" class="flex items-center hover:no-underline">
       <img src="/logo.png" alt="Airbrush Learn" class="h-[56px] w-auto" />
     </a>
-    <nav>
-      <ul class="flex items-center gap-6 max-[640px]:gap-3.5 list-none m-0 p-0">
-        <li><a href="/" class="text-body font-medium text-[0.95rem] hover:text-accent-dark hover:no-underline">Home</a></li>
-        <li><a href="/gallery" class="text-body font-medium text-[0.95rem] hover:text-accent-dark hover:no-underline">Gallery</a></li>
+    <nav class="flex items-center">
+      <button
+        type="button"
+        data-mobile-nav-toggle
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        aria-label="Toggle menu"
+        class="md:hidden flex items-center justify-center w-9 h-9 -mr-1.5 text-ink"
+      >
+        <svg data-menu-icon width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg data-close-icon class="hidden" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <ul id="mobile-nav" data-mobile-nav class="hidden md:flex md:items-center md:gap-6 max-md:absolute max-md:inset-x-0 max-md:top-full max-md:flex-col max-md:items-stretch max-md:gap-1 max-md:bg-bg max-md:border-t max-md:border-border max-md:p-4 max-md:shadow-[0_18px_48px_rgba(0,0,0,0.12)] list-none m-0 p-0">
+        <li><a href="/" class="block max-md:py-2 text-body font-medium text-[0.95rem] hover:text-accent-dark hover:no-underline">Home</a></li>
+        <li><a href="/gallery" class="block max-md:py-2 text-body font-medium text-[0.95rem] hover:text-accent-dark hover:no-underline">Gallery</a></li>
         <li>
           <details>
-            <summary class="list-none cursor-pointer flex items-center gap-1.5 text-body font-medium text-[0.95rem] py-3.5 marker:content-none [&::-webkit-details-marker]:hidden hover:text-accent-dark">
+            <summary class="list-none cursor-pointer flex items-center gap-1.5 text-body font-medium text-[0.95rem] py-3.5 max-md:py-2 marker:content-none [&::-webkit-details-marker]:hidden hover:text-accent-dark">
               <span>Categories</span>
               <span class="text-[0.6rem] text-muted">&#9662;</span>
             </summary>
-            <div class="absolute top-full right-0 w-[min(640px,calc(100vw-40px))] bg-bg border border-border rounded shadow-[0_18px_48px_rgba(0,0,0,0.12)] p-4 grid grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-0.5 z-40">
+            <div class="absolute top-full right-0 w-[min(640px,calc(100vw-40px))] bg-bg border border-border rounded shadow-[0_18px_48px_rgba(0,0,0,0.12)] p-4 grid grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-0.5 z-40 max-md:static max-md:w-full max-md:border-0 max-md:shadow-none max-md:p-0 max-md:mt-1">
               {categoryCounts.map((cat) => (
                 <a href={`/category/${cat.slug}`} class="block p-3 rounded-xl hover:bg-bg-alt hover:no-underline hover:translate-x-1 transition-transform">
                   <span class="flex items-baseline gap-1.5 text-[0.9rem] font-semibold text-ink">
@@ -35,7 +46,7 @@ const categoryCounts = categories.map((cat) => ({
             </div>
           </details>
         </li>
-        <li><a href="https://spraygunner.com/?utm_source=airbrushlearn&utm_medium=nav" target="_blank" rel="noopener" class="text-body font-medium text-[0.95rem] hover:text-accent-dark hover:no-underline">Shop SprayGunner</a></li>
+        <li><a href="https://spraygunner.com/?utm_source=airbrushlearn&utm_medium=nav" target="_blank" rel="noopener" class="block max-md:py-2 text-body font-medium text-[0.95rem] hover:text-accent-dark hover:no-underline">Shop SprayGunner</a></li>
       </ul>
     </nav>
   </div>

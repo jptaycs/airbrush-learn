@@ -68,6 +68,56 @@
     });
   }
 
+  // --- Mobile nav toggle ---
+  const mobileToggle = document.querySelector('[data-mobile-nav-toggle]');
+  const mobileNav = document.querySelector('[data-mobile-nav]');
+  if (mobileToggle && mobileNav) {
+    const menuIcon = mobileToggle.querySelector('[data-menu-icon]');
+    const closeIcon = mobileToggle.querySelector('[data-close-icon]');
+
+    const closeMobileNav = () => {
+      if (mobileToggle.getAttribute('aria-expanded') !== 'true') return;
+      mobileToggle.setAttribute('aria-expanded', 'false');
+      menuIcon?.classList.remove('hidden');
+      closeIcon?.classList.add('hidden');
+      mobileNav.classList.add('menu-panel-closing');
+      mobileNav.classList.remove('menu-panel-open');
+      const finish = () => {
+        mobileNav.classList.remove('flex', 'menu-panel-closing');
+        mobileNav.classList.add('hidden');
+      };
+      if (reduceMotion) finish();
+      else setTimeout(finish, 150);
+    };
+
+    const openMobileNav = () => {
+      mobileToggle.setAttribute('aria-expanded', 'true');
+      menuIcon?.classList.add('hidden');
+      closeIcon?.classList.remove('hidden');
+      mobileNav.classList.remove('hidden', 'menu-panel-closing');
+      mobileNav.classList.add('flex', 'menu-panel-open');
+    };
+
+    mobileToggle.addEventListener('click', () => {
+      if (mobileToggle.getAttribute('aria-expanded') === 'true') closeMobileNav();
+      else openMobileNav();
+    });
+
+    mobileNav.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMobileNav));
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('header')) closeMobileNav();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeMobileNav();
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 768) closeMobileNav();
+    });
+  }
+
   // --- Category carousels ---
   document.querySelectorAll('[data-carousel]').forEach((root) => {
     const track = root.querySelector('[data-carousel-track]');
