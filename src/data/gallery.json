@@ -1,0 +1,72 @@
+[
+  {
+    "slug": "custom-painted-gibson-j200-guitar",
+    "title": "Custom Painted Gibson J-200 Guitar",
+    "category": "guitars",
+    "image": "guitars.jpg",
+    "credit": "Photo via Wikimedia Commons"
+  },
+  {
+    "slug": "airbrush-street-art-mural",
+    "title": "Airbrush Street Art Mural",
+    "category": "murals",
+    "image": "murals.jpg",
+    "credit": "Photo via Wikimedia Commons"
+  },
+  {
+    "slug": "airbrush-nail-art-design",
+    "title": "Airbrush Nail Art Design",
+    "category": "nail-art",
+    "image": "nail-art.jpg",
+    "credit": "Photo via Wikimedia Commons"
+  },
+  {
+    "slug": "custom-racing-helmet-graphics",
+    "title": "Custom Racing Helmet Graphics",
+    "category": "helmets",
+    "image": "helmets.jpg",
+    "credit": "Photo via Wikimedia Commons"
+  },
+  {
+    "slug": "custom-skateboard-deck-art",
+    "title": "Custom Skateboard Deck Art",
+    "category": "skateboards",
+    "image": "skateboards.jpg",
+    "credit": "Photo via Wikimedia Commons"
+  },
+  {
+    "slug": "custom-painted-diecast-muscle-cars",
+    "title": "Custom Painted Diecast Muscle Cars",
+    "category": "diecast-cars",
+    "image": "diecast-cars.jpg",
+    "credit": "Photo via Wikimedia Commons"
+  },
+  {
+    "slug": "hand-painted-toy-soldier",
+    "title": "Hand-Painted Toy Soldier",
+    "category": "toy-soldiers",
+    "image": "toy-soldiers.jpg",
+    "credit": "Photo via Wikimedia Commons"
+  },
+  {
+    "slug": "hand-painted-sawantwadi-wooden-toys",
+    "title": "Hand-Painted Sawantwadi Wooden Toys",
+    "category": "wooden-toys",
+    "image": "wooden-toys.jpg",
+    "credit": "Photo via Wikimedia Commons"
+  },
+  {
+    "slug": "hand-painted-matryoshka-nesting-dolls",
+    "title": "Hand-Painted Matryoshka Nesting Dolls",
+    "category": "nesting-dolls",
+    "image": "nesting-dolls.jpg",
+    "credit": "Photo via Wikimedia Commons"
+  },
+  {
+    "slug": "hand-painted-carousel-figure",
+    "title": "Hand-Painted Carousel Figure",
+    "category": "carousel-figures",
+    "image": "carousel-figures.jpg",
+    "credit": "Photo via Wikimedia Commons"
+  }
+]
