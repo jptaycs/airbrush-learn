@@ -7,7 +7,8 @@
     "subjects": ["miniatures", "cosplay", "nail-art"],
     "experience": ["beginner", "intermediate"],
     "blurb": "Forgiving trigger control, a solid first gravity-feed airbrush.",
-    "url": "https://spraygunner.com/?utm_source=airbrushlearn&utm_medium=gear-advisor"
+    "url": "https://spraygunner.com/?utm_source=airbrushlearn&utm_medium=gear-advisor",
+    "image": null
   },
   {
     "name": "Compact Studio Compressor (placeholder — swap for real SprayGunner pick)",
@@ -16,7 +17,8 @@
     "budgetTier": "budget",
     "experience": ["beginner", "intermediate", "advanced"],
     "blurb": "Quiet, consistent pressure for a home studio setup.",
-    "url": "https://spraygunner.com/?utm_source=airbrushlearn&utm_medium=gear-advisor"
+    "url": "https://spraygunner.com/?utm_source=airbrushlearn&utm_medium=gear-advisor",
+    "image": null
   },
   {
     "name": "Airbrush Cleaning Kit (placeholder — swap for real SprayGunner pick)",
@@ -25,6 +27,7 @@
     "budgetTier": "budget",
     "experience": ["beginner", "intermediate", "advanced"],
     "blurb": "Brushes, pot, and solution to keep your airbrush spraying clean.",
-    "url": "https://spraygunner.com/?utm_source=airbrushlearn&utm_medium=gear-advisor"
+    "url": "https://spraygunner.com/?utm_source=airbrushlearn&utm_medium=gear-advisor",
+    "image": null
   }
 ]
