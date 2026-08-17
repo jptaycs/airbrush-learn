@@ -26,7 +26,7 @@ export default async (req) => {
     return new Response('Missing id', { status: 400 });
   }
 
-  const store = getStore('gallery-pending');
+  const store = getStore({ name: 'gallery-pending', consistency: 'strong' });
   const meta = await store.get(`${id}/meta`, { type: 'json' });
   const imageBuffer = await store.get(`${id}/image`, { type: 'arrayBuffer' });
   if (!meta || !imageBuffer) {

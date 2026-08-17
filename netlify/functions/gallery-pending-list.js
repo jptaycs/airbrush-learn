@@ -5,11 +5,12 @@ export default async (req) => {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  const store = getStore('gallery-pending');
+  const store = getStore({ name: 'gallery-pending', consistency: 'strong' });
   const index = (await store.get('index', { type: 'json' })) || [];
 
+  const MAX_RETURNED = 10;
   const submissions = [];
-  for (const id of index) {
+  for (const id of index.slice(0, MAX_RETURNED)) {
     const meta = await store.get(`${id}/meta`, { type: 'json' });
     if (!meta) continue;
     const imageBuffer = await store.get(`${id}/image`, { type: 'arrayBuffer' });

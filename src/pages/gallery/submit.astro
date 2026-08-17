@@ -39,12 +39,16 @@ import { galleryCategories } from '../../data/galleryCategories.js';
         <label class="block">
           <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Image</span>
           <input type="file" name="image" accept="image/jpeg,image/png,image/webp" required class="w-full rounded-lg border border-border px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow" />
-          <span class="block text-[0.75rem] text-muted mt-1">JPEG, PNG, or WebP. Max 8MB.</span>
+          <span class="block text-[0.75rem] text-muted mt-1">JPEG, PNG, or WebP. Max 4MB.</span>
         </label>
         <label class="flex items-start gap-2.5 text-[0.85rem]">
           <input type="checkbox" name="rights" required class="mt-0.5" />
           <span>I made this piece myself and have the right to share it here.</span>
         </label>
+
+        <p class="text-[0.75rem] text-muted text-center">
+          By submitting, you agree to our <a href="/terms-of-use" class="underline hover:text-accent-dark">Terms of Use</a> and <a href="/privacy-policy" class="underline hover:text-accent-dark">Privacy Policy</a>.
+        </p>
 
         <div class="absolute -left-[9999px]" aria-hidden="true">
           <label for="submit-website">Website</label>

@@ -1,12 +1,10 @@
 import { getStore } from '@netlify/blobs';
+import { galleryCategories } from '../../src/data/galleryCategories.js';
 
-const VALID_DISCIPLINES = [
-  'automotive', 'fine-art', 'miniatures', 'cosplay', 'fabric', 'scale-models',
-  'body-art', 'guitars', 'murals', 'nail-art', 'helmets', 'skateboards',
-  'diecast-cars', 'toy-soldiers', 'wooden-toys', 'nesting-dolls', 'carousel-figures',
-];
+const VALID_DISCIPLINES = galleryCategories.map((c) => c.slug);
 const VALID_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-const MAX_SIZE = 8 * 1024 * 1024;
+const MAX_SIZE = 4 * 1024 * 1024;
+const MAX_PENDING = 50;
 
 const okResponse = () =>
   new Response(JSON.stringify({ ok: true, message: 'Thanks — your submission is under review.' }), {
@@ -47,11 +45,17 @@ export default async (req) => {
     return errorResponse('Image must be JPEG, PNG, or WebP.', 400);
   }
   if (image.size > MAX_SIZE) {
-    return errorResponse('Image must be 8MB or smaller.', 400);
+    return errorResponse('Image must be 4MB or smaller.', 400);
+  }
+
+  const store = getStore({ name: 'gallery-pending', consistency: 'strong' });
+
+  const existingIndex = (await store.get('index', { type: 'json' })) || [];
+  if (existingIndex.length >= MAX_PENDING) {
+    return errorResponse('The review queue is currently full. Please try again later.', 429);
   }
 
   const id = crypto.randomUUID();
-  const store = getStore('gallery-pending');
   const imageBuffer = await image.arrayBuffer();
 
   await store.set(`${id}/image`, imageBuffer);

@@ -10,7 +10,7 @@ export default async (req) => {
     return new Response('Missing id', { status: 400 });
   }
 
-  const store = getStore('gallery-pending');
+  const store = getStore({ name: 'gallery-pending', consistency: 'strong' });
   await store.delete(`${id}/meta`);
   await store.delete(`${id}/image`);
   const index = (await store.get('index', { type: 'json' })) || [];
