@@ -11,6 +11,11 @@ const categorySlugsWithPublishedArticles = new Set(
   articles.filter((a) => a.status !== 'draft').map((a) => a.category)
 );
 
+const gallery = JSON.parse(
+  readFileSync(fileURLToPath(new URL('./src/data/gallery.json', import.meta.url)), 'utf-8')
+);
+const gallerySlugsWithPieces = new Set(gallery.map((p) => p.category));
+
 export default defineConfig({
   site: 'https://airbrush.gallery',
   integrations: [
@@ -28,6 +33,11 @@ export default defineConfig({
 
         const catMatch = path.match(/^\/category\/([^/]+)\/?$/);
         if (catMatch && !categorySlugsWithPublishedArticles.has(catMatch[1])) {
+          return false;
+        }
+
+        const galleryCatMatch = path.match(/^\/gallery\/([^/]+)\/?$/);
+        if (galleryCatMatch && !gallerySlugsWithPieces.has(galleryCatMatch[1])) {
           return false;
         }
 
