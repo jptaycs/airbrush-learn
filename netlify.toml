@@ -2,6 +2,9 @@
   command = "astro build"
   publish = "dist"
 
+[functions]
+  directory = "netlify/functions"
+
 # There is no prebuild fetch step. The n8n content pipeline commits finished
 # articles (src/data/articles.json) and their hero images (public/images/) directly
 # to this repo via the GitHub API as its last step, so by the time a build runs,

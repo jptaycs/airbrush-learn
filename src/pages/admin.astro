@@ -1,0 +1,278 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { categories } from '../data/categories.js';
+---
+<BaseLayout
+  title="Admin — Airbrush Learn"
+  description="Article management"
+  canonicalPath="/admin"
+  noindex={true}
+>
+  <section class="mx-auto max-w-wide px-5 py-12">
+    <h1 class="font-serif text-ink text-[1.8rem] mb-8">Article Admin</h1>
+
+    <div data-login-panel>
+      <label class="block text-[0.85rem] text-muted mb-2" for="admin-password">Password</label>
+      <div class="flex gap-2 max-w-sm">
+        <input id="admin-password" type="password" class="flex-1 rounded border border-border px-3 py-2" />
+        <button type="button" data-login-btn class="rounded bg-accent text-white px-4 py-2 font-semibold hover:opacity-90">Log in</button>
+      </div>
+      <p data-login-error class="hidden text-red-600 text-[0.85rem] mt-2"></p>
+    </div>
+
+    <div data-admin-panel class="hidden">
+      <div class="flex items-center justify-between mb-6">
+        <p data-status-msg class="text-[0.85rem] text-muted"></p>
+        <button type="button" data-refresh-btn class="text-[0.85rem] text-accent-dark font-semibold hover:underline">Refresh</button>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-[0.9rem] border-collapse">
+          <thead>
+            <tr class="border-b border-border text-muted text-[0.75rem] uppercase tracking-wide">
+              <th class="py-2 pr-4">Title</th>
+              <th class="py-2 pr-4">Status</th>
+              <th class="py-2 pr-4">Category</th>
+              <th class="py-2 pr-4">Date</th>
+              <th class="py-2 pr-4">Actions</th>
+            </tr>
+          </thead>
+          <tbody data-article-rows></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div data-edit-panel class="hidden mt-10 border-t border-border pt-8">
+      <h2 class="font-serif text-ink text-[1.3rem] mb-4">Edit article</h2>
+      <form data-edit-form class="grid gap-4 max-w-2xl">
+        <input type="hidden" data-field="slug" />
+        <label class="block">
+          <span class="block text-[0.8rem] text-muted mb-1">Title</span>
+          <input type="text" data-field="title" class="w-full rounded border border-border px-3 py-2" required />
+        </label>
+        <label class="block">
+          <span class="block text-[0.8rem] text-muted mb-1">Excerpt</span>
+          <textarea data-field="excerpt" rows="2" class="w-full rounded border border-border px-3 py-2"></textarea>
+        </label>
+        <label class="block">
+          <span class="block text-[0.8rem] text-muted mb-1">Published date</span>
+          <input type="date" data-field="published_date" class="w-full rounded border border-border px-3 py-2" />
+        </label>
+        <label class="block">
+          <span class="block text-[0.8rem] text-muted mb-1">Category</span>
+          <select data-field="category" class="w-full rounded border border-border px-3 py-2">
+            {categories.map((c) => <option value={c.slug}>{c.label}</option>)}
+          </select>
+        </label>
+        <label class="block">
+          <span class="block text-[0.8rem] text-muted mb-1">Status</span>
+          <select data-field="status" class="w-full rounded border border-border px-3 py-2">
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+          </select>
+        </label>
+        <label class="block">
+          <span class="block text-[0.8rem] text-muted mb-1">Body (raw HTML)</span>
+          <textarea data-field="content_html" rows="14" class="w-full rounded border border-border px-3 py-2 font-mono text-[0.8rem]"></textarea>
+        </label>
+        <div class="flex gap-3">
+          <button type="submit" class="rounded bg-accent text-white px-5 py-2.5 font-semibold hover:opacity-90">Save</button>
+          <button type="button" data-cancel-edit class="rounded border border-border px-5 py-2.5 font-semibold hover:bg-bg-alt">Cancel</button>
+        </div>
+        <p data-edit-error class="hidden text-red-600 text-[0.85rem]"></p>
+      </form>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const PASSWORD_KEY = 'admin_password';
+  const loginPanel = document.querySelector('[data-login-panel]');
+  const adminPanel = document.querySelector('[data-admin-panel]');
+  const editPanel = document.querySelector('[data-edit-panel]');
+  const passwordInput = document.getElementById('admin-password');
+  const loginBtn = document.querySelector('[data-login-btn]');
+  const loginError = document.querySelector('[data-login-error]');
+  const statusMsg = document.querySelector('[data-status-msg]');
+  const refreshBtn = document.querySelector('[data-refresh-btn]');
+  const rowsBody = document.querySelector('[data-article-rows]');
+  const editForm = document.querySelector('[data-edit-form]');
+  const editError = document.querySelector('[data-edit-error]');
+  const cancelEditBtn = document.querySelector('[data-cancel-edit]');
+
+  let currentSha = null;
+  let currentArticles = [];
+
+  const getPassword = () => sessionStorage.getItem(PASSWORD_KEY) || '';
+
+  const api = async (path, options = {}) => {
+    return fetch(`/.netlify/functions/${path}`, {
+      ...options,
+      headers: {
+        'x-admin-password': getPassword(),
+        'content-type': 'application/json',
+        ...(options.headers || {}),
+      },
+    });
+  };
+
+  const escapeHtml = (str) =>
+    String(str ?? '').replace(/[&<>"']/g, (c) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;',
+    }[c]));
+
+  const renderRows = () => {
+    rowsBody.innerHTML = currentArticles
+      .map(
+        (a) => `
+        <tr class="border-b border-border/60">
+          <td class="py-2 pr-4">${escapeHtml(a.title)}</td>
+          <td class="py-2 pr-4">
+            <span class="text-[0.7rem] font-semibold uppercase px-2 py-0.5 rounded-full ${a.status === 'draft' ? 'bg-bg-alt text-muted' : 'bg-accent/10 text-accent-dark'}">${a.status === 'draft' ? 'Draft' : 'Published'}</span>
+          </td>
+          <td class="py-2 pr-4">${escapeHtml(a.category || '')}</td>
+          <td class="py-2 pr-4">${escapeHtml(a.published_date || '')}</td>
+          <td class="py-2 pr-4 whitespace-nowrap">
+            <button type="button" data-edit="${escapeHtml(a.slug)}" class="text-accent-dark font-semibold hover:underline mr-3">Edit</button>
+            <button type="button" data-toggle="${escapeHtml(a.slug)}" class="text-accent-dark font-semibold hover:underline mr-3">${a.status === 'draft' ? 'Publish' : 'Unpublish'}</button>
+            <button type="button" data-delete="${escapeHtml(a.slug)}" class="text-red-600 font-semibold hover:underline">Delete</button>
+            <a href="/posts/${escapeHtml(a.slug)}" target="_blank" class="text-muted hover:underline ml-3">Preview</a>
+          </td>
+        </tr>
+      `
+      )
+      .join('');
+  };
+
+  const loadArticles = async () => {
+    statusMsg.textContent = 'Loading…';
+    const res = await api('admin-list');
+    if (!res.ok) {
+      statusMsg.textContent = 'Failed to load articles.';
+      return false;
+    }
+    const data = await res.json();
+    currentArticles = data.articles;
+    currentSha = data.sha;
+    statusMsg.textContent = `${currentArticles.length} article(s)`;
+    renderRows();
+    return true;
+  };
+
+  loginBtn.addEventListener('click', async () => {
+    sessionStorage.setItem(PASSWORD_KEY, passwordInput.value);
+    const res = await api('admin-list');
+    if (!res.ok) {
+      loginError.textContent = 'Wrong password.';
+      loginError.classList.remove('hidden');
+      sessionStorage.removeItem(PASSWORD_KEY);
+      return;
+    }
+    const data = await res.json();
+    currentArticles = data.articles;
+    currentSha = data.sha;
+    loginError.classList.add('hidden');
+    loginPanel.classList.add('hidden');
+    adminPanel.classList.remove('hidden');
+    statusMsg.textContent = `${currentArticles.length} article(s)`;
+    renderRows();
+  });
+
+  refreshBtn.addEventListener('click', loadArticles);
+
+  const openEdit = (slug) => {
+    const article = currentArticles.find((a) => a.slug === slug);
+    if (!article) return;
+    editForm.querySelector('[data-field="slug"]').value = article.slug;
+    editForm.querySelector('[data-field="title"]').value = article.title || '';
+    editForm.querySelector('[data-field="excerpt"]').value = article.excerpt || '';
+    editForm.querySelector('[data-field="published_date"]').value = article.published_date || '';
+    editForm.querySelector('[data-field="category"]').value = article.category || '';
+    editForm.querySelector('[data-field="status"]').value = article.status === 'draft' ? 'draft' : 'published';
+    editForm.querySelector('[data-field="content_html"]').value = article.content_html || '';
+    editError.classList.add('hidden');
+    editPanel.classList.remove('hidden');
+    editPanel.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  cancelEditBtn.addEventListener('click', () => {
+    editPanel.classList.add('hidden');
+  });
+
+  rowsBody.addEventListener('click', async (e) => {
+    const editSlug = e.target.closest('[data-edit]')?.dataset.edit;
+    const toggleSlug = e.target.closest('[data-toggle]')?.dataset.toggle;
+    const deleteSlug = e.target.closest('[data-delete]')?.dataset.delete;
+
+    if (editSlug) {
+      openEdit(editSlug);
+      return;
+    }
+
+    if (toggleSlug) {
+      const article = currentArticles.find((a) => a.slug === toggleSlug);
+      if (!article) return;
+      const updated = { ...article, status: article.status === 'draft' ? 'published' : 'draft' };
+      statusMsg.textContent = 'Saving…';
+      const res = await api('admin-save', { method: 'POST', body: JSON.stringify({ article: updated, sha: currentSha }) });
+      if (!res.ok) {
+        statusMsg.textContent = await res.text();
+        return;
+      }
+      await loadArticles();
+      return;
+    }
+
+    if (deleteSlug) {
+      if (!confirm(`Delete "${deleteSlug}"? This cannot be undone from here (use git revert to recover).`)) return;
+      statusMsg.textContent = 'Deleting…';
+      const res = await api('admin-delete', { method: 'POST', body: JSON.stringify({ slug: deleteSlug, sha: currentSha }) });
+      if (!res.ok) {
+        statusMsg.textContent = await res.text();
+        return;
+      }
+      await loadArticles();
+    }
+  });
+
+  editForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const slug = editForm.querySelector('[data-field="slug"]').value;
+    const original = currentArticles.find((a) => a.slug === slug) || {};
+    const newPublishedDate = editForm.querySelector('[data-field="published_date"]').value;
+    const newCategory = editForm.querySelector('[data-field="category"]').value;
+    const article = {
+      slug,
+      title: editForm.querySelector('[data-field="title"]').value,
+      excerpt: editForm.querySelector('[data-field="excerpt"]').value,
+      published_date: newPublishedDate || original.published_date,
+      category: newCategory || original.category,
+      status: editForm.querySelector('[data-field="status"]').value,
+      content_html: editForm.querySelector('[data-field="content_html"]').value,
+    };
+    const merged = { ...original, ...article };
+
+    const res = await api('admin-save', { method: 'POST', body: JSON.stringify({ article: merged, sha: currentSha }) });
+    if (!res.ok) {
+      editError.textContent = await res.text();
+      editError.classList.remove('hidden');
+      return;
+    }
+    editPanel.classList.add('hidden');
+    await loadArticles();
+  });
+
+  if (getPassword()) {
+    loadArticles().then((ok) => {
+      if (ok) {
+        loginPanel.classList.add('hidden');
+        adminPanel.classList.remove('hidden');
+      } else {
+        sessionStorage.removeItem(PASSWORD_KEY);
+      }
+    });
+  }
+</script>

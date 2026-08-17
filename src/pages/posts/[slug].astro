@@ -44,6 +44,7 @@ const shareItems = [
   description={article.excerpt}
   canonicalPath={`/posts/${article.slug}`}
   ogImage={`/images/${article.slug}.png`}
+  noindex={article.status === 'draft'}
 >
   <Fragment slot="head">
     <ArticleSchema

@@ -7,7 +7,8 @@ import { estimateReadMinutes } from '../lib/readTime.js';
 import articles from '../data/articles.json';
 import gallery from '../data/gallery.json';
 
-const sorted = [...articles].sort((a, b) =>
+const published = articles.filter((a) => a.status !== 'draft');
+const sorted = [...published].sort((a, b) =>
   a.published_date < b.published_date ? 1 : -1
 );
 

@@ -13,7 +13,7 @@ export async function getStaticPaths() {
 
 const { cat } = Astro.props;
 const inCategory = articles
-  .filter((a) => a.category === cat.slug)
+  .filter((a) => a.category === cat.slug && a.status !== 'draft')
   .sort((a, b) => (a.published_date < b.published_date ? 1 : -1));
 ---
 <BaseLayout
