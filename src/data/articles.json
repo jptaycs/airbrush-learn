@@ -67,7 +67,8 @@
     "image_prompt": "Editorial hero image for a blog post titled: Createx vs Badger Airbrush Paint: A Detailed Comparison. Clean, professional, conceptual workspace scene with soft natural lighting. No text, no logos, no watermarks.",
     "source_topic": "createx vs badger airbrush paint",
     "published_date": "2026-08-17",
-    "category": "reviews"
+    "category": "reviews",
+    "status": "draft"
   },
   {
     "slug": "airbrush-spitting-paint",
