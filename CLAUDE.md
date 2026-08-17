@@ -42,8 +42,9 @@ Each article object in `src/data/articles.json` has these fields:
 | `source_topic` | the target SEO keyword from the content brief; carried through for reference, not rendered anywhere |
 | `published_date` | sort order (newest first) and displayed date |
 | `category` | category badge, `/category/<slug>` archive-page membership, mega-menu counts — one of 9 fixed slugs (see `src/data/categories.js`); missing/unrecognized values are treated as uncategorized |
+| `status` | `"draft"` or `"published"`. A missing/absent field is treated as `"published"` — no migration was needed when this field was introduced. Drafts are filtered out of the homepage, category pages, and the sitemap, but still get a `noindex`'d `/posts/<slug>` page so they're directly previewable. See `/admin` below. |
 
-There's no `status` field and no filtering step — every object present in `articles.json` gets built into a page. The n8n workflow's `Publish Guard (block fallback)` node is what decides whether an article reaches the commit step at all; nothing here re-checks that.
+The n8n workflow's `Publish Guard (block fallback)` node is what decides whether an article reaches the commit step at all; nothing here re-checks that. The n8n workflow does **not** currently set `status: "draft"` on new entries (see To Do below) — until it does, every article it commits is immediately live, same as before `status` existed.
 
 If you add a new field, update it in two places: the n8n workflow's "Build Article Entry" node (where the JSON object is constructed) and wherever it should be consumed in `src/pages/`.
 
@@ -65,8 +66,10 @@ src/pages/
   gallery/[category].astro   # one page per gallery discipline, getStaticPaths() over galleryCategories.js
   terms-of-use.astro
   privacy-policy.astro       # both real pages with placeholder copy — not stubs, but not final legal text either
+  admin.astro                # password-gated article admin (list/edit/publish/delete) — noindex'd, calls netlify/functions/admin-*
 src/styles/global.css        # @tailwind directives + global resets; design tokens live in tailwind.config.mjs
 tailwind.config.mjs          # design tokens (colors, spacing, radius, fonts) — the palette lives here, not in global.css
+netlify/functions/           # admin-list.js, admin-save.js, admin-delete.js — the only code that holds the GitHub write token; see Deployment below
 public/                      # logo.png, favicon.ico, apple-touch-icon.png, robots.txt, generated /images/, /images/gallery/*.jpg
 ```
 
@@ -80,6 +83,12 @@ public/                      # logo.png, favicon.ico, apple-touch-icon.png, robo
 ## Deployment
 
 Netlify, connected to this repo. Build command `astro build`, output directory `dist` (see `netlify.toml`). No environment variables are required for the build itself. Every push to `main` — from n8n's automated commits or a manual commit — triggers a deploy; there is no manual "export" step. Domain: `airbrush.gallery` (currently WordPress; cut over only after verifying a build on the Netlify preview URL).
+
+**Runtime environment variables (required for `/admin` to work, not for the build):** set in Netlify's site settings, not this repo.
+- `GITHUB_PAT` — a GitHub Personal Access Token with write access to this repo, used only inside `netlify/functions/admin-*.js` to commit article changes via the Contents API. Never exposed client-side.
+- `ADMIN_PASSWORD` — the shared password gating `/admin`. This is the actual write-access boundary (there's no per-user auth), so it should be long and random, not memorable — treat it like the GitHub token itself, not a login password.
+
+Local testing of the functions needs a gitignored `.env` with the same two variables plus `npx netlify-cli dev` (`npm run dev` only serves the static site, not the functions).
 
 ## Known gaps / things not to assume are done
 
@@ -97,7 +106,7 @@ Netlify, connected to this repo. Build command `astro build`, output directory `
 
 - [ ] **Fix the date-sort comparator bug.** `(a, b) => a.published_date < b.published_date ? 1 : -1`, used in both `src/pages/index.astro` and `src/pages/category/[slug].astro`, returns `-1` for equal dates instead of `0`, which violates the comparator contract. Only bites once multiple articles share a `published_date`, but should be fixed — and ideally shared instead of duplicated across both files — before that happens.
 
-- [ ] **Exclude noindex'd pages from the sitemap.** `astro.config.mjs`'s `sitemap()` integration has no `filter` configured, so category/gallery pages marked `noindex` (currently any with zero articles/pieces) still get listed in `sitemap.xml` — a contradictory signal to search engines.
+- [ ] **Sitemap filter still doesn't cover gallery pages.** `astro.config.mjs`'s `sitemap()` integration now has a `filter` (added alongside the admin panel work) that excludes draft posts, empty categories, and `/admin` — but it doesn't know about `src/pages/gallery/[category].astro`, so the 7 gallery discipline pages currently marked `noindex` (zero pieces) still get listed in `sitemap.xml`. Extend the same filter to also check gallery category page paths against piece counts from `gallery.json`.
 
 - [ ] **Make the cursor spray-trail idle when the mouse stops.** The `requestAnimationFrame` loop in `PageInteractions.astro` (the fine-pointer cursor particle effect) runs indefinitely at ~60fps even once the pointer stops moving, burning CPU/battery on an idle tab.
 
@@ -107,4 +116,8 @@ Netlify, connected to this repo. Build command `astro build`, output directory `
 
 - [ ] **Get a decision on Facebook/X auto-posting.** Proposed adding a step to the end of the n8n publish pipeline to auto-post each new article to Facebook and/or X. Facebook just needs a Page + long-lived access token; X now requires a paid API tier to post (the free tier is read-only), so that half has a real ongoing cost. Awaiting a yes/no from ownership before building either side.
 
-- [ ] **Make the n8n workflow set `status: "draft"` on new articles.** An `/admin` panel (in progress as of 2026-08-17, see `docs/superpowers/specs/`) is adding a real `status: "draft" | "published"` field to `src/data/articles.json` (a missing `status` is treated as `"published"`, so existing articles are unaffected). For that panel to actually let you review an article before it goes live, the n8n workflow's "Build Article Entry" node needs to set `status: "draft"` when it commits a new entry — without that change, new articles will keep auto-publishing immediately, same as today, and the panel will only be useful for editing/unpublishing/deleting after the fact.
+- [ ] **Make the n8n workflow set `status: "draft"` on new articles.** The `/admin` panel (merged 2026-08-17, see `docs/superpowers/specs/2026-08-17-admin-panel-design.md`) added a real `status: "draft" | "published"` field to `src/data/articles.json` (a missing `status` is treated as `"published"`, so existing articles were unaffected). For the panel to actually let you review an article before it goes live, the n8n workflow's "Build Article Entry" node needs to set `status: "draft"` when it commits a new entry — without that change, new articles keep auto-publishing immediately, same as before this panel existed, and the panel is only useful for editing/unpublishing/deleting after the fact.
+
+- [ ] **Verify `/admin` against a real GitHub API round-trip before relying on it.** The panel's Netlify Functions (`netlify/functions/admin-*.js`) were built and reviewed without a real `GITHUB_PAT` available in the dev environment — build success, HTTP status codes (401/400/409/502), and client-side UI logic were all verified, but a real `admin-list` fetch of live repo data, a real `admin-save`/`admin-delete` commit landing on GitHub, and a genuine stale-`sha` 409 conflict were not. Once `GITHUB_PAT`/`ADMIN_PASSWORD` are set in Netlify, test all of this against a deploy preview before trusting it in production.
+
+- [ ] **`/admin`'s password has no rate limiting.** The shared password is the sole gate on repo write access (arbitrary commits to `main`, which auto-deploy), and nothing currently throttles guesses. Mitigated for now by using a long random password (see Deployment above), but real rate limiting (Netlify's own, or a short delay on failed attempts) would close this properly.
