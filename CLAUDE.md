@@ -60,7 +60,7 @@ src/data/categories.js       # fixed 9-category taxonomy (label/description) —
 src/data/gallery.json        # curated gallery pieces (slug/title/category/image/credit) — not from n8n
 src/data/galleryCategories.js # fixed gallery discipline taxonomy (slug/label) — separate from article categories.js
 src/lib/readTime.js          # estimateReadMinutes(html) — computed from content_html word count
-src/lib/sortArticles.js      # byPublishedDateDesc(a, b) — shared newest-first comparator for articles
+src/lib/sortArticles.js      # sortArticlesNewestFirst(articles) — shared newest-first sort; same-date ties break by array position (later = newer), since published_date has no time component
 src/layouts/BaseLayout.astro # <head>, SEO/OG meta, header, footer — every page uses this
 src/components/              # Header, Footer, ArticleCard, ArticleSchema (JSON-LD), GalleryGrid
 src/pages/
