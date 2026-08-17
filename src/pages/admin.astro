@@ -167,7 +167,7 @@ import { categories } from '../data/categories.js';
       .map(
         (s) => `
         <div class="rounded-xl border border-border overflow-hidden">
-          <img src="${s.imageDataUrl}" alt="${escapeHtml(s.title)}" class="w-full aspect-[4/3] object-cover" />
+          <img src="${escapeHtml(s.imageDataUrl)}" alt="${escapeHtml(s.title)}" class="w-full aspect-[4/3] object-cover" />
           <div class="p-4">
             <h3 class="font-serif text-ink text-[1rem] truncate" title="${escapeHtml(s.title)}">${escapeHtml(s.title)}</h3>
             <p class="text-muted text-[0.8rem] mt-1">${escapeHtml(s.artistName)} &middot; ${escapeHtml(s.discipline)}</p>
