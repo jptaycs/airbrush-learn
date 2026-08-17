@@ -28,66 +28,75 @@ import { categories } from '../data/categories.js';
     </div>
 
     <div data-admin-panel class="hidden">
-      <h1 class="font-serif text-ink text-[1.8rem] mb-8">Article Admin</h1>
-      <div class="flex items-center justify-between mb-6">
-        <p data-status-msg class="text-[0.85rem] text-muted"></p>
-        <button type="button" data-refresh-btn class="text-[0.85rem] text-accent-dark font-semibold hover:underline">Refresh</button>
+      <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
+        <div>
+          <h1 class="font-serif text-ink text-[1.8rem]">Article Admin</h1>
+          <p data-status-msg class="text-muted text-[0.85rem] mt-1"></p>
+        </div>
+        <button type="button" data-refresh-btn class="inline-flex items-center gap-1.5 rounded-full border border-border text-ink px-4 py-2 text-[0.85rem] font-semibold hover:bg-bg-alt transition-colors">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+          Refresh
+        </button>
       </div>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-[0.9rem] border-collapse">
-          <thead>
-            <tr class="border-b border-border text-muted text-[0.75rem] uppercase tracking-wide">
-              <th class="py-2 pr-4">Title</th>
-              <th class="py-2 pr-4">Status</th>
-              <th class="py-2 pr-4">Category</th>
-              <th class="py-2 pr-4">Date</th>
-              <th class="py-2 pr-4">Actions</th>
-            </tr>
-          </thead>
-          <tbody data-article-rows></tbody>
-        </table>
+      <div class="rounded-xl border border-border overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-[0.88rem] border-collapse">
+            <thead>
+              <tr class="bg-bg-alt text-muted text-[0.72rem] uppercase tracking-wide">
+                <th class="py-3 px-4 font-semibold">Title</th>
+                <th class="py-3 px-4 font-semibold">Status</th>
+                <th class="py-3 px-4 font-semibold">Category</th>
+                <th class="py-3 px-4 font-semibold">Date</th>
+                <th class="py-3 px-4 font-semibold">Actions</th>
+              </tr>
+            </thead>
+            <tbody data-article-rows></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
-    <div data-edit-panel class="hidden mt-10 border-t border-border pt-8">
-      <h2 class="font-serif text-ink text-[1.3rem] mb-4">Edit article</h2>
-      <form data-edit-form class="grid gap-4 max-w-2xl">
-        <input type="hidden" data-field="slug" />
-        <label class="block">
-          <span class="block text-[0.8rem] text-muted mb-1">Title</span>
-          <input type="text" data-field="title" class="w-full rounded border border-border px-3 py-2" required />
-        </label>
-        <label class="block">
-          <span class="block text-[0.8rem] text-muted mb-1">Excerpt</span>
-          <textarea data-field="excerpt" rows="2" class="w-full rounded border border-border px-3 py-2"></textarea>
-        </label>
-        <label class="block">
-          <span class="block text-[0.8rem] text-muted mb-1">Published date</span>
-          <input type="date" data-field="published_date" class="w-full rounded border border-border px-3 py-2" />
-        </label>
-        <label class="block">
-          <span class="block text-[0.8rem] text-muted mb-1">Category</span>
-          <select data-field="category" class="w-full rounded border border-border px-3 py-2">
-            {categories.map((c) => <option value={c.slug}>{c.label}</option>)}
-          </select>
-        </label>
-        <label class="block">
-          <span class="block text-[0.8rem] text-muted mb-1">Status</span>
-          <select data-field="status" class="w-full rounded border border-border px-3 py-2">
-            <option value="published">Published</option>
-            <option value="draft">Draft</option>
-          </select>
-        </label>
-        <label class="block">
-          <span class="block text-[0.8rem] text-muted mb-1">Body (raw HTML)</span>
-          <textarea data-field="content_html" rows="14" class="w-full rounded border border-border px-3 py-2 font-mono text-[0.8rem]"></textarea>
-        </label>
-        <div class="flex gap-3">
-          <button type="submit" class="rounded bg-accent text-white px-5 py-2.5 font-semibold hover:opacity-90">Save</button>
-          <button type="button" data-cancel-edit class="rounded border border-border px-5 py-2.5 font-semibold hover:bg-bg-alt">Cancel</button>
-        </div>
-        <p data-edit-error class="hidden text-red-600 text-[0.85rem]"></p>
-      </form>
+    <div data-edit-panel class="hidden mt-10">
+      <div class="rounded-xl border border-border bg-bg-alt/40 p-6 sm:p-8">
+        <h2 class="font-serif text-ink text-[1.3rem] mb-6">Edit article</h2>
+        <form data-edit-form class="grid gap-5 max-w-2xl">
+          <input type="hidden" data-field="slug" />
+          <label class="block">
+            <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Title</span>
+            <input type="text" data-field="title" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow" required />
+          </label>
+          <label class="block">
+            <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Excerpt</span>
+            <textarea data-field="excerpt" rows="2" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow"></textarea>
+          </label>
+          <label class="block">
+            <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Published date</span>
+            <input type="date" data-field="published_date" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow" />
+          </label>
+          <label class="block">
+            <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Category</span>
+            <select data-field="category" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow">
+              {categories.map((c) => <option value={c.slug}>{c.label}</option>)}
+            </select>
+          </label>
+          <label class="block">
+            <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Status</span>
+            <select data-field="status" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow">
+              <option value="published">Published</option>
+              <option value="draft">Draft</option>
+            </select>
+          </label>
+          <label class="block">
+            <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Body (raw HTML)</span>
+            <textarea data-field="content_html" rows="14" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 font-mono text-[0.8rem] focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow"></textarea>
+          </label>
+          <div class="flex gap-3">
+            <button type="submit" class="rounded-full bg-accent text-white px-5 py-2.5 font-semibold hover:opacity-90 transition-opacity">Save</button>
+            <button type="button" data-cancel-edit class="rounded-full border border-border px-5 py-2.5 font-semibold hover:bg-bg transition-colors">Cancel</button>
+          </div>
+          <p data-edit-error class="hidden text-red-600 text-[0.85rem]"></p>
+        </form>
+      </div>
     </div>
   </section>
 </BaseLayout>
@@ -133,21 +142,31 @@ import { categories } from '../data/categories.js';
     }[c]));
 
   const renderRows = () => {
+    if (currentArticles.length === 0) {
+      rowsBody.innerHTML = `
+        <tr>
+          <td colspan="5" class="py-12 text-center text-muted">No articles yet.</td>
+        </tr>
+      `;
+      return;
+    }
     rowsBody.innerHTML = currentArticles
       .map(
         (a) => `
-        <tr class="border-b border-border/60">
-          <td class="py-2 pr-4">${escapeHtml(a.title)}</td>
-          <td class="py-2 pr-4">
+        <tr class="border-t border-border hover:bg-bg-alt/60 transition-colors">
+          <td class="py-3 px-4 max-w-[280px] truncate" title="${escapeHtml(a.title)}">${escapeHtml(a.title)}</td>
+          <td class="py-3 px-4">
             <span class="text-[0.7rem] font-semibold uppercase px-2 py-0.5 rounded-full ${a.status === 'draft' ? 'bg-bg-alt text-muted' : 'bg-accent/10 text-accent-dark'}">${a.status === 'draft' ? 'Draft' : 'Published'}</span>
           </td>
-          <td class="py-2 pr-4">${escapeHtml(a.category || '')}</td>
-          <td class="py-2 pr-4">${escapeHtml(a.published_date || '')}</td>
-          <td class="py-2 pr-4 whitespace-nowrap">
-            <button type="button" data-edit="${escapeHtml(a.slug)}" class="text-accent-dark font-semibold hover:underline mr-3">Edit</button>
-            <button type="button" data-toggle="${escapeHtml(a.slug)}" class="text-accent-dark font-semibold hover:underline mr-3">${a.status === 'draft' ? 'Publish' : 'Unpublish'}</button>
-            <button type="button" data-delete="${escapeHtml(a.slug)}" class="text-red-600 font-semibold hover:underline">Delete</button>
-            <a href="/posts/${escapeHtml(a.slug)}" target="_blank" class="text-muted hover:underline ml-3">Preview</a>
+          <td class="py-3 px-4 text-muted">${escapeHtml(a.category || '—')}</td>
+          <td class="py-3 px-4 text-muted whitespace-nowrap">${escapeHtml(a.published_date || '—')}</td>
+          <td class="py-3 px-4">
+            <div class="flex flex-wrap items-center gap-1.5">
+              <button type="button" data-edit="${escapeHtml(a.slug)}" class="rounded-full border border-border px-2.5 py-1 text-[0.78rem] font-semibold text-ink hover:bg-bg-alt transition-colors">Edit</button>
+              <button type="button" data-toggle="${escapeHtml(a.slug)}" class="rounded-full border border-border px-2.5 py-1 text-[0.78rem] font-semibold text-accent-dark hover:bg-accent/10 transition-colors">${a.status === 'draft' ? 'Publish' : 'Unpublish'}</button>
+              <a href="/posts/${escapeHtml(a.slug)}" target="_blank" class="rounded-full border border-border px-2.5 py-1 text-[0.78rem] font-semibold text-ink hover:bg-bg-alt transition-colors">Preview</a>
+              <button type="button" data-delete="${escapeHtml(a.slug)}" class="rounded-full border border-red-200 px-2.5 py-1 text-[0.78rem] font-semibold text-red-600 hover:bg-red-50 transition-colors">Delete</button>
+            </div>
           </td>
         </tr>
       `
