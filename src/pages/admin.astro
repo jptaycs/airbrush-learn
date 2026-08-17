@@ -28,9 +28,9 @@ import { categories } from '../data/categories.js';
     </div>
 
     <div data-admin-panel class="hidden">
-      <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
+      <div class="flex flex-wrap items-end justify-between gap-4 mb-6">
         <div>
-          <h1 class="font-serif text-ink text-[1.8rem]">Article Admin</h1>
+          <h1 class="font-serif text-ink text-[1.8rem]">Admin</h1>
           <p data-status-msg class="text-muted text-[0.85rem] mt-1"></p>
         </div>
         <button type="button" data-refresh-btn class="inline-flex items-center gap-1.5 rounded-full border border-border text-ink px-4 py-2 text-[0.85rem] font-semibold hover:bg-bg-alt transition-colors">
@@ -38,21 +38,33 @@ import { categories } from '../data/categories.js';
           Refresh
         </button>
       </div>
-      <div class="rounded-xl border border-border overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-[0.88rem] border-collapse">
-            <thead>
-              <tr class="bg-bg-alt text-muted text-[0.72rem] uppercase tracking-wide">
-                <th class="py-3 px-4 font-semibold">Title</th>
-                <th class="py-3 px-4 font-semibold">Status</th>
-                <th class="py-3 px-4 font-semibold">Category</th>
-                <th class="py-3 px-4 font-semibold">Date</th>
-                <th class="py-3 px-4 font-semibold">Actions</th>
-              </tr>
-            </thead>
-            <tbody data-article-rows></tbody>
-          </table>
+
+      <div class="flex gap-2 mb-6 border-b border-border">
+        <button type="button" data-tab-btn="articles" class="px-4 py-2.5 text-[0.9rem] font-semibold border-b-2 border-accent text-accent-dark">Articles</button>
+        <button type="button" data-tab-btn="gallery" class="px-4 py-2.5 text-[0.9rem] font-semibold border-b-2 border-transparent text-muted hover:text-ink">Gallery Submissions</button>
+      </div>
+
+      <div data-tab-panel="articles">
+        <div class="rounded-xl border border-border overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-[0.88rem] border-collapse">
+              <thead>
+                <tr class="bg-bg-alt text-muted text-[0.72rem] uppercase tracking-wide">
+                  <th class="py-3 px-4 font-semibold">Title</th>
+                  <th class="py-3 px-4 font-semibold">Status</th>
+                  <th class="py-3 px-4 font-semibold">Category</th>
+                  <th class="py-3 px-4 font-semibold">Date</th>
+                  <th class="py-3 px-4 font-semibold">Actions</th>
+                </tr>
+              </thead>
+              <tbody data-article-rows></tbody>
+            </table>
+          </div>
         </div>
+      </div>
+
+      <div data-tab-panel="gallery" class="hidden">
+        <div data-gallery-rows class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-5"></div>
       </div>
     </div>
 
@@ -115,6 +127,9 @@ import { categories } from '../data/categories.js';
   const editForm = document.querySelector('[data-edit-form]');
   const editError = document.querySelector('[data-edit-error]');
   const cancelEditBtn = document.querySelector('[data-cancel-edit]');
+  const tabButtons = document.querySelectorAll('[data-tab-btn]');
+  const tabPanels = document.querySelectorAll('[data-tab-panel]');
+  const galleryRows = document.querySelector('[data-gallery-rows]');
 
   let currentSha = null;
   let currentArticles = [];
@@ -140,6 +155,86 @@ import { categories } from '../data/categories.js';
       '"': '&quot;',
       "'": '&#39;',
     }[c]));
+
+  let pendingSubmissions = [];
+
+  const renderGalleryRows = () => {
+    if (pendingSubmissions.length === 0) {
+      galleryRows.innerHTML = `<p class="col-span-full py-12 text-center text-muted">No pending submissions.</p>`;
+      return;
+    }
+    galleryRows.innerHTML = pendingSubmissions
+      .map(
+        (s) => `
+        <div class="rounded-xl border border-border overflow-hidden">
+          <img src="${s.imageDataUrl}" alt="${escapeHtml(s.title)}" class="w-full aspect-[4/3] object-cover" />
+          <div class="p-4">
+            <h3 class="font-serif text-ink text-[1rem] truncate" title="${escapeHtml(s.title)}">${escapeHtml(s.title)}</h3>
+            <p class="text-muted text-[0.8rem] mt-1">${escapeHtml(s.artistName)} &middot; ${escapeHtml(s.discipline)}</p>
+            <p class="text-muted text-[0.75rem] mt-0.5">${escapeHtml(s.submittedAt || '')}</p>
+            <div class="flex gap-2 mt-3">
+              <button type="button" data-approve="${escapeHtml(s.id)}" class="rounded-full bg-accent text-white px-3 py-1.5 text-[0.78rem] font-semibold hover:opacity-90 transition-opacity">Approve</button>
+              <button type="button" data-reject="${escapeHtml(s.id)}" class="rounded-full border border-red-200 text-red-600 px-3 py-1.5 text-[0.78rem] font-semibold hover:bg-red-50 transition-colors">Reject</button>
+            </div>
+          </div>
+        </div>
+      `
+      )
+      .join('');
+  };
+
+  const loadPendingSubmissions = async () => {
+    const res = await api('gallery-pending-list');
+    if (!res.ok) {
+      galleryRows.innerHTML = `<p class="col-span-full py-12 text-center text-muted">Failed to load submissions.</p>`;
+      return;
+    }
+    const data = await res.json();
+    pendingSubmissions = data.submissions;
+    renderGalleryRows();
+  };
+
+  tabButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const tab = btn.dataset.tabBtn;
+      tabButtons.forEach((b) => {
+        const active = b.dataset.tabBtn === tab;
+        b.classList.toggle('border-accent', active);
+        b.classList.toggle('text-accent-dark', active);
+        b.classList.toggle('border-transparent', !active);
+        b.classList.toggle('text-muted', !active);
+      });
+      tabPanels.forEach((p) => {
+        p.classList.toggle('hidden', p.dataset.tabPanel !== tab);
+      });
+      if (tab === 'gallery') loadPendingSubmissions();
+    });
+  });
+
+  galleryRows.addEventListener('click', async (e) => {
+    const approveId = e.target.closest('[data-approve]')?.dataset.approve;
+    const rejectId = e.target.closest('[data-reject]')?.dataset.reject;
+
+    if (approveId) {
+      const res = await api('gallery-approve', { method: 'POST', body: JSON.stringify({ id: approveId }) });
+      if (!res.ok) {
+        alert(await res.text());
+        return;
+      }
+      await loadPendingSubmissions();
+      return;
+    }
+
+    if (rejectId) {
+      if (!confirm('Reject this submission? It will be deleted and cannot be recovered from here.')) return;
+      const res = await api('gallery-reject', { method: 'POST', body: JSON.stringify({ id: rejectId }) });
+      if (!res.ok) {
+        alert(await res.text());
+        return;
+      }
+      await loadPendingSubmissions();
+    }
+  });
 
   const renderRows = () => {
     if (currentArticles.length === 0) {
