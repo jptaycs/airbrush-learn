@@ -18,6 +18,8 @@ export default defineConfig({
       filter: (page) => {
         const path = new URL(page).pathname;
 
+        if (path === '/admin' || path === '/admin/') return false;
+
         const postMatch = path.match(/^\/posts\/([^/]+)\/?$/);
         if (postMatch) {
           const article = articles.find((a) => a.slug === postMatch[1]);

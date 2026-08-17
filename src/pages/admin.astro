@@ -115,22 +115,31 @@ import { categories } from '../data/categories.js';
     });
   };
 
+  const escapeHtml = (str) =>
+    String(str ?? '').replace(/[&<>"']/g, (c) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;',
+    }[c]));
+
   const renderRows = () => {
     rowsBody.innerHTML = currentArticles
       .map(
         (a) => `
         <tr class="border-b border-border/60">
-          <td class="py-2 pr-4">${a.title}</td>
+          <td class="py-2 pr-4">${escapeHtml(a.title)}</td>
           <td class="py-2 pr-4">
             <span class="text-[0.7rem] font-semibold uppercase px-2 py-0.5 rounded-full ${a.status === 'draft' ? 'bg-bg-alt text-muted' : 'bg-accent/10 text-accent-dark'}">${a.status === 'draft' ? 'Draft' : 'Published'}</span>
           </td>
-          <td class="py-2 pr-4">${a.category || ''}</td>
-          <td class="py-2 pr-4">${a.published_date || ''}</td>
+          <td class="py-2 pr-4">${escapeHtml(a.category || '')}</td>
+          <td class="py-2 pr-4">${escapeHtml(a.published_date || '')}</td>
           <td class="py-2 pr-4 whitespace-nowrap">
-            <button type="button" data-edit="${a.slug}" class="text-accent-dark font-semibold hover:underline mr-3">Edit</button>
-            <button type="button" data-toggle="${a.slug}" class="text-accent-dark font-semibold hover:underline mr-3">${a.status === 'draft' ? 'Publish' : 'Unpublish'}</button>
-            <button type="button" data-delete="${a.slug}" class="text-red-600 font-semibold hover:underline">Delete</button>
-            <a href="/posts/${a.slug}" target="_blank" class="text-muted hover:underline ml-3">Preview</a>
+            <button type="button" data-edit="${escapeHtml(a.slug)}" class="text-accent-dark font-semibold hover:underline mr-3">Edit</button>
+            <button type="button" data-toggle="${escapeHtml(a.slug)}" class="text-accent-dark font-semibold hover:underline mr-3">${a.status === 'draft' ? 'Publish' : 'Unpublish'}</button>
+            <button type="button" data-delete="${escapeHtml(a.slug)}" class="text-red-600 font-semibold hover:underline">Delete</button>
+            <a href="/posts/${escapeHtml(a.slug)}" target="_blank" class="text-muted hover:underline ml-3">Preview</a>
           </td>
         </tr>
       `
@@ -143,13 +152,14 @@ import { categories } from '../data/categories.js';
     const res = await api('admin-list');
     if (!res.ok) {
       statusMsg.textContent = 'Failed to load articles.';
-      return;
+      return false;
     }
     const data = await res.json();
     currentArticles = data.articles;
     currentSha = data.sha;
     statusMsg.textContent = `${currentArticles.length} article(s)`;
     renderRows();
+    return true;
   };
 
   loginBtn.addEventListener('click', async () => {
@@ -230,16 +240,19 @@ import { categories } from '../data/categories.js';
 
   editForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const slug = editForm.querySelector('[data-field="slug"]').value;
+    const original = currentArticles.find((a) => a.slug === slug) || {};
+    const newPublishedDate = editForm.querySelector('[data-field="published_date"]').value;
+    const newCategory = editForm.querySelector('[data-field="category"]').value;
     const article = {
-      slug: editForm.querySelector('[data-field="slug"]').value,
+      slug,
       title: editForm.querySelector('[data-field="title"]').value,
       excerpt: editForm.querySelector('[data-field="excerpt"]').value,
-      published_date: editForm.querySelector('[data-field="published_date"]').value,
-      category: editForm.querySelector('[data-field="category"]').value,
+      published_date: newPublishedDate || original.published_date,
+      category: newCategory || original.category,
       status: editForm.querySelector('[data-field="status"]').value,
       content_html: editForm.querySelector('[data-field="content_html"]').value,
     };
-    const original = currentArticles.find((a) => a.slug === article.slug) || {};
     const merged = { ...original, ...article };
 
     const res = await api('admin-save', { method: 'POST', body: JSON.stringify({ article: merged, sha: currentSha }) });
@@ -253,9 +266,13 @@ import { categories } from '../data/categories.js';
   });
 
   if (getPassword()) {
-    loadArticles().then(() => {
-      loginPanel.classList.add('hidden');
-      adminPanel.classList.remove('hidden');
+    loadArticles().then((ok) => {
+      if (ok) {
+        loginPanel.classList.add('hidden');
+        adminPanel.classList.remove('hidden');
+      } else {
+        sessionStorage.removeItem(PASSWORD_KEY);
+      }
     });
   }
 </script>
