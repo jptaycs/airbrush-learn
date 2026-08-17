@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { galleryCategories } from '../../data/galleryCategories.js';
+---
+<BaseLayout
+  title="Submit Your Work — Airbrush Learn"
+  description="Share your airbrush art with the community gallery."
+  canonicalPath="/gallery/submit"
+>
+  <section class="mx-auto max-w-wide px-5 py-12">
+    <div class="text-[0.78rem] text-muted mb-4">
+      <a href="/" class="text-muted hover:text-accent-dark">Home</a> / <a href="/gallery" class="text-muted hover:text-accent-dark">Gallery</a> / <span class="text-body">Submit</span>
+    </div>
+    <div class="max-w-xl mx-auto">
+      <h1 class="font-serif text-ink text-[2rem] mb-2 text-center">Submit Your Work</h1>
+      <p class="text-muted text-[0.95rem] mb-8 text-center">Share a piece with the community gallery. Every submission is reviewed before it goes live.</p>
+
+      <form data-submit-form class="grid gap-5 bg-bg border border-border rounded-xl p-6 sm:p-8 relative">
+        <label class="block">
+          <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Title</span>
+          <input type="text" name="title" required class="w-full rounded-lg border border-border px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow" />
+        </label>
+        <label class="block">
+          <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Your name</span>
+          <input type="text" name="artistName" required class="w-full rounded-lg border border-border px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow" />
+        </label>
+        <label class="block">
+          <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Discipline</span>
+          <select name="discipline" required class="w-full rounded-lg border border-border px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow">
+            <option value="" disabled selected>Select one</option>
+            {galleryCategories.map((c) => <option value={c.slug}>{c.label}</option>)}
+          </select>
+        </label>
+        <label class="block">
+          <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Email</span>
+          <input type="email" name="email" required class="w-full rounded-lg border border-border px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow" />
+          <span class="block text-[0.75rem] text-muted mt-1">Never shown publicly — only for follow-up if needed.</span>
+        </label>
+        <label class="block">
+          <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Image</span>
+          <input type="file" name="image" accept="image/jpeg,image/png,image/webp" required class="w-full rounded-lg border border-border px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow" />
+          <span class="block text-[0.75rem] text-muted mt-1">JPEG, PNG, or WebP. Max 4MB.</span>
+        </label>
+        <label class="flex items-start gap-2.5 text-[0.85rem]">
+          <input type="checkbox" name="rights" required class="mt-0.5" />
+          <span>I made this piece myself and have the right to share it here.</span>
+        </label>
+
+        <p class="text-[0.75rem] text-muted text-center">
+          By submitting, you agree to our <a href="/terms-of-use" class="underline hover:text-accent-dark">Terms of Use</a> and <a href="/privacy-policy" class="underline hover:text-accent-dark">Privacy Policy</a>.
+        </p>
+
+        <div class="absolute -left-[9999px]" aria-hidden="true">
+          <label for="submit-website">Website</label>
+          <input type="text" id="submit-website" name="website" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <button type="submit" data-submit-btn class="rounded-full bg-accent text-white px-5 py-3 font-semibold hover:opacity-90 transition-opacity">Submit for Review</button>
+        <p data-submit-message class="hidden text-[0.85rem]"></p>
+      </form>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const form = document.querySelector('[data-submit-form]');
+  const submitBtn = document.querySelector('[data-submit-btn]');
+  const message = document.querySelector('[data-submit-message]');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting…';
+    message.classList.add('hidden');
+
+    const formData = new FormData(form);
+    try {
+      const res = await fetch('/.netlify/functions/gallery-submit', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        message.textContent = data.error || 'Something went wrong. Please try again.';
+        message.className = 'text-red-600 text-[0.85rem]';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit for Review';
+        return;
+      }
+      form.reset();
+      message.textContent = data.message || 'Thanks — your submission is under review.';
+      message.className = 'text-accent-dark text-[0.85rem] font-semibold';
+      submitBtn.textContent = 'Submitted';
+    } catch (err) {
+      message.textContent = 'Network error. Please try again.';
+      message.className = 'text-red-600 text-[0.85rem]';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit for Review';
+    }
+    message.classList.remove('hidden');
+  });
+</script>
