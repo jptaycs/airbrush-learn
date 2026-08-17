@@ -17,6 +17,11 @@ export default async (req) => {
       Accept: 'application/vnd.github+json',
     },
   });
+
+  if (!getRes.ok) {
+    return new Response('Failed to fetch current articles.json from GitHub', { status: 502 });
+  }
+
   const getData = await getRes.json();
 
   if (getData.sha !== sha) {
