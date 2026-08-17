@@ -51,6 +51,7 @@ import { categories } from '../data/categories.js';
       <div class="flex gap-2 mb-6 border-b border-border">
         <button type="button" data-tab-btn="articles" class="px-4 py-2.5 text-[0.9rem] font-semibold border-b-2 border-accent text-accent-dark">Articles</button>
         <button type="button" data-tab-btn="gallery" class="px-4 py-2.5 text-[0.9rem] font-semibold border-b-2 border-transparent text-muted hover:text-ink">Gallery Submissions</button>
+        <button type="button" data-tab-btn="topics" class="px-4 py-2.5 text-[0.9rem] font-semibold border-b-2 border-transparent text-muted hover:text-ink">Topics</button>
       </div>
 
       <div data-tab-panel="articles">
@@ -74,6 +75,30 @@ import { categories } from '../data/categories.js';
 
       <div data-tab-panel="gallery" class="hidden">
         <div data-gallery-rows class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-5"></div>
+      </div>
+
+      <div data-tab-panel="topics" class="hidden">
+        <div class="flex justify-end mb-4">
+          <button type="button" data-add-topic-btn class="rounded-full bg-accent text-white px-4 py-2 text-[0.85rem] font-semibold hover:opacity-90 transition-opacity">+ Add Topic</button>
+        </div>
+        <div class="rounded-xl border border-border overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-[0.88rem] border-collapse">
+              <thead>
+                <tr class="bg-bg-alt text-muted text-[0.72rem] uppercase tracking-wide">
+                  <th class="py-3 px-4 font-semibold">#</th>
+                  <th class="py-3 px-4 font-semibold">Category</th>
+                  <th class="py-3 px-4 font-semibold">Article Title</th>
+                  <th class="py-3 px-4 font-semibold">Priority</th>
+                  <th class="py-3 px-4 font-semibold">Status</th>
+                  <th class="py-3 px-4 font-semibold">Publish Date</th>
+                  <th class="py-3 px-4 font-semibold">Actions</th>
+                </tr>
+              </thead>
+              <tbody data-topic-rows></tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -130,6 +155,64 @@ import { categories } from '../data/categories.js';
         </form>
       </div>
     </div>
+
+    <div data-topic-edit-panel class="hidden mt-10">
+      <div class="rounded-xl border border-border bg-bg-alt/40 p-6 sm:p-8">
+        <h2 class="font-serif text-ink text-[1.3rem] mb-6">Edit topic</h2>
+        <form data-topic-edit-form class="grid gap-5 max-w-2xl">
+          <label class="block">
+            <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">#</span>
+            <input type="number" data-tfield="id" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow" required />
+            <span class="block text-[0.75rem] text-muted mt-1">Unique topic number — matches what n8n references. Don't change this on an existing topic.</span>
+          </label>
+          <label class="block">
+            <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Category</span>
+            <input type="text" data-tfield="category" placeholder="e.g. Buying Guides" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow" />
+          </label>
+          <label class="block">
+            <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Search Intent</span>
+            <input type="text" data-tfield="search_intent" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow" />
+          </label>
+          <label class="block">
+            <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Article Title</span>
+            <input type="text" data-tfield="article_title" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow" required />
+          </label>
+          <label class="block">
+            <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Target Keyword</span>
+            <input type="text" data-tfield="target_keyword" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow" />
+          </label>
+          <label class="block">
+            <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Priority</span>
+            <select data-tfield="priority" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow">
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </label>
+          <label class="block">
+            <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Status</span>
+            <select data-tfield="status" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow">
+              <option value="Not started">Not started</option>
+              <option value="Published">Published</option>
+              <option value="Blocked">Blocked</option>
+            </select>
+          </label>
+          <label class="block">
+            <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Publish Date</span>
+            <input type="date" data-tfield="publish_date" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow" />
+          </label>
+          <label class="block">
+            <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Notes</span>
+            <textarea data-tfield="notes" rows="2" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow"></textarea>
+          </label>
+          <div class="flex gap-3">
+            <button type="submit" class="rounded-full bg-accent text-white px-5 py-2.5 font-semibold hover:opacity-90 transition-opacity">Save</button>
+            <button type="button" data-cancel-topic-edit class="rounded-full border border-border px-5 py-2.5 font-semibold hover:bg-bg transition-colors">Cancel</button>
+          </div>
+          <p data-topic-edit-error class="hidden text-red-600 text-[0.85rem]"></p>
+        </form>
+      </div>
+    </div>
   </section>
 </BaseLayout>
 
@@ -155,9 +238,17 @@ import { categories } from '../data/categories.js';
   const tabButtons = document.querySelectorAll('[data-tab-btn]');
   const tabPanels = document.querySelectorAll('[data-tab-panel]');
   const galleryRows = document.querySelector('[data-gallery-rows]');
+  const topicRows = document.querySelector('[data-topic-rows]');
+  const addTopicBtn = document.querySelector('[data-add-topic-btn]');
+  const topicEditPanel = document.querySelector('[data-topic-edit-panel]');
+  const topicEditForm = document.querySelector('[data-topic-edit-form]');
+  const topicEditError = document.querySelector('[data-topic-edit-error]');
+  const cancelTopicEditBtn = document.querySelector('[data-cancel-topic-edit]');
 
   let currentSha = null;
   let currentArticles = [];
+  let currentTopicsSha = null;
+  let currentTopics = [];
 
   // published_date has no time component, so "newest"/"oldest" reuse the same
   // array-position tiebreak as the public site (later in articles.json = more
@@ -236,6 +327,58 @@ import { categories } from '../data/categories.js';
     renderGalleryRows();
   };
 
+  const renderTopicRows = () => {
+    if (currentTopics.length === 0) {
+      topicRows.innerHTML = `
+        <tr>
+          <td colspan="7" class="py-12 text-center text-muted">No topics yet.</td>
+        </tr>
+      `;
+      return;
+    }
+    const statusClass = (status) =>
+      status === 'Published'
+        ? 'bg-accent/10 text-accent-dark'
+        : status === 'Blocked'
+        ? 'bg-red-50 text-red-600'
+        : 'bg-bg-alt text-muted';
+    topicRows.innerHTML = [...currentTopics]
+      .sort((a, b) => a.id - b.id)
+      .map(
+        (t) => `
+        <tr class="border-t border-border hover:bg-bg-alt/60 transition-colors">
+          <td class="py-3 px-4 text-muted">${t.id}</td>
+          <td class="py-3 px-4 text-muted">${escapeHtml(t.category || '—')}</td>
+          <td class="py-3 px-4 max-w-[280px] truncate" title="${escapeHtml(t.article_title)}">${escapeHtml(t.article_title)}</td>
+          <td class="py-3 px-4 text-muted">${escapeHtml(t.priority || '—')}</td>
+          <td class="py-3 px-4">
+            <span class="text-[0.7rem] font-semibold uppercase px-2 py-0.5 rounded-full ${statusClass(t.status)}">${escapeHtml(t.status || 'Not started')}</span>
+          </td>
+          <td class="py-3 px-4 text-muted whitespace-nowrap">${escapeHtml(t.publish_date || '—')}</td>
+          <td class="py-3 px-4">
+            <div class="flex flex-wrap items-center gap-1.5">
+              <button type="button" data-topic-edit="${t.id}" class="rounded-full border border-border px-2.5 py-1 text-[0.78rem] font-semibold text-ink hover:bg-bg-alt transition-colors">Edit</button>
+              <button type="button" data-topic-delete="${t.id}" class="rounded-full border border-red-200 px-2.5 py-1 text-[0.78rem] font-semibold text-red-600 hover:bg-red-50 transition-colors">Delete</button>
+            </div>
+          </td>
+        </tr>
+      `
+      )
+      .join('');
+  };
+
+  const loadTopics = async () => {
+    const res = await api('topics-list');
+    if (!res.ok) {
+      topicRows.innerHTML = `<tr><td colspan="7" class="py-12 text-center text-muted">Failed to load topics.</td></tr>`;
+      return;
+    }
+    const data = await res.json();
+    currentTopics = data.topics;
+    currentTopicsSha = data.sha;
+    renderTopicRows();
+  };
+
   tabButtons.forEach((btn) => {
     btn.addEventListener('click', () => {
       const tab = btn.dataset.tabBtn;
@@ -250,6 +393,7 @@ import { categories } from '../data/categories.js';
         p.classList.toggle('hidden', p.dataset.tabPanel !== tab);
       });
       if (tab === 'gallery') loadPendingSubmissions();
+      if (tab === 'topics') loadTopics();
     });
   });
 
@@ -276,6 +420,77 @@ import { categories } from '../data/categories.js';
       }
       await loadPendingSubmissions();
     }
+  });
+
+  const openTopicEdit = (id) => {
+    const isNew = id === null;
+    const topic = isNew
+      ? { id: (currentTopics.reduce((max, t) => Math.max(max, t.id), 0) || 0) + 1, priority: 'Medium', status: 'Not started' }
+      : currentTopics.find((t) => t.id === id);
+    if (!topic) return;
+    topicEditForm.querySelector('[data-tfield="id"]').value = topic.id;
+    topicEditForm.querySelector('[data-tfield="id"]').disabled = !isNew;
+    topicEditForm.querySelector('[data-tfield="category"]').value = topic.category || '';
+    topicEditForm.querySelector('[data-tfield="search_intent"]').value = topic.search_intent || '';
+    topicEditForm.querySelector('[data-tfield="article_title"]').value = topic.article_title || '';
+    topicEditForm.querySelector('[data-tfield="target_keyword"]').value = topic.target_keyword || '';
+    topicEditForm.querySelector('[data-tfield="priority"]').value = topic.priority || 'Medium';
+    topicEditForm.querySelector('[data-tfield="status"]').value = topic.status || 'Not started';
+    topicEditForm.querySelector('[data-tfield="publish_date"]').value = topic.publish_date || '';
+    topicEditForm.querySelector('[data-tfield="notes"]').value = topic.notes || '';
+    topicEditError.classList.add('hidden');
+    topicEditPanel.classList.remove('hidden');
+    topicEditPanel.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  addTopicBtn.addEventListener('click', () => openTopicEdit(null));
+
+  cancelTopicEditBtn.addEventListener('click', () => {
+    topicEditPanel.classList.add('hidden');
+  });
+
+  topicRows.addEventListener('click', async (e) => {
+    const editId = e.target.closest('[data-topic-edit]')?.dataset.topicEdit;
+    const deleteId = e.target.closest('[data-topic-delete]')?.dataset.topicDelete;
+
+    if (editId) {
+      openTopicEdit(Number(editId));
+      return;
+    }
+
+    if (deleteId) {
+      if (!confirm(`Delete topic #${deleteId}? This cannot be undone from here (use git revert to recover).`)) return;
+      const res = await api('topics-delete', { method: 'POST', body: JSON.stringify({ id: Number(deleteId), sha: currentTopicsSha }) });
+      if (!res.ok) {
+        alert(await res.text());
+        return;
+      }
+      await loadTopics();
+    }
+  });
+
+  topicEditForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const topic = {
+      id: Number(topicEditForm.querySelector('[data-tfield="id"]').value),
+      category: topicEditForm.querySelector('[data-tfield="category"]').value,
+      search_intent: topicEditForm.querySelector('[data-tfield="search_intent"]').value,
+      article_title: topicEditForm.querySelector('[data-tfield="article_title"]').value,
+      target_keyword: topicEditForm.querySelector('[data-tfield="target_keyword"]').value,
+      priority: topicEditForm.querySelector('[data-tfield="priority"]').value,
+      status: topicEditForm.querySelector('[data-tfield="status"]').value,
+      publish_date: topicEditForm.querySelector('[data-tfield="publish_date"]').value,
+      notes: topicEditForm.querySelector('[data-tfield="notes"]').value,
+    };
+
+    const res = await api('topics-save', { method: 'POST', body: JSON.stringify({ topic, sha: currentTopicsSha }) });
+    if (!res.ok) {
+      topicEditError.textContent = await res.text();
+      topicEditError.classList.remove('hidden');
+      return;
+    }
+    topicEditPanel.classList.add('hidden');
+    await loadTopics();
   });
 
   const renderRows = () => {

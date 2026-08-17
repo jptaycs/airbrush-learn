@@ -1,0 +1,123 @@
+[
+  {
+    "id": 1,
+    "category": "Buying Guides",
+    "search_intent": "High purchase intent",
+    "article_title": "Best Airbrush Compressor for Beginners in 2026",
+    "target_keyword": "best airbrush compressor for beginners",
+    "priority": "High",
+    "status": "Published",
+    "publish_date": "2026-08-11",
+    "notes": ""
+  },
+  {
+    "id": 7,
+    "category": "How-To & Tutorials",
+    "search_intent": "Broad traffic",
+    "article_title": "How to Thin Paint for Airbrushing (Every Paint Type Explained)",
+    "target_keyword": "how to thin paint for airbrush",
+    "priority": "High",
+    "status": "Published",
+    "publish_date": "2026-08-11",
+    "notes": ""
+  },
+  {
+    "id": 13,
+    "category": "Reviews",
+    "search_intent": "Comparison traffic",
+    "article_title": "Createx vs Badger Airbrush Paint: Which Is Better?",
+    "target_keyword": "createx vs badger airbrush paint",
+    "priority": "High",
+    "status": "Published",
+    "publish_date": "2026-08-11",
+    "notes": ""
+  },
+  {
+    "id": 18,
+    "category": "Troubleshooting",
+    "search_intent": "Long-tail, low competition",
+    "article_title": "Why Is My Airbrush Spitting Paint? Causes and Fixes",
+    "target_keyword": "airbrush spitting paint fix",
+    "priority": "Medium",
+    "status": "Published",
+    "publish_date": "",
+    "notes": ""
+  },
+  {
+    "id": 23,
+    "category": "Paints & Colors",
+    "search_intent": "Broad traffic",
+    "article_title": "Best Airbrush Paint Colors for Skin Tones",
+    "target_keyword": "best airbrush paint skin tones",
+    "priority": "Medium",
+    "status": "Published",
+    "publish_date": "",
+    "notes": ""
+  },
+  {
+    "id": 28,
+    "category": "Automotive",
+    "search_intent": "Pinterest & social traffic",
+    "article_title": "How to Airbrush Flames on a Car Hood",
+    "target_keyword": "how to airbrush flames on car",
+    "priority": "Medium",
+    "status": "Published",
+    "publish_date": "2026-08-17",
+    "notes": ""
+  },
+  {
+    "id": 32,
+    "category": "Miniatures",
+    "search_intent": "Broad traffic",
+    "article_title": "Airbrushing Miniatures for Beginners: Complete Guide",
+    "target_keyword": "airbrushing miniatures for beginners",
+    "priority": "High",
+    "status": "Published",
+    "publish_date": "2026-08-17",
+    "notes": ""
+  },
+  {
+    "id": 36,
+    "category": "Cosplay & Body Art",
+    "search_intent": "Broad traffic",
+    "article_title": "How to Airbrush Cosplay Armor for a Metallic Finish",
+    "target_keyword": "airbrush cosplay armor metallic",
+    "priority": "Medium",
+    "status": "Not started",
+    "publish_date": "",
+    "notes": ""
+  },
+  {
+    "id": 40,
+    "category": "Beginner",
+    "search_intent": "Broad traffic",
+    "article_title": "Airbrushing 101: Everything a First-Timer Needs to Know",
+    "target_keyword": "airbrushing for beginners",
+    "priority": "High",
+    "status": "Not started",
+    "publish_date": "",
+    "notes": "Good pillar/hub page candidate"
+  },
+  {
+    "id": 43,
+    "category": "Beginner",
+    "search_intent": "Broad traffic",
+    "article_title": "Common Beginner Airbrushing Mistakes (and How to Avoid Them)",
+    "target_keyword": "beginner airbrushing mistakes",
+    "priority": "Medium",
+    "status": "Not started",
+    "publish_date": "",
+    "notes": ""
+  },
+  {
+    "id": 44,
+    "category": "Trending / Niche",
+    "search_intent": "Pinterest & social traffic",
+    "article_title": "Airbrush Nail Art: Trends and Techniques for 2026",
+    "target_keyword": "airbrush nail art",
+    "priority": "Medium",
+    "status": "Not started",
+    "publish_date": "",
+    "notes": ""
+  }
+]
