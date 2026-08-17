@@ -4,12 +4,12 @@ import ArticleCard from '../components/ArticleCard.astro';
 import ArticleCarousel from '../components/ArticleCarousel.astro';
 import { categories } from '../data/categories.js';
 import { estimateReadMinutes } from '../lib/readTime.js';
-import { byPublishedDateDesc } from '../lib/sortArticles.js';
+import { sortArticlesNewestFirst } from '../lib/sortArticles.js';
 import articles from '../data/articles.json';
 import gallery from '../data/gallery.json';
 
 const published = articles.filter((a) => a.status !== 'draft');
-const sorted = [...published].sort(byPublishedDateDesc);
+const sorted = sortArticlesNewestFirst(published);
 
 const featured = sorted[0];
 const featuredCat = featured ? categories.find((c) => c.slug === featured.category) : null;

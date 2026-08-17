@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
 import { categories } from '../../data/categories.js';
-import { byPublishedDateDesc } from '../../lib/sortArticles.js';
+import { sortArticlesNewestFirst } from '../../lib/sortArticles.js';
 import articles from '../../data/articles.json';
 
 export async function getStaticPaths() {
@@ -13,9 +13,9 @@ export async function getStaticPaths() {
 }
 
 const { cat } = Astro.props;
-const inCategory = articles
-  .filter((a) => a.category === cat.slug && a.status !== 'draft')
-  .sort(byPublishedDateDesc);
+const inCategory = sortArticlesNewestFirst(
+  articles.filter((a) => a.category === cat.slug && a.status !== 'draft')
+);
 ---
 <BaseLayout
   title={`${cat.label} — Airbrush Learn`}
