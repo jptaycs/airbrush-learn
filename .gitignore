@@ -6,3 +6,6 @@ dist
 .playwright-mcp
 .claude/worktrees
 .superpowers
+
+# Local Netlify folder
+.netlify
