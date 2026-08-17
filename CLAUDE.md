@@ -48,6 +48,10 @@ The n8n workflow's `Publish Guard (block fallback)` node is what decides whether
 
 If you add a new field, update it in two places: the n8n workflow's "Build Article Entry" node (where the JSON object is constructed) and wherever it should be consumed in `src/pages/`.
 
+### `src/data/gallery.json`
+
+Unlike articles, gallery pieces come from two sources now: curated entries committed directly (as before), and community submissions approved via `/admin`'s "Gallery Submissions" tab. Both produce the identical shape: `{ slug, title, category, image, credit }` — `category` is a `src/data/galleryCategories.js` slug (not `categories.js`), `image` is a bare filename resolved against `public/images/gallery/`, and `credit` is the submitter's name for approved submissions or the existing attribution string for curated pieces. There's no field distinguishing a piece's origin — once approved, a submission is indistinguishable from a curated entry.
+
 ## Project structure
 
 ```
@@ -64,12 +68,13 @@ src/pages/
   category/[slug].astro      # one page per category, getStaticPaths() over categories.js
   gallery/index.astro        # gallery landing page — all pieces, filterable by discipline
   gallery/[category].astro   # one page per gallery discipline, getStaticPaths() over galleryCategories.js
+  gallery/submit.astro       # public community-submission form — posts to netlify/functions/gallery-submit
   terms-of-use.astro
   privacy-policy.astro       # both real pages with placeholder copy — not stubs, but not final legal text either
-  admin.astro                # password-gated article admin (list/edit/publish/delete) — noindex'd, calls netlify/functions/admin-*
+  admin.astro                # password-gated admin (articles: list/edit/publish/delete; gallery: review/approve/reject pending submissions) — noindex'd, calls netlify/functions/admin-* and gallery-*
 src/styles/global.css        # @tailwind directives + global resets; design tokens live in tailwind.config.mjs
 tailwind.config.mjs          # design tokens (colors, spacing, radius, fonts) — the palette lives here, not in global.css
-netlify/functions/           # admin-list.js, admin-save.js, admin-delete.js — the only code that holds the GitHub write token; see Deployment below
+netlify/functions/           # admin-{list,save,delete}.js (articles) and gallery-{submit,pending-list,approve,reject}.js (gallery submissions) — admin-{list,save,delete}.js and gallery-approve.js hold the GitHub write token; gallery-submit.js and gallery-pending-list.js only touch Netlify Blobs, never GitHub; see Deployment below
 public/                      # logo.png, favicon.ico, apple-touch-icon.png, robots.txt, generated /images/, /images/gallery/*.jpg
 ```
 
@@ -84,11 +89,13 @@ public/                      # logo.png, favicon.ico, apple-touch-icon.png, robo
 
 Netlify, connected to this repo. Build command `astro build`, output directory `dist` (see `netlify.toml`). No environment variables are required for the build itself. Every push to `main` — from n8n's automated commits or a manual commit — triggers a deploy; there is no manual "export" step. Domain: `airbrush.gallery` (currently WordPress; cut over only after verifying a build on the Netlify preview URL).
 
-**Runtime environment variables (required for `/admin` to work, not for the build):** set in Netlify's site settings, not this repo.
-- `GITHUB_PAT` — a GitHub Personal Access Token with write access to this repo, used only inside `netlify/functions/admin-*.js` to commit article changes via the Contents API. Never exposed client-side.
-- `ADMIN_PASSWORD` — the shared password gating `/admin`. This is the actual write-access boundary (there's no per-user auth), so it should be long and random, not memorable — treat it like the GitHub token itself, not a login password.
+**Runtime environment variables (required for `/admin` and gallery submissions to work, not for the build):** set in Netlify's site settings, not this repo.
+- `GITHUB_PAT` — a GitHub Personal Access Token with write access to this repo, used inside `netlify/functions/admin-*.js` and `gallery-approve.js` to commit changes via the Contents API. Never exposed client-side.
+- `ADMIN_PASSWORD` — the shared password gating `/admin` (both its Articles and Gallery Submissions tabs). This is the actual write-access boundary (there's no per-user auth), so it should be long and random, not memorable — treat it like the GitHub token itself, not a login password.
 
-Local testing of the functions needs a gitignored `.env` with the same two variables plus `npx netlify-cli dev` (`npm run dev` only serves the static site, not the functions).
+Pending gallery submissions (`gallery-submit.js`, `gallery-pending-list.js`) are stored in Netlify Blobs (`@netlify/blobs`), not git — this needs no separate credential or environment variable; it's automatically available to Netlify Functions on this site, and emulated locally with zero setup by `netlify-cli dev`.
+
+Local testing of the functions needs a gitignored `.env` with the two variables above plus `npx netlify-cli dev` (`npm run dev` only serves the static site, not the functions).
 
 ## Known gaps / things not to assume are done
 
@@ -110,7 +117,9 @@ Local testing of the functions needs a gitignored `.env` with the same two varia
 
 - [ ] **Make the cursor spray-trail idle when the mouse stops.** The `requestAnimationFrame` loop in `PageInteractions.astro` (the fine-pointer cursor particle effect) runs indefinitely at ~60fps even once the pointer stops moving, burning CPU/battery on an idle tab.
 
-- [ ] **Write real Terms of Use / Privacy Policy copy.** Both pages exist and render (not 404s), but the copy is still placeholder, per this file's own "Known gaps" note above — needs real legal review before either page is the actual system of record.
+- [ ] **Write real Terms of Use / Privacy Policy copy.** Both pages exist and render (not 404s), but the copy is still placeholder, per this file's own "Known gaps" note above — needs real legal review before either page is the actual system of record. This is now more urgent than before: `/gallery/submit` (merged 2026-08-18) collects a submitter's name, email, and uploaded artwork from the public with no accounts, and links to both pages — but the placeholder copy doesn't actually cover what's collected, why, or how long it's kept, and doesn't address what license a submitter grants when their work is published.
+
+- [ ] **Verify `/gallery/submit` → `gallery-approve` against a real GitHub API round-trip before relying on it.** Same standing gap as `/admin`'s article functions: `gallery-approve.js` was built and reviewed without a real `GITHUB_PAT` available in the dev environment — the 401/400/404 paths and the `getRes.ok`-before-`sha` guard were verified, but a real image commit + `gallery.json` append landing on GitHub, and the piece actually appearing on `/gallery` after the next build, were not. Test this on a deploy preview before trusting the "Submit Your Work" CTA already live on `/gallery`.
 
 - [ ] **Cut over the live domain.** `airbrush.gallery` currently still points at the old WordPress site. Cut over to this Netlify-hosted site only after verifying a build on the Netlify preview URL (see "Deployment" above).
 
