@@ -80,37 +80,48 @@ import { categories } from '../data/categories.js';
     <div data-edit-panel class="hidden mt-10">
       <div class="rounded-xl border border-border bg-bg-alt/40 p-6 sm:p-8">
         <h2 class="font-serif text-ink text-[1.3rem] mb-6">Edit article</h2>
-        <form data-edit-form class="grid gap-5 max-w-2xl">
+        <form data-edit-form class="grid gap-5">
           <input type="hidden" data-field="slug" />
-          <label class="block">
-            <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Title</span>
-            <input type="text" data-field="title" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow" required />
-          </label>
-          <label class="block">
-            <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Excerpt</span>
-            <textarea data-field="excerpt" rows="2" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow"></textarea>
-          </label>
-          <label class="block">
-            <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Published date</span>
-            <input type="date" data-field="published_date" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow" />
-          </label>
-          <label class="block">
-            <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Category</span>
-            <select data-field="category" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow">
-              {categories.map((c) => <option value={c.slug}>{c.label}</option>)}
-            </select>
-          </label>
-          <label class="block">
-            <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Status</span>
-            <select data-field="status" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow">
-              <option value="published">Published</option>
-              <option value="draft">Draft</option>
-            </select>
-          </label>
-          <label class="block">
-            <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Body (raw HTML)</span>
-            <textarea data-field="content_html" rows="14" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 font-mono text-[0.8rem] focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow"></textarea>
-          </label>
+          <div class="grid gap-5 max-w-2xl">
+            <label class="block">
+              <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Title</span>
+              <input type="text" data-field="title" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow" required />
+            </label>
+            <label class="block">
+              <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Excerpt</span>
+              <textarea data-field="excerpt" rows="2" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow"></textarea>
+            </label>
+            <label class="block">
+              <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Published date</span>
+              <input type="date" data-field="published_date" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow" />
+            </label>
+            <label class="block">
+              <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Category</span>
+              <select data-field="category" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow">
+                {categories.map((c) => <option value={c.slug}>{c.label}</option>)}
+              </select>
+            </label>
+            <label class="block">
+              <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Status</span>
+              <select data-field="status" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow">
+                <option value="published">Published</option>
+                <option value="draft">Draft</option>
+              </select>
+            </label>
+          </div>
+          <div class="grid gap-5 lg:grid-cols-2">
+            <label class="block">
+              <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Body (raw HTML)</span>
+              <textarea data-field="content_html" rows="20" class="w-full h-full rounded-lg border border-border bg-bg px-3.5 py-2.5 font-mono text-[0.8rem] focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow"></textarea>
+            </label>
+            <div class="block">
+              <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Preview</span>
+              <div data-edit-preview class="prose prose-site max-w-prose h-[calc(100%-1.6rem)] overflow-y-auto rounded-lg border border-border bg-bg px-4 py-3">
+                <h1 data-preview-title></h1>
+                <div data-preview-body></div>
+              </div>
+            </div>
+          </div>
           <div class="flex gap-3">
             <button type="submit" class="rounded-full bg-accent text-white px-5 py-2.5 font-semibold hover:opacity-90 transition-opacity">Save</button>
             <button type="button" data-cancel-edit class="rounded-full border border-border px-5 py-2.5 font-semibold hover:bg-bg transition-colors">Cancel</button>
@@ -139,6 +150,8 @@ import { categories } from '../data/categories.js';
   const editForm = document.querySelector('[data-edit-form]');
   const editError = document.querySelector('[data-edit-error]');
   const cancelEditBtn = document.querySelector('[data-cancel-edit]');
+  const previewTitle = document.querySelector('[data-preview-title]');
+  const previewBody = document.querySelector('[data-preview-body]');
   const tabButtons = document.querySelectorAll('[data-tab-btn]');
   const tabPanels = document.querySelectorAll('[data-tab-panel]');
   const galleryRows = document.querySelector('[data-gallery-rows]');
@@ -339,6 +352,13 @@ import { categories } from '../data/categories.js';
   refreshBtn.addEventListener('click', loadArticles);
   sortSelect.addEventListener('change', renderRows);
 
+  // Same-tab, same-origin content the admin already controls (and which the
+  // real article page renders raw via set:html) — no new sanitization need.
+  const updatePreview = () => {
+    previewTitle.textContent = editForm.querySelector('[data-field="title"]').value || '(untitled)';
+    previewBody.innerHTML = editForm.querySelector('[data-field="content_html"]').value || '';
+  };
+
   const openEdit = (slug) => {
     const article = currentArticles.find((a) => a.slug === slug);
     if (!article) return;
@@ -352,7 +372,11 @@ import { categories } from '../data/categories.js';
     editError.classList.add('hidden');
     editPanel.classList.remove('hidden');
     editPanel.scrollIntoView({ behavior: 'smooth' });
+    updatePreview();
   };
+
+  editForm.querySelector('[data-field="title"]').addEventListener('input', updatePreview);
+  editForm.querySelector('[data-field="content_html"]').addEventListener('input', updatePreview);
 
   cancelEditBtn.addEventListener('click', () => {
     editPanel.classList.add('hidden');
