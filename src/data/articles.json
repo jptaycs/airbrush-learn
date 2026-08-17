@@ -57,7 +57,8 @@
     "image_prompt": "Editorial hero image for a blog post titled: Freehand Airbrush Tips: Master Your Technique. Clean, professional, conceptual workspace scene with soft natural lighting. No text, no logos, no watermarks.",
     "source_topic": "how to airbrush freehand",
     "published_date": "2026-08-17",
-    "category": "how-to"
+    "category": "how-to",
+    "status": "draft"
   },
   {
     "slug": "createx-vs-badger-airbrush-paint",
