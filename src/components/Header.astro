@@ -4,7 +4,7 @@ import articles from '../data/articles.json';
 
 const categoryCounts = categories.map((cat) => ({
   ...cat,
-  count: articles.filter((a) => a.category === cat.slug).length,
+  count: articles.filter((a) => a.category === cat.slug && a.status !== 'draft').length,
 }));
 ---
 <header class="sticky top-0 z-30 border-b border-border bg-bg/80 backdrop-blur">
