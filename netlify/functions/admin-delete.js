@@ -51,6 +51,31 @@ export default async (req) => {
     return new Response(`Failed to delete: ${err}`, { status: 502 });
   }
 
+  // Best-effort cleanup of the hero image — a missing/failed image delete
+  // shouldn't fail the article delete, which already succeeded above.
+  const imagePath = `public/images/${slug}.png`;
+  const imageGetRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${imagePath}`, {
+    headers: {
+      Authorization: `token ${process.env.GITHUB_PAT}`,
+      Accept: 'application/vnd.github+json',
+    },
+  });
+  if (imageGetRes.ok) {
+    const imageData = await imageGetRes.json();
+    await fetch(`https://api.github.com/repos/${REPO}/contents/${imagePath}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `token ${process.env.GITHUB_PAT}`,
+        Accept: 'application/vnd.github+json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message: `Admin: delete hero image for ${slug}`,
+        sha: imageData.sha,
+      }),
+    }).catch(() => {});
+  }
+
   return new Response(JSON.stringify({ ok: true }), {
     headers: { 'content-type': 'application/json' },
   });
