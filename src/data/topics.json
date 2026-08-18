@@ -121,6 +121,17 @@
     "notes": ""
   },
   {
+    "id": 8,
+    "category": "How-To & Tutorials",
+    "search_intent": "Broad traffic",
+    "article_title": "How to Set Up an Airbrush Compressor Correctly",
+    "target_keyword": "how to set up airbrush compressor",
+    "priority": "Medium",
+    "status": "Not started",
+    "publish_date": "",
+    "notes": ""
+  },
+  {
     "id": 10,
     "category": "How-To & Tutorials",
     "search_intent": "Broad traffic",
@@ -181,17 +192,6 @@
     "search_intent": "High purchase intent",
     "article_title": "How to Choose the Right Nozzle Size for Your Airbrush",
     "target_keyword": "how to choose airbrush nozzle size",
-    "priority": "Medium",
-    "status": "Not started",
-    "publish_date": "",
-    "notes": ""
-  },
-  {
-    "id": 8,
-    "category": "How-To & Tutorials",
-    "search_intent": "Broad traffic",
-    "article_title": "How to Set Up an Airbrush Compressor Correctly",
-    "target_keyword": "how to set up airbrush compressor",
     "priority": "Medium",
     "status": "Not started",
     "publish_date": "",
