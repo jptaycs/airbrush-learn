@@ -1,16 +1,5 @@
 [
   {
-    "id": 1,
-    "category": "Buying Guides",
-    "search_intent": "High purchase intent",
-    "article_title": "Best Airbrush Compressor for Beginners in 2026",
-    "target_keyword": "best airbrush compressor for beginners",
-    "priority": "High",
-    "status": "Published",
-    "publish_date": "2026-08-11",
-    "notes": ""
-  },
-  {
     "id": 7,
     "category": "How-To & Tutorials",
     "search_intent": "Broad traffic",
@@ -27,6 +16,17 @@
     "search_intent": "Comparison traffic",
     "article_title": "Createx vs Badger Airbrush Paint: Which Is Better?",
     "target_keyword": "createx vs badger airbrush paint",
+    "priority": "High",
+    "status": "Published",
+    "publish_date": "2026-08-11",
+    "notes": ""
+  },
+  {
+    "id": 1,
+    "category": "Buying Guides",
+    "search_intent": "High purchase intent",
+    "article_title": "Best Airbrush Compressor for Beginners in 2026",
+    "target_keyword": "best airbrush compressor for beginners",
     "priority": "High",
     "status": "Published",
     "publish_date": "2026-08-11",
