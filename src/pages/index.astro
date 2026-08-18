@@ -196,20 +196,22 @@ const homeGalleryTiles = [
         ))}
       </div>
 
-      <div data-panel="all" class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-7">
-        {categoryArticles.filter((cat) => cat.articles[0]).map((cat) => {
-          const a = cat.articles[0];
-          return (
-            <ArticleCard
-              slug={a.slug}
-              title={a.title}
-              excerpt={a.excerpt}
-              published_date={a.published_date}
-              category={a.category}
-              content_html={a.content_html}
-            />
-          );
-        })}
+      <div data-panel="all">
+        <div class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-7">
+          {categoryArticles.filter((cat) => cat.articles[0]).map((cat) => {
+            const a = cat.articles[0];
+            return (
+              <ArticleCard
+                slug={a.slug}
+                title={a.title}
+                excerpt={a.excerpt}
+                published_date={a.published_date}
+                category={a.category}
+                content_html={a.content_html}
+              />
+            );
+          })}
+        </div>
       </div>
 
       {categoryArticles.map((cat) => (
