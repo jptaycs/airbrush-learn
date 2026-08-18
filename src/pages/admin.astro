@@ -136,7 +136,8 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
             </label>
             <label class="block">
               <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Published date</span>
-              <input type="date" data-field="published_date" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow" />
+              <input type="datetime-local" data-field="published_date" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow" />
+              <span class="block text-[0.75rem] text-muted mt-1">Time is optional — existing date-only articles keep working unchanged; the public site always displays date only.</span>
             </label>
             <label class="block">
               <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Category</span>
@@ -390,6 +391,14 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
       '"': '&quot;',
       "'": '&#39;',
     }[c]));
+
+  // Table display only — the stored value stays whatever it already was
+  // (date-only or date+time); this just makes a time component visible
+  // when one is present, without touching what's saved.
+  const formatAdminDate = (value) => {
+    if (!value) return '—';
+    return value.includes('T') ? value.replace('T', ' ') : value;
+  };
 
   let pendingSubmissions = [];
 
@@ -741,7 +750,7 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
             <span class="text-[0.7rem] font-semibold uppercase px-2 py-0.5 rounded-full ${a.status === 'draft' ? 'bg-bg-alt text-muted' : 'bg-accent/10 text-accent-dark'}">${a.status === 'draft' ? 'Draft' : 'Published'}</span>
           </td>
           <td class="py-3 px-4 text-muted">${escapeHtml(a.category || '—')}</td>
-          <td class="py-3 px-4 text-muted whitespace-nowrap">${escapeHtml(a.published_date || '—')}</td>
+          <td class="py-3 px-4 text-muted whitespace-nowrap">${escapeHtml(formatAdminDate(a.published_date))}</td>
           <td class="py-3 px-4">
             <div class="flex flex-wrap items-center gap-1.5">
               <button type="button" data-edit="${escapeHtml(a.slug)}" class="rounded-full border border-border px-2.5 py-1 text-[0.78rem] font-semibold text-ink hover:bg-bg-alt transition-colors">Edit</button>
@@ -810,13 +819,24 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
     previewBody.innerHTML = editForm.querySelector('[data-field="content_html"]').value || '';
   };
 
+  // <input type="datetime-local"> requires a "YYYY-MM-DDTHH:mm" value —
+  // a bare "YYYY-MM-DD" (every article published before this field could
+  // carry a time) silently fails to populate the input at all. Pad it to
+  // midnight so old entries still show up filled in; the user only sees
+  // a time if they actually set one, since saving without touching the
+  // field keeps sending this same padded value straight through.
+  const toDatetimeLocalValue = (value) => {
+    if (!value) return '';
+    return value.includes('T') ? value : `${value}T00:00`;
+  };
+
   const openEdit = (slug) => {
     const article = currentArticles.find((a) => a.slug === slug);
     if (!article) return;
     editForm.querySelector('[data-field="slug"]').value = article.slug;
     editForm.querySelector('[data-field="title"]').value = article.title || '';
     editForm.querySelector('[data-field="excerpt"]').value = article.excerpt || '';
-    editForm.querySelector('[data-field="published_date"]').value = article.published_date || '';
+    editForm.querySelector('[data-field="published_date"]').value = toDatetimeLocalValue(article.published_date);
     editForm.querySelector('[data-field="category"]').value = article.category || '';
     editForm.querySelector('[data-field="status"]').value = article.status === 'draft' ? 'draft' : 'published';
     editForm.querySelector('[data-field="content_html"]').value = article.content_html || '';
