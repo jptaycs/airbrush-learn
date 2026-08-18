@@ -34,10 +34,17 @@ const galleryCategoryCount = new Set(gallery.map((p) => p.category)).size;
 // The swap itself is plain JS in PageInteractions.astro; every panel but
 // "all" starts `hidden` in the markup below so the default view is correct
 // even before JS runs.
-const categoryArticles = categories.map((cat) => ({
-  ...cat,
-  articles: byCategory(cat.slug),
-}));
+// The homepage widget only features the 6 broadly educational/learning
+// categories (not the full 10-category taxonomy) — the more specific ones
+// (Automotive, Miniatures, Cosplay & Body Art, Trending / Niche) are still
+// reachable via the header's Categories mega-menu, the footer, and their
+// own /category/<slug> pages, just not surfaced in this widget. Order here
+// is deliberate (Beginner first), not categories.js's own order.
+const FEATURED_CATEGORY_SLUGS = ['beginner', 'how-to', 'buying-guides', 'troubleshooting', 'reviews', 'paints-colors'];
+const categoryArticles = FEATURED_CATEGORY_SLUGS.map((slug) => {
+  const cat = categories.find((c) => c.slug === slug);
+  return { ...cat, articles: byCategory(cat.slug) };
+});
 const MAX_PER_CATEGORY_PANEL = 9;
 
 const stepIcons = [
@@ -197,7 +204,7 @@ const homeGalleryTiles = [
       </div>
 
       <div data-panel="all">
-        <div class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-7">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
           {categoryArticles.filter((cat) => cat.articles[0]).map((cat) => {
             const a = cat.articles[0];
             return (
