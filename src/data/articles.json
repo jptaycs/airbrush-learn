@@ -40,7 +40,8 @@
     "image_prompt": "Editorial hero image for a blog post titled: Airbrush Nail Art: Techniques & Trends for 2026. Clean, professional, conceptual workspace scene with soft natural lighting. No text, no logos, no watermarks.",
     "source_topic": "airbrush nail art",
     "published_date": "2026-08-18",
-    "status": "draft"
+    "status": "draft",
+    "category": "cosplay-body-art"
   },
   {
     "slug": "airbrush-cosplay-armor",
