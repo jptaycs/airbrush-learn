@@ -28,6 +28,12 @@ export default async (req) => {
     return new Response('This file changed since you loaded it — refresh and try again.', { status: 409 });
   }
 
+  // GitHub's Contents API omits `content` (sends `download_url` instead)
+  // once a file crosses ~1MB — without this check, Buffer.from(undefined,
+  // ...) throws and the function 500s with no actionable message.
+  if (!getData.content) {
+    return new Response('articles.json is too large for the GitHub Contents API to return inline', { status: 502 });
+  }
   const current = JSON.parse(Buffer.from(getData.content, 'base64').toString('utf-8'));
   const idx = current.findIndex((a) => a.slug === article.slug);
   if (idx === -1) {
