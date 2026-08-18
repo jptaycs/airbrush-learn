@@ -34,13 +34,24 @@ import { categories } from '../data/categories.js';
           <p data-status-msg class="text-muted text-[0.85rem] mt-1"></p>
         </div>
         <div class="flex items-center gap-2">
-          <label class="text-[0.8rem] text-muted font-semibold" for="article-sort">Sort</label>
-          <select id="article-sort" data-sort-select class="rounded-full border border-border text-ink px-3.5 py-2 text-[0.85rem] font-semibold hover:bg-bg-alt transition-colors focus:outline-none focus:ring-2 focus:ring-accent/40">
-            <option value="newest">Newest first</option>
-            <option value="oldest">Oldest first</option>
-            <option value="title-asc">Title (A&ndash;Z)</option>
-            <option value="title-desc">Title (Z&ndash;A)</option>
-          </select>
+          <div data-header-control="articles" class="flex items-center gap-2">
+            <label class="text-[0.8rem] text-muted font-semibold" for="article-sort">Sort</label>
+            <select id="article-sort" data-sort-select class="rounded-full border border-border text-ink px-3.5 py-2 text-[0.85rem] font-semibold hover:bg-bg-alt transition-colors focus:outline-none focus:ring-2 focus:ring-accent/40">
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="title-asc">Title (A&ndash;Z)</option>
+              <option value="title-desc">Title (Z&ndash;A)</option>
+            </select>
+          </div>
+          <div data-header-control="topics" class="hidden items-center gap-2">
+            <label class="text-[0.8rem] text-muted font-semibold" for="topic-status-filter">Filter</label>
+            <select id="topic-status-filter" data-topic-status-filter class="rounded-full border border-border text-ink px-3.5 py-2 text-[0.85rem] font-semibold hover:bg-bg-alt transition-colors focus:outline-none focus:ring-2 focus:ring-accent/40">
+              <option value="all">All statuses</option>
+              <option value="Not started">Not started</option>
+              <option value="Published">Published</option>
+              <option value="Blocked">Blocked</option>
+            </select>
+          </div>
           <button type="button" data-refresh-btn class="inline-flex items-center gap-1.5 rounded-full border border-border text-ink px-4 py-2 text-[0.85rem] font-semibold hover:bg-bg-alt transition-colors">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
             Refresh
@@ -239,6 +250,10 @@ import { categories } from '../data/categories.js';
   const previewBody = document.querySelector('[data-preview-body]');
   const tabButtons = document.querySelectorAll('[data-tab-btn]');
   const tabPanels = document.querySelectorAll('[data-tab-panel]');
+  const headerControls = document.querySelectorAll('[data-header-control]');
+  let activeTab = 'articles';
+  const topicStatusFilterSelect = document.querySelector('[data-topic-status-filter]');
+  let topicStatusFilter = 'all';
   const galleryRows = document.querySelector('[data-gallery-rows]');
   const topicRows = document.querySelector('[data-topic-rows]');
   const addTopicBtn = document.querySelector('[data-add-topic-btn]');
@@ -333,7 +348,24 @@ import { categories } from '../data/categories.js';
     if (currentTopics.length === 0) {
       topicRows.innerHTML = `
         <tr>
-          <td colspan="7" class="py-12 text-center text-muted">No topics yet.</td>
+          <td colspan="8" class="py-12 text-center text-muted">No topics yet.</td>
+        </tr>
+      `;
+      return;
+    }
+    // The status filter is a display-only view — reordering only makes
+    // sense against the full, unfiltered list (dragging a filtered subset
+    // against hidden rows would silently scramble the real pipeline order),
+    // so dragging is disabled whenever a filter narrower than "all" is active.
+    const filtered = topicStatusFilter === 'all'
+      ? currentTopics
+      : currentTopics.filter((t) => (t.status || 'Not started') === topicStatusFilter);
+    const canDrag = topicStatusFilter === 'all';
+
+    if (filtered.length === 0) {
+      topicRows.innerHTML = `
+        <tr>
+          <td colspan="8" class="py-12 text-center text-muted">No topics match this filter.</td>
         </tr>
       `;
       return;
@@ -348,11 +380,11 @@ import { categories } from '../data/categories.js';
     // pipeline's pick priority (see Fetch Topics from API -> Filter ->
     // Limit to 1 Topic in the n8n workflow), so this must never be
     // re-sorted by id or anything else for display.
-    topicRows.innerHTML = currentTopics
+    topicRows.innerHTML = filtered
       .map(
         (t) => `
-        <tr class="border-t border-border hover:bg-bg-alt/60 transition-colors" draggable="true" data-topic-row="${t.id}">
-          <td class="py-3 px-4 text-muted cursor-grab active:cursor-grabbing" title="Drag to reorder" aria-hidden="true">⠿</td>
+        <tr class="border-t border-border hover:bg-bg-alt/60 transition-colors" draggable="${canDrag}" data-topic-row="${t.id}">
+          <td class="py-3 px-4 ${canDrag ? 'text-muted cursor-grab active:cursor-grabbing' : 'text-border'}" title="${canDrag ? 'Drag to reorder' : 'Clear the filter to reorder'}" aria-hidden="true">⠿</td>
           <td class="py-3 px-4 text-muted">${t.id}</td>
           <td class="py-3 px-4 text-muted">${escapeHtml(t.category || '—')}</td>
           <td class="py-3 px-4 max-w-[280px] truncate" title="${escapeHtml(t.article_title)}">${escapeHtml(t.article_title)}</td>
@@ -376,7 +408,7 @@ import { categories } from '../data/categories.js';
   const loadTopics = async () => {
     const res = await api('topics-list');
     if (!res.ok) {
-      topicRows.innerHTML = `<tr><td colspan="7" class="py-12 text-center text-muted">Failed to load topics.</td></tr>`;
+      topicRows.innerHTML = `<tr><td colspan="8" class="py-12 text-center text-muted">Failed to load topics.</td></tr>`;
       return;
     }
     const data = await res.json();
@@ -388,6 +420,7 @@ import { categories } from '../data/categories.js';
   tabButtons.forEach((btn) => {
     btn.addEventListener('click', () => {
       const tab = btn.dataset.tabBtn;
+      activeTab = tab;
       tabButtons.forEach((b) => {
         const active = b.dataset.tabBtn === tab;
         b.classList.toggle('border-accent', active);
@@ -397,6 +430,14 @@ import { categories } from '../data/categories.js';
       });
       tabPanels.forEach((p) => {
         p.classList.toggle('hidden', p.dataset.tabPanel !== tab);
+      });
+      // Header controls (Sort, Topics status filter) are per-tab — each one
+      // only does anything on its own tab, so show only the one that matches
+      // instead of leaving a dead control visible on the others.
+      headerControls.forEach((c) => {
+        const show = c.dataset.headerControl === tab;
+        c.classList.toggle('hidden', !show);
+        c.classList.toggle('flex', show);
       });
       if (tab === 'gallery') loadPendingSubmissions();
       if (tab === 'topics') loadTopics();
@@ -612,8 +653,16 @@ import { categories } from '../data/categories.js';
     renderRows();
   });
 
-  refreshBtn.addEventListener('click', loadArticles);
+  refreshBtn.addEventListener('click', () => {
+    if (activeTab === 'gallery') return loadPendingSubmissions();
+    if (activeTab === 'topics') return loadTopics();
+    return loadArticles();
+  });
   sortSelect.addEventListener('change', renderRows);
+  topicStatusFilterSelect.addEventListener('change', () => {
+    topicStatusFilter = topicStatusFilterSelect.value;
+    renderTopicRows();
+  });
 
   // Same-tab, same-origin content the admin already controls (and which the
   // real article page renders raw via set:html) — no new sanitization need.
