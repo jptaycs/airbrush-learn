@@ -78,14 +78,16 @@ import { categories } from '../data/categories.js';
       </div>
 
       <div data-tab-panel="topics" class="hidden">
-        <div class="flex justify-end mb-4">
-          <button type="button" data-add-topic-btn class="rounded-full bg-accent text-white px-4 py-2 text-[0.85rem] font-semibold hover:opacity-90 transition-opacity">+ Add Topic</button>
+        <div class="flex items-center justify-between mb-4 gap-4">
+          <p class="text-muted text-[0.82rem]">Drag rows by the <span aria-hidden="true">⠿</span> handle to reorder. The n8n pipeline picks the first <span class="font-semibold">Not started</span> topic from the top of this list — reordering changes what gets generated next.</p>
+          <button type="button" data-add-topic-btn class="rounded-full bg-accent text-white px-4 py-2 text-[0.85rem] font-semibold hover:opacity-90 transition-opacity whitespace-nowrap">+ Add Topic</button>
         </div>
         <div class="rounded-xl border border-border overflow-hidden">
           <div class="overflow-x-auto">
             <table class="w-full text-left text-[0.88rem] border-collapse">
               <thead>
                 <tr class="bg-bg-alt text-muted text-[0.72rem] uppercase tracking-wide">
+                  <th class="py-3 px-4 font-semibold w-8"></th>
                   <th class="py-3 px-4 font-semibold">#</th>
                   <th class="py-3 px-4 font-semibold">Category</th>
                   <th class="py-3 px-4 font-semibold">Article Title</th>
@@ -342,11 +344,15 @@ import { categories } from '../data/categories.js';
         : status === 'Blocked'
         ? 'bg-red-50 text-red-600'
         : 'bg-bg-alt text-muted';
-    topicRows.innerHTML = [...currentTopics]
-      .sort((a, b) => a.id - b.id)
+    // Rendered in currentTopics' actual array order — that order IS the
+    // pipeline's pick priority (see Fetch Topics from API -> Filter ->
+    // Limit to 1 Topic in the n8n workflow), so this must never be
+    // re-sorted by id or anything else for display.
+    topicRows.innerHTML = currentTopics
       .map(
         (t) => `
-        <tr class="border-t border-border hover:bg-bg-alt/60 transition-colors">
+        <tr class="border-t border-border hover:bg-bg-alt/60 transition-colors" draggable="true" data-topic-row="${t.id}">
+          <td class="py-3 px-4 text-muted cursor-grab active:cursor-grabbing" title="Drag to reorder" aria-hidden="true">⠿</td>
           <td class="py-3 px-4 text-muted">${t.id}</td>
           <td class="py-3 px-4 text-muted">${escapeHtml(t.category || '—')}</td>
           <td class="py-3 px-4 max-w-[280px] truncate" title="${escapeHtml(t.article_title)}">${escapeHtml(t.article_title)}</td>
@@ -467,6 +473,48 @@ import { categories } from '../data/categories.js';
       }
       await loadTopics();
     }
+  });
+
+  // Drag-to-reorder: the row order IS the pipeline's pick-priority order
+  // (see the comment in renderTopicRows), so a drop persists immediately
+  // via topics-reorder rather than needing a separate "Save order" step.
+  let draggedTopicId = null;
+
+  topicRows.addEventListener('dragstart', (e) => {
+    const row = e.target.closest('[data-topic-row]');
+    if (!row) return;
+    draggedTopicId = Number(row.dataset.topicRow);
+    e.dataTransfer.effectAllowed = 'move';
+  });
+
+  topicRows.addEventListener('dragover', (e) => {
+    if (draggedTopicId === null) return;
+    e.preventDefault();
+  });
+
+  topicRows.addEventListener('drop', async (e) => {
+    const targetRow = e.target.closest('[data-topic-row]');
+    if (!targetRow || draggedTopicId === null) return;
+    e.preventDefault();
+
+    const targetId = Number(targetRow.dataset.topicRow);
+    const fromIdx = currentTopics.findIndex((t) => t.id === draggedTopicId);
+    const toIdx = currentTopics.findIndex((t) => t.id === targetId);
+    draggedTopicId = null;
+    if (fromIdx === -1 || toIdx === -1 || fromIdx === toIdx) return;
+
+    const [moved] = currentTopics.splice(fromIdx, 1);
+    currentTopics.splice(toIdx, 0, moved);
+    renderTopicRows();
+
+    const res = await api('topics-reorder', {
+      method: 'POST',
+      body: JSON.stringify({ order: currentTopics.map((t) => t.id), sha: currentTopicsSha }),
+    });
+    if (!res.ok) {
+      alert(await res.text());
+    }
+    await loadTopics();
   });
 
   topicEditForm.addEventListener('submit', async (e) => {
