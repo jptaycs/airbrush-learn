@@ -155,6 +155,23 @@
     });
   }
 
+  // --- Homepage "Browse by Category" filter ---
+  // Swaps which category's article grid is visible based on the selected
+  // radio button, without a page navigation. Every panel but "all" starts
+  // `hidden` in the markup, so the default view is already correct if this
+  // script never runs — clicking a category button just does nothing.
+  const catSelector = document.querySelector('[data-cat-selector]');
+  if (catSelector) {
+    const panels = document.querySelectorAll('[data-panel]');
+    catSelector.addEventListener('change', (e) => {
+      const target = e.target;
+      if (!(target instanceof HTMLInputElement) || target.name !== 'cat-filter') return;
+      panels.forEach((panel) => {
+        panel.hidden = panel.dataset.panel !== target.value;
+      });
+    });
+  }
+
   // --- Category carousels ---
   document.querySelectorAll('[data-carousel]').forEach((root) => {
     const track = root.querySelector('[data-carousel-track]');

@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ArticleCard from '../components/ArticleCard.astro';
-import ArticleCarousel from '../components/ArticleCarousel.astro';
 import { categories } from '../data/categories.js';
 import { estimateReadMinutes } from '../lib/readTime.js';
 import { sortArticlesNewestFirst } from '../lib/sortArticles.js';
@@ -29,20 +28,17 @@ const categoryCounts = categories.map((cat) => ({
 const galleryPieceCount = gallery.length;
 const galleryCategoryCount = new Set(gallery.map((p) => p.category)).size;
 
-const carouselAccents = ['bg-accent', 'bg-teal'];
-const categoryArticles = categories.map((cat, i) => ({
+// "Browse by Category" defaults to a 9-card grid (one card per category,
+// its latest article — byCategory() is already newest-first). Picking a
+// category button swaps in a grid of that category's own articles instead.
+// The swap itself is plain JS in PageInteractions.astro; every panel but
+// "all" starts `hidden` in the markup below so the default view is correct
+// even before JS runs.
+const categoryArticles = categories.map((cat) => ({
   ...cat,
   articles: byCategory(cat.slug),
-  accentClass: carouselAccents[i % carouselAccents.length],
 }));
-// "Browse by Category" shows the first few rows directly; the rest live
-// behind a <details> disclosure so the homepage doesn't stack one full
-// carousel row per category (9 today, and categories.js's own comment
-// says this taxonomy is meant to stay fixed, but this keeps the section
-// short even if that changes).
-const VISIBLE_CATEGORY_ROWS = 3;
-const visibleCategoryRows = categoryArticles.slice(0, VISIBLE_CATEGORY_ROWS);
-const hiddenCategoryRows = categoryArticles.slice(VISIBLE_CATEGORY_ROWS);
+const MAX_PER_CATEGORY_PANEL = 9;
 
 const stepIcons = [
   '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
@@ -182,40 +178,65 @@ const homeGalleryTiles = [
 
   <section class="bg-bg-alt py-16">
     <div class="mx-auto max-w-wide px-5">
-      <div class="text-center mb-12">
+      <div class="text-center mb-10">
         <h2 class="font-serif text-ink text-[2rem]">Browse by Category</h2>
-        <p class="mt-2 text-muted text-[1rem] max-w-[480px] mx-auto">Scroll each row or jump straight to a category's full archive.</p>
+        <p class="mt-2 text-muted text-[1rem] max-w-[480px] mx-auto">Showing each category's latest article — pick a category to see more.</p>
       </div>
-      <div class="space-y-14">
-        {visibleCategoryRows.map((cat) => (
-          <ArticleCarousel
-            title={cat.label}
-            description={cat.description}
-            viewAllHref={`/category/${cat.slug}`}
-            articles={cat.articles}
-            accentClass={cat.accentClass}
-          />
+
+      <div class="flex flex-wrap justify-center gap-2 mb-10" data-cat-selector>
+        <label class="cursor-pointer rounded-full border border-border px-4 py-2 text-[0.85rem] font-semibold text-ink hover:bg-bg-alt transition-colors has-[:checked]:bg-accent has-[:checked]:text-white has-[:checked]:border-accent">
+          <input type="radio" name="cat-filter" value="all" checked class="sr-only" />
+          All
+        </label>
+        {categoryArticles.map((cat) => (
+          <label class="cursor-pointer rounded-full border border-border px-4 py-2 text-[0.85rem] font-semibold text-ink hover:bg-bg-alt transition-colors has-[:checked]:bg-accent has-[:checked]:text-white has-[:checked]:border-accent">
+            <input type="radio" name="cat-filter" value={cat.slug} class="sr-only" />
+            {cat.label}
+          </label>
         ))}
       </div>
-      {hiddenCategoryRows.length > 0 && (
-        <details class="mt-10 group">
-          <summary class="list-none cursor-pointer mx-auto w-fit rounded-full border border-border text-ink px-5 py-2.5 text-[0.9rem] font-semibold hover:bg-bg-alt transition-colors marker:content-none [&::-webkit-details-marker]:hidden">
-            <span class="group-open:hidden">Show {hiddenCategoryRows.length} more categories &darr;</span>
-            <span class="hidden group-open:inline">Show fewer categories &uarr;</span>
-          </summary>
-          <div class="space-y-14 mt-14">
-            {hiddenCategoryRows.map((cat) => (
-              <ArticleCarousel
-                title={cat.label}
-                description={cat.description}
-                viewAllHref={`/category/${cat.slug}`}
-                articles={cat.articles}
-                accentClass={cat.accentClass}
-              />
-            ))}
-          </div>
-        </details>
-      )}
+
+      <div data-panel="all" class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-7">
+        {categoryArticles.filter((cat) => cat.articles[0]).map((cat) => {
+          const a = cat.articles[0];
+          return (
+            <ArticleCard
+              slug={a.slug}
+              title={a.title}
+              excerpt={a.excerpt}
+              published_date={a.published_date}
+              category={a.category}
+              content_html={a.content_html}
+            />
+          );
+        })}
+      </div>
+
+      {categoryArticles.map((cat) => (
+        <div data-panel={cat.slug} hidden>
+          {cat.articles.length === 0 ? (
+            <p class="text-center text-muted py-10">New articles are on the way — check back soon.</p>
+          ) : (
+            <div class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-7">
+              {cat.articles.slice(0, MAX_PER_CATEGORY_PANEL).map((article) => (
+                <ArticleCard
+                  slug={article.slug}
+                  title={article.title}
+                  excerpt={article.excerpt}
+                  published_date={article.published_date}
+                  category={article.category}
+                  content_html={article.content_html}
+                />
+              ))}
+            </div>
+          )}
+          {cat.articles.length > MAX_PER_CATEGORY_PANEL && (
+            <div class="text-center mt-8">
+              <a href={`/category/${cat.slug}`} class="inline-block rounded-full border border-border text-ink px-5 py-2.5 text-[0.9rem] font-semibold hover:no-underline hover:bg-bg-alt">View all {cat.label} articles &rarr;</a>
+            </div>
+          )}
+        </div>
+      ))}
     </div>
   </section>
 
