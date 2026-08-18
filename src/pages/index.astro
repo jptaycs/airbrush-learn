@@ -184,12 +184,12 @@ const homeGalleryTiles = [
       </div>
 
       <div class="flex flex-wrap justify-center gap-2 mb-10" data-cat-selector>
-        <label class="cursor-pointer rounded-full border border-border px-4 py-2 text-[0.85rem] font-semibold text-ink hover:bg-bg-alt transition-colors has-[:checked]:bg-accent has-[:checked]:text-white has-[:checked]:border-accent">
+        <label class="scroll-mt-24 cursor-pointer rounded-full border border-border px-4 py-2 text-[0.85rem] font-semibold text-ink hover:bg-bg-alt transition-colors has-[:checked]:bg-accent has-[:checked]:text-white has-[:checked]:border-accent">
           <input type="radio" name="cat-filter" value="all" checked class="sr-only" />
           All
         </label>
         {categoryArticles.map((cat) => (
-          <label class="cursor-pointer rounded-full border border-border px-4 py-2 text-[0.85rem] font-semibold text-ink hover:bg-bg-alt transition-colors has-[:checked]:bg-accent has-[:checked]:text-white has-[:checked]:border-accent">
+          <label class="scroll-mt-24 cursor-pointer rounded-full border border-border px-4 py-2 text-[0.85rem] font-semibold text-ink hover:bg-bg-alt transition-colors has-[:checked]:bg-accent has-[:checked]:text-white has-[:checked]:border-accent">
             <input type="radio" name="cat-filter" value={cat.slug} class="sr-only" />
             {cat.label}
           </label>
