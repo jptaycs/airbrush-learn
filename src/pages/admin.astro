@@ -90,7 +90,7 @@ import { categories } from '../data/categories.js';
 
       <div data-tab-panel="topics" class="hidden">
         <div class="flex items-center justify-between mb-4 gap-4">
-          <p class="text-muted text-[0.82rem]">Drag rows by the <span aria-hidden="true">⠿</span> handle to reorder. The n8n pipeline picks the first <span class="font-semibold">Not started</span> topic from the top of this list — reordering changes what gets generated next.</p>
+          <p class="text-muted text-[0.82rem]">Drag rows by the <span aria-hidden="true">⠿</span> handle to reorder. The n8n pipeline picks the first <span class="font-semibold">Not started</span> topic from the top of this list — reordering changes what gets generated next. Dragging is disabled while a status filter is active — switch back to "All statuses" to reorder.</p>
           <button type="button" data-add-topic-btn class="rounded-full bg-accent text-white px-4 py-2 text-[0.85rem] font-semibold hover:opacity-90 transition-opacity whitespace-nowrap">+ Add Topic</button>
         </div>
         <div class="rounded-xl border border-border overflow-hidden">
@@ -251,7 +251,11 @@ import { categories } from '../data/categories.js';
   const tabButtons = document.querySelectorAll('[data-tab-btn]');
   const tabPanels = document.querySelectorAll('[data-tab-panel]');
   const headerControls = document.querySelectorAll('[data-header-control]');
-  let activeTab = 'articles';
+  // The active tab is already tracked by the DOM (exactly one [data-tab-panel]
+  // lacks `hidden` at a time) — deriving it here instead of mirroring it into
+  // a separate variable means there's only one source of truth to go stale.
+  const getActiveTab = () =>
+    document.querySelector('[data-tab-panel]:not(.hidden)')?.dataset.tabPanel || 'articles';
   const topicStatusFilterSelect = document.querySelector('[data-topic-status-filter]');
   let topicStatusFilter = 'all';
   const galleryRows = document.querySelector('[data-gallery-rows]');
@@ -344,30 +348,30 @@ import { categories } from '../data/categories.js';
     renderGalleryRows();
   };
 
+  // Kept as a single constant since this table's empty/error rows need to
+  // span every <th> in the thead above — three separate literals had
+  // already drifted out of sync once (7 vs the table's real 8 columns)
+  // before this was introduced.
+  const TOPICS_COLSPAN = 8;
+  const topicsEmptyRow = (message) =>
+    `<tr><td colspan="${TOPICS_COLSPAN}" class="py-12 text-center text-muted">${message}</td></tr>`;
+
   const renderTopicRows = () => {
     if (currentTopics.length === 0) {
-      topicRows.innerHTML = `
-        <tr>
-          <td colspan="8" class="py-12 text-center text-muted">No topics yet.</td>
-        </tr>
-      `;
+      topicRows.innerHTML = topicsEmptyRow('No topics yet.');
       return;
     }
     // The status filter is a display-only view — reordering only makes
     // sense against the full, unfiltered list (dragging a filtered subset
     // against hidden rows would silently scramble the real pipeline order),
     // so dragging is disabled whenever a filter narrower than "all" is active.
-    const filtered = topicStatusFilter === 'all'
+    const canDrag = topicStatusFilter === 'all';
+    const filtered = canDrag
       ? currentTopics
       : currentTopics.filter((t) => (t.status || 'Not started') === topicStatusFilter);
-    const canDrag = topicStatusFilter === 'all';
 
     if (filtered.length === 0) {
-      topicRows.innerHTML = `
-        <tr>
-          <td colspan="8" class="py-12 text-center text-muted">No topics match this filter.</td>
-        </tr>
-      `;
+      topicRows.innerHTML = topicsEmptyRow('No topics match this filter.');
       return;
     }
     const statusClass = (status) =>
@@ -408,7 +412,7 @@ import { categories } from '../data/categories.js';
   const loadTopics = async () => {
     const res = await api('topics-list');
     if (!res.ok) {
-      topicRows.innerHTML = `<tr><td colspan="8" class="py-12 text-center text-muted">Failed to load topics.</td></tr>`;
+      topicRows.innerHTML = topicsEmptyRow('Failed to load topics.');
       return;
     }
     const data = await res.json();
@@ -417,10 +421,23 @@ import { categories } from '../data/categories.js';
     renderTopicRows();
   };
 
+  // Single source of truth for "which loader owns this tab", shared by the
+  // tab-click handler (which auto-loads gallery/topics data, but not
+  // articles — that's already loaded at login) and the refresh button
+  // (which always reloads whatever tab is currently showing). Wrapped in
+  // arrow functions so this can sit above loadArticles/loadPendingSubmissions/
+  // loadTopics's own `const` declarations further down without a
+  // temporal-dead-zone error — none of these are invoked until a user
+  // actually clicks something, by which point the whole script has run.
+  const tabLoaders = {
+    articles: () => loadArticles(),
+    gallery: () => loadPendingSubmissions(),
+    topics: () => loadTopics(),
+  };
+
   tabButtons.forEach((btn) => {
     btn.addEventListener('click', () => {
       const tab = btn.dataset.tabBtn;
-      activeTab = tab;
       tabButtons.forEach((b) => {
         const active = b.dataset.tabBtn === tab;
         b.classList.toggle('border-accent', active);
@@ -439,8 +456,7 @@ import { categories } from '../data/categories.js';
         c.classList.toggle('hidden', !show);
         c.classList.toggle('flex', show);
       });
-      if (tab === 'gallery') loadPendingSubmissions();
-      if (tab === 'topics') loadTopics();
+      if (tab !== 'articles') tabLoaders[tab]?.();
     });
   });
 
@@ -522,6 +538,12 @@ import { categories } from '../data/categories.js';
   let draggedTopicId = null;
 
   topicRows.addEventListener('dragstart', (e) => {
+    // Belt-and-suspenders: the `draggable` attribute rendered in
+    // renderTopicRows() already gates this per-row while a filter is
+    // active, but that guarantee lives in the render layer — checking the
+    // filter again here means a row that somehow becomes draggable without
+    // going through that exact render path still can't start a reorder.
+    if (topicStatusFilter !== 'all') return;
     const row = e.target.closest('[data-topic-row]');
     if (!row) return;
     draggedTopicId = Number(row.dataset.topicRow);
@@ -535,7 +557,7 @@ import { categories } from '../data/categories.js';
 
   topicRows.addEventListener('drop', async (e) => {
     const targetRow = e.target.closest('[data-topic-row]');
-    if (!targetRow || draggedTopicId === null) return;
+    if (!targetRow || draggedTopicId === null || topicStatusFilter !== 'all') return;
     e.preventDefault();
 
     const targetId = Number(targetRow.dataset.topicRow);
@@ -579,6 +601,13 @@ import { categories } from '../data/categories.js';
       return;
     }
     topicEditPanel.classList.add('hidden');
+    // A saved topic can land outside the currently-active status filter
+    // (a new topic defaults to "Not started"; an edit can change the
+    // status entirely) — without resetting the filter, the row the admin
+    // just touched would silently vanish from the list with nothing on
+    // screen to say the save actually succeeded.
+    topicStatusFilter = 'all';
+    topicStatusFilterSelect.value = 'all';
     await loadTopics();
   });
 
@@ -653,11 +682,7 @@ import { categories } from '../data/categories.js';
     renderRows();
   });
 
-  refreshBtn.addEventListener('click', () => {
-    if (activeTab === 'gallery') return loadPendingSubmissions();
-    if (activeTab === 'topics') return loadTopics();
-    return loadArticles();
-  });
+  refreshBtn.addEventListener('click', () => tabLoaders[getActiveTab()]());
   sortSelect.addEventListener('change', renderRows);
   topicStatusFilterSelect.addEventListener('change', () => {
     topicStatusFilter = topicStatusFilterSelect.value;
