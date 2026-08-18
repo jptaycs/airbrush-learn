@@ -8,4 +8,5 @@ export const categories = [
   { slug: 'miniatures', label: 'Miniatures', description: 'NMM, OSL & 28mm tabletop finishes.' },
   { slug: 'cosplay-body-art', label: 'Cosplay & Body Art', description: 'Convention-ready finishes that hold up under stage lights.' },
   { slug: 'beginner', label: 'Beginner', description: 'Everything you need to make your first project a success.' },
+  { slug: 'trending-niche', label: 'Trending / Niche', description: 'Nail art, tattoos, fabric, and whatever else airbrushing is trending toward right now.' },
 ];
