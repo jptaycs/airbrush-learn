@@ -35,6 +35,14 @@ const categoryArticles = categories.map((cat, i) => ({
   articles: byCategory(cat.slug),
   accentClass: carouselAccents[i % carouselAccents.length],
 }));
+// "Browse by Category" shows the first few rows directly; the rest live
+// behind a <details> disclosure so the homepage doesn't stack one full
+// carousel row per category (9 today, and categories.js's own comment
+// says this taxonomy is meant to stay fixed, but this keeps the section
+// short even if that changes).
+const VISIBLE_CATEGORY_ROWS = 3;
+const visibleCategoryRows = categoryArticles.slice(0, VISIBLE_CATEGORY_ROWS);
+const hiddenCategoryRows = categoryArticles.slice(VISIBLE_CATEGORY_ROWS);
 
 const stepIcons = [
   '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
@@ -179,7 +187,7 @@ const homeGalleryTiles = [
         <p class="mt-2 text-muted text-[1rem] max-w-[480px] mx-auto">Scroll each row or jump straight to a category's full archive.</p>
       </div>
       <div class="space-y-14">
-        {categoryArticles.map((cat) => (
+        {visibleCategoryRows.map((cat) => (
           <ArticleCarousel
             title={cat.label}
             description={cat.description}
@@ -189,6 +197,25 @@ const homeGalleryTiles = [
           />
         ))}
       </div>
+      {hiddenCategoryRows.length > 0 && (
+        <details class="mt-10 group">
+          <summary class="list-none cursor-pointer mx-auto w-fit rounded-full border border-border text-ink px-5 py-2.5 text-[0.9rem] font-semibold hover:bg-bg-alt transition-colors marker:content-none [&::-webkit-details-marker]:hidden">
+            <span class="group-open:hidden">Show {hiddenCategoryRows.length} more categories &darr;</span>
+            <span class="hidden group-open:inline">Show fewer categories &uarr;</span>
+          </summary>
+          <div class="space-y-14 mt-14">
+            {hiddenCategoryRows.map((cat) => (
+              <ArticleCarousel
+                title={cat.label}
+                description={cat.description}
+                viewAllHref={`/category/${cat.slug}`}
+                articles={cat.articles}
+                accentClass={cat.accentClass}
+              />
+            ))}
+          </div>
+        </details>
+      )}
     </div>
   </section>
 
