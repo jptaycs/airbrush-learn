@@ -353,6 +353,35 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
     }
   };
 
+  // Every write endpoint (admin-save/delete, topics-save/delete/reorder)
+  // does a GitHub sha compare-and-swap and 409s if the file moved since
+  // this tab last loaded it — trivially common with a single operator
+  // clicking multiple actions in a row, two tabs open, or n8n writing to
+  // topics.json around the same time. Refresh the sha and silently retry
+  // instead of surfacing that as an error the admin has to manually act on.
+  const refreshSha = async (kind) => {
+    const res = await api(kind === 'topics' ? 'topics-list' : 'admin-list');
+    if (!res.ok) return false;
+    const data = await res.json();
+    if (kind === 'topics') {
+      currentTopics = data.topics;
+      currentTopicsSha = data.sha;
+    } else {
+      currentArticles = data.articles;
+      currentSha = data.sha;
+    }
+    return true;
+  };
+
+  const withShaRetry = async (kind, requestFn, attempts = 3) => {
+    let res = await requestFn();
+    for (let i = 0; i < attempts - 1 && res.status === 409; i++) {
+      if (!(await refreshSha(kind))) break;
+      res = await requestFn();
+    }
+    return res;
+  };
+
   const escapeHtml = (str) =>
     String(str ?? '').replace(/[&<>"']/g, (c) => ({
       '&': '&amp;',
@@ -588,7 +617,9 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
       const deleteId = deleteBtn.dataset.topicDelete;
       if (!confirm(`Delete topic #${deleteId}? This cannot be undone from here (use git revert to recover).`)) return;
       await withButtonLoading(deleteBtn, async () => {
-        const res = await api('topics-delete', { method: 'POST', body: JSON.stringify({ id: Number(deleteId), sha: currentTopicsSha }) });
+        const res = await withShaRetry('topics', () =>
+          api('topics-delete', { method: 'POST', body: JSON.stringify({ id: Number(deleteId), sha: currentTopicsSha }) })
+        );
         if (!res.ok) {
           alert(await res.text());
           return;
@@ -636,12 +667,19 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
     currentTopics.splice(toIdx, 0, moved);
     renderTopicRows();
 
+    // Captured once, up front — refreshSha's refetch inside withShaRetry
+    // replaces currentTopics wholesale, which would otherwise clobber the
+    // reorder the admin just did before a retry gets a chance to resend it.
+    const desiredOrder = currentTopics.map((t) => t.id);
+
     const topicsPanel = document.querySelector('[data-tab-panel="topics"]');
     await withContainerLoading(topicsPanel, async () => {
-      const res = await api('topics-reorder', {
-        method: 'POST',
-        body: JSON.stringify({ order: currentTopics.map((t) => t.id), sha: currentTopicsSha }),
-      });
+      const res = await withShaRetry('topics', () =>
+        api('topics-reorder', {
+          method: 'POST',
+          body: JSON.stringify({ order: desiredOrder, sha: currentTopicsSha }),
+        })
+      );
       if (!res.ok) {
         alert(await res.text());
       }
@@ -665,7 +703,9 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
 
     const submitBtn = topicEditForm.querySelector('button[type="submit"]');
     await withButtonLoading(submitBtn, async () => {
-      const res = await api('topics-save', { method: 'POST', body: JSON.stringify({ topic, sha: currentTopicsSha }) });
+      const res = await withShaRetry('topics', () =>
+        api('topics-save', { method: 'POST', body: JSON.stringify({ topic, sha: currentTopicsSha }) })
+      );
       if (!res.ok) {
         topicEditError.textContent = await res.text();
         topicEditError.classList.remove('hidden');
@@ -809,7 +849,9 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
       if (!article) return;
       const updated = { ...article, status: article.status === 'draft' ? 'published' : 'draft' };
       await withButtonLoading(toggleBtn, async () => {
-        const res = await api('admin-save', { method: 'POST', body: JSON.stringify({ article: updated, sha: currentSha }) });
+        const res = await withShaRetry('articles', () =>
+          api('admin-save', { method: 'POST', body: JSON.stringify({ article: updated, sha: currentSha }) })
+        );
         if (!res.ok) {
           statusMsg.textContent = await res.text();
           return;
@@ -823,7 +865,9 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
       const deleteSlug = deleteBtn.dataset.delete;
       if (!confirm(`Delete "${deleteSlug}"? This cannot be undone from here (use git revert to recover).`)) return;
       await withButtonLoading(deleteBtn, async () => {
-        const res = await api('admin-delete', { method: 'POST', body: JSON.stringify({ slug: deleteSlug, sha: currentSha }) });
+        const res = await withShaRetry('articles', () =>
+          api('admin-delete', { method: 'POST', body: JSON.stringify({ slug: deleteSlug, sha: currentSha }) })
+        );
         if (!res.ok) {
           statusMsg.textContent = await res.text();
           return;
@@ -852,7 +896,9 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
 
     const submitBtn = editForm.querySelector('button[type="submit"]');
     await withButtonLoading(submitBtn, async () => {
-      const res = await api('admin-save', { method: 'POST', body: JSON.stringify({ article: merged, sha: currentSha }) });
+      const res = await withShaRetry('articles', () =>
+        api('admin-save', { method: 'POST', body: JSON.stringify({ article: merged, sha: currentSha }) })
+      );
       if (!res.ok) {
         editError.textContent = await res.text();
         editError.classList.remove('hidden');
