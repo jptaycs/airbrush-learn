@@ -1,6 +1,7 @@
 import { getStore } from '@netlify/blobs';
 import { galleryCategories } from '../../src/data/galleryCategories.js';
 import { updateGalleryIndex } from './lib/galleryIndex.js';
+import { SHOW_GALLERY } from '../../src/lib/featureFlags.js';
 
 const VALID_DISCIPLINES = galleryCategories.map((c) => c.slug);
 const VALID_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -16,6 +17,13 @@ const errorResponse = (error, status) =>
   new Response(JSON.stringify({ error }), { status, headers: { 'content-type': 'application/json' } });
 
 export default async (req) => {
+  // The gallery feature (including its admin review tab) is paused — see
+  // src/lib/featureFlags.js. Reject before touching the blob store at all,
+  // so nothing queues up with nowhere to be reviewed.
+  if (!SHOW_GALLERY) {
+    return errorResponse('Submissions are paused right now — check back later.', 403);
+  }
+
   let formData;
   try {
     formData = await req.formData();

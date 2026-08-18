@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { categories } from '../data/categories.js';
+import { SHOW_GALLERY } from '../lib/featureFlags.js';
 ---
 <BaseLayout
   title="Admin — Airbrush Learn"
@@ -61,7 +62,9 @@ import { categories } from '../data/categories.js';
 
       <div class="flex gap-2 mb-6 border-b border-border">
         <button type="button" data-tab-btn="articles" class="px-4 py-2.5 text-[0.9rem] font-semibold border-b-2 border-accent text-accent-dark">Articles</button>
-        <button type="button" data-tab-btn="gallery" class="px-4 py-2.5 text-[0.9rem] font-semibold border-b-2 border-transparent text-muted hover:text-ink">Gallery Submissions</button>
+        {SHOW_GALLERY && (
+          <button type="button" data-tab-btn="gallery" class="px-4 py-2.5 text-[0.9rem] font-semibold border-b-2 border-transparent text-muted hover:text-ink">Gallery Submissions</button>
+        )}
         <button type="button" data-tab-btn="topics" class="px-4 py-2.5 text-[0.9rem] font-semibold border-b-2 border-transparent text-muted hover:text-ink">Topics</button>
       </div>
 
@@ -84,9 +87,11 @@ import { categories } from '../data/categories.js';
         </div>
       </div>
 
-      <div data-tab-panel="gallery" class="hidden">
-        <div data-gallery-rows class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-5"></div>
-      </div>
+      {SHOW_GALLERY && (
+        <div data-tab-panel="gallery" class="hidden">
+          <div data-gallery-rows class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-5"></div>
+        </div>
+      )}
 
       <div data-tab-panel="topics" class="hidden">
         <div class="flex items-center justify-between mb-4 gap-4">
@@ -301,6 +306,53 @@ import { categories } from '../data/categories.js';
     });
   };
 
+  // Same stroke-icon style as the Refresh button's svg elsewhere in this
+  // file, just spinning via Tailwind's built-in animate-spin utility.
+  const spinnerSvg = (size = 14) =>
+    `<svg class="animate-spin" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-9-9"/></svg>`;
+
+  // For actions triggered by one specific button (login, refresh, a row's
+  // Edit/Delete/Approve/etc, a form's Save). Swaps the button to a spinner
+  // and disables it for the duration of `fn`. On the success path the
+  // button is usually destroyed by the re-render that follows (loadArticles/
+  // loadTopics/loadPendingSubmissions replace the whole table via
+  // innerHTML), so the `document.body.contains` check skips restoring a
+  // detached node; on an early-return error path the row/form stays put,
+  // so the button needs its original label and enabled state back.
+  const withButtonLoading = async (button, fn) => {
+    if (!button) return fn();
+    const originalHtml = button.innerHTML;
+    const originalDisabled = button.disabled;
+    button.disabled = true;
+    button.innerHTML = spinnerSvg(14);
+    try {
+      return await fn();
+    } finally {
+      if (document.body.contains(button)) {
+        button.innerHTML = originalHtml;
+        button.disabled = originalDisabled;
+      }
+    }
+  };
+
+  // For actions with no single button to spinner-ify: loading a tab's data
+  // on first switch/refresh, and the topics drag-and-drop reorder. Overlays
+  // a centered spinner on `container` (which also blocks clicks under it,
+  // preventing a second action mid-request) for the duration of `fn`.
+  const withContainerLoading = async (container, fn) => {
+    if (!container) return fn();
+    container.classList.add('relative');
+    const overlay = document.createElement('div');
+    overlay.className = 'absolute inset-0 bg-bg/70 flex items-center justify-center z-20 rounded-xl';
+    overlay.innerHTML = `<span class="text-accent">${spinnerSvg(28)}</span>`;
+    container.appendChild(overlay);
+    try {
+      return await fn();
+    } finally {
+      overlay.remove();
+    }
+  };
+
   const escapeHtml = (str) =>
     String(str ?? '').replace(/[&<>"']/g, (c) => ({
       '&': '&amp;',
@@ -456,32 +508,43 @@ import { categories } from '../data/categories.js';
         c.classList.toggle('hidden', !show);
         c.classList.toggle('flex', show);
       });
-      if (tab !== 'articles') tabLoaders[tab]?.();
+      if (tab !== 'articles' && tabLoaders[tab]) {
+        const panel = document.querySelector(`[data-tab-panel="${tab}"]`);
+        withContainerLoading(panel, () => tabLoaders[tab]());
+      }
     });
   });
 
-  galleryRows.addEventListener('click', async (e) => {
-    const approveId = e.target.closest('[data-approve]')?.dataset.approve;
-    const rejectId = e.target.closest('[data-reject]')?.dataset.reject;
+  // galleryRows is null when SHOW_GALLERY is false (the tab/panel aren't
+  // rendered at all) — guard rather than let this throw at script load.
+  galleryRows?.addEventListener('click', async (e) => {
+    const approveBtn = e.target.closest('[data-approve]');
+    const rejectBtn = e.target.closest('[data-reject]');
 
-    if (approveId) {
-      const res = await api('gallery-approve', { method: 'POST', body: JSON.stringify({ id: approveId }) });
-      if (!res.ok) {
-        alert(await res.text());
-        return;
-      }
-      await loadPendingSubmissions();
+    if (approveBtn) {
+      const approveId = approveBtn.dataset.approve;
+      await withButtonLoading(approveBtn, async () => {
+        const res = await api('gallery-approve', { method: 'POST', body: JSON.stringify({ id: approveId }) });
+        if (!res.ok) {
+          alert(await res.text());
+          return;
+        }
+        await loadPendingSubmissions();
+      });
       return;
     }
 
-    if (rejectId) {
+    if (rejectBtn) {
+      const rejectId = rejectBtn.dataset.reject;
       if (!confirm('Reject this submission? It will be deleted and cannot be recovered from here.')) return;
-      const res = await api('gallery-reject', { method: 'POST', body: JSON.stringify({ id: rejectId }) });
-      if (!res.ok) {
-        alert(await res.text());
-        return;
-      }
-      await loadPendingSubmissions();
+      await withButtonLoading(rejectBtn, async () => {
+        const res = await api('gallery-reject', { method: 'POST', body: JSON.stringify({ id: rejectId }) });
+        if (!res.ok) {
+          alert(await res.text());
+          return;
+        }
+        await loadPendingSubmissions();
+      });
     }
   });
 
@@ -514,21 +577,24 @@ import { categories } from '../data/categories.js';
 
   topicRows.addEventListener('click', async (e) => {
     const editId = e.target.closest('[data-topic-edit]')?.dataset.topicEdit;
-    const deleteId = e.target.closest('[data-topic-delete]')?.dataset.topicDelete;
+    const deleteBtn = e.target.closest('[data-topic-delete]');
 
     if (editId) {
       openTopicEdit(Number(editId));
       return;
     }
 
-    if (deleteId) {
+    if (deleteBtn) {
+      const deleteId = deleteBtn.dataset.topicDelete;
       if (!confirm(`Delete topic #${deleteId}? This cannot be undone from here (use git revert to recover).`)) return;
-      const res = await api('topics-delete', { method: 'POST', body: JSON.stringify({ id: Number(deleteId), sha: currentTopicsSha }) });
-      if (!res.ok) {
-        alert(await res.text());
-        return;
-      }
-      await loadTopics();
+      await withButtonLoading(deleteBtn, async () => {
+        const res = await api('topics-delete', { method: 'POST', body: JSON.stringify({ id: Number(deleteId), sha: currentTopicsSha }) });
+        if (!res.ok) {
+          alert(await res.text());
+          return;
+        }
+        await loadTopics();
+      });
     }
   });
 
@@ -570,14 +636,17 @@ import { categories } from '../data/categories.js';
     currentTopics.splice(toIdx, 0, moved);
     renderTopicRows();
 
-    const res = await api('topics-reorder', {
-      method: 'POST',
-      body: JSON.stringify({ order: currentTopics.map((t) => t.id), sha: currentTopicsSha }),
+    const topicsPanel = document.querySelector('[data-tab-panel="topics"]');
+    await withContainerLoading(topicsPanel, async () => {
+      const res = await api('topics-reorder', {
+        method: 'POST',
+        body: JSON.stringify({ order: currentTopics.map((t) => t.id), sha: currentTopicsSha }),
+      });
+      if (!res.ok) {
+        alert(await res.text());
+      }
+      await loadTopics();
     });
-    if (!res.ok) {
-      alert(await res.text());
-    }
-    await loadTopics();
   });
 
   topicEditForm.addEventListener('submit', async (e) => {
@@ -594,21 +663,24 @@ import { categories } from '../data/categories.js';
       notes: topicEditForm.querySelector('[data-tfield="notes"]').value,
     };
 
-    const res = await api('topics-save', { method: 'POST', body: JSON.stringify({ topic, sha: currentTopicsSha }) });
-    if (!res.ok) {
-      topicEditError.textContent = await res.text();
-      topicEditError.classList.remove('hidden');
-      return;
-    }
-    topicEditPanel.classList.add('hidden');
-    // A saved topic can land outside the currently-active status filter
-    // (a new topic defaults to "Not started"; an edit can change the
-    // status entirely) — without resetting the filter, the row the admin
-    // just touched would silently vanish from the list with nothing on
-    // screen to say the save actually succeeded.
-    topicStatusFilter = 'all';
-    topicStatusFilterSelect.value = 'all';
-    await loadTopics();
+    const submitBtn = topicEditForm.querySelector('button[type="submit"]');
+    await withButtonLoading(submitBtn, async () => {
+      const res = await api('topics-save', { method: 'POST', body: JSON.stringify({ topic, sha: currentTopicsSha }) });
+      if (!res.ok) {
+        topicEditError.textContent = await res.text();
+        topicEditError.classList.remove('hidden');
+        return;
+      }
+      topicEditPanel.classList.add('hidden');
+      // A saved topic can land outside the currently-active status filter
+      // (a new topic defaults to "Not started"; an edit can change the
+      // status entirely) — without resetting the filter, the row the admin
+      // just touched would silently vanish from the list with nothing on
+      // screen to say the save actually succeeded.
+      topicStatusFilter = 'all';
+      topicStatusFilterSelect.value = 'all';
+      await loadTopics();
+    });
   });
 
   const renderRows = () => {
@@ -663,26 +735,28 @@ import { categories } from '../data/categories.js';
     if (e.key === 'Enter') loginBtn.click();
   });
 
-  loginBtn.addEventListener('click', async () => {
-    sessionStorage.setItem(PASSWORD_KEY, passwordInput.value);
-    const res = await api('admin-list');
-    if (!res.ok) {
-      loginError.textContent = 'Wrong password.';
-      loginError.classList.remove('hidden');
-      sessionStorage.removeItem(PASSWORD_KEY);
-      return;
-    }
-    const data = await res.json();
-    currentArticles = data.articles;
-    currentSha = data.sha;
-    loginError.classList.add('hidden');
-    loginPanel.classList.add('hidden');
-    adminPanel.classList.remove('hidden');
-    statusMsg.textContent = `${currentArticles.length} article(s)`;
-    renderRows();
-  });
+  loginBtn.addEventListener('click', () =>
+    withButtonLoading(loginBtn, async () => {
+      sessionStorage.setItem(PASSWORD_KEY, passwordInput.value);
+      const res = await api('admin-list');
+      if (!res.ok) {
+        loginError.textContent = 'Wrong password.';
+        loginError.classList.remove('hidden');
+        sessionStorage.removeItem(PASSWORD_KEY);
+        return;
+      }
+      const data = await res.json();
+      currentArticles = data.articles;
+      currentSha = data.sha;
+      loginError.classList.add('hidden');
+      loginPanel.classList.add('hidden');
+      adminPanel.classList.remove('hidden');
+      statusMsg.textContent = `${currentArticles.length} article(s)`;
+      renderRows();
+    })
+  );
 
-  refreshBtn.addEventListener('click', () => tabLoaders[getActiveTab()]());
+  refreshBtn.addEventListener('click', () => withButtonLoading(refreshBtn, () => tabLoaders[getActiveTab()]()));
   sortSelect.addEventListener('change', renderRows);
   topicStatusFilterSelect.addEventListener('change', () => {
     topicStatusFilter = topicStatusFilterSelect.value;
@@ -721,37 +795,41 @@ import { categories } from '../data/categories.js';
 
   rowsBody.addEventListener('click', async (e) => {
     const editSlug = e.target.closest('[data-edit]')?.dataset.edit;
-    const toggleSlug = e.target.closest('[data-toggle]')?.dataset.toggle;
-    const deleteSlug = e.target.closest('[data-delete]')?.dataset.delete;
+    const toggleBtn = e.target.closest('[data-toggle]');
+    const deleteBtn = e.target.closest('[data-delete]');
 
     if (editSlug) {
       openEdit(editSlug);
       return;
     }
 
-    if (toggleSlug) {
+    if (toggleBtn) {
+      const toggleSlug = toggleBtn.dataset.toggle;
       const article = currentArticles.find((a) => a.slug === toggleSlug);
       if (!article) return;
       const updated = { ...article, status: article.status === 'draft' ? 'published' : 'draft' };
-      statusMsg.textContent = 'Saving…';
-      const res = await api('admin-save', { method: 'POST', body: JSON.stringify({ article: updated, sha: currentSha }) });
-      if (!res.ok) {
-        statusMsg.textContent = await res.text();
-        return;
-      }
-      await loadArticles();
+      await withButtonLoading(toggleBtn, async () => {
+        const res = await api('admin-save', { method: 'POST', body: JSON.stringify({ article: updated, sha: currentSha }) });
+        if (!res.ok) {
+          statusMsg.textContent = await res.text();
+          return;
+        }
+        await loadArticles();
+      });
       return;
     }
 
-    if (deleteSlug) {
+    if (deleteBtn) {
+      const deleteSlug = deleteBtn.dataset.delete;
       if (!confirm(`Delete "${deleteSlug}"? This cannot be undone from here (use git revert to recover).`)) return;
-      statusMsg.textContent = 'Deleting…';
-      const res = await api('admin-delete', { method: 'POST', body: JSON.stringify({ slug: deleteSlug, sha: currentSha }) });
-      if (!res.ok) {
-        statusMsg.textContent = await res.text();
-        return;
-      }
-      await loadArticles();
+      await withButtonLoading(deleteBtn, async () => {
+        const res = await api('admin-delete', { method: 'POST', body: JSON.stringify({ slug: deleteSlug, sha: currentSha }) });
+        if (!res.ok) {
+          statusMsg.textContent = await res.text();
+          return;
+        }
+        await loadArticles();
+      });
     }
   });
 
@@ -772,14 +850,17 @@ import { categories } from '../data/categories.js';
     };
     const merged = { ...original, ...article };
 
-    const res = await api('admin-save', { method: 'POST', body: JSON.stringify({ article: merged, sha: currentSha }) });
-    if (!res.ok) {
-      editError.textContent = await res.text();
-      editError.classList.remove('hidden');
-      return;
-    }
-    editPanel.classList.add('hidden');
-    await loadArticles();
+    const submitBtn = editForm.querySelector('button[type="submit"]');
+    await withButtonLoading(submitBtn, async () => {
+      const res = await api('admin-save', { method: 'POST', body: JSON.stringify({ article: merged, sha: currentSha }) });
+      if (!res.ok) {
+        editError.textContent = await res.text();
+        editError.classList.remove('hidden');
+        return;
+      }
+      editPanel.classList.add('hidden');
+      await loadArticles();
+    });
   });
 
   if (getPassword()) {
