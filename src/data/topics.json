@@ -121,6 +121,17 @@
     "notes": ""
   },
   {
+    "id": 10,
+    "category": "How-To & Tutorials",
+    "search_intent": "Broad traffic",
+    "article_title": "How to Layer Colors with an Airbrush for Realistic Shading",
+    "target_keyword": "airbrush color layering shading",
+    "priority": "Medium",
+    "status": "Not started",
+    "publish_date": "",
+    "notes": ""
+  },
+  {
     "id": 2,
     "category": "Buying Guides",
     "search_intent": "High purchase intent",
@@ -192,17 +203,6 @@
     "search_intent": "Broad traffic",
     "article_title": "How to Airbrush a Base Coat Without Streaks",
     "target_keyword": "airbrush base coat without streaks",
-    "priority": "Medium",
-    "status": "Not started",
-    "publish_date": "",
-    "notes": ""
-  },
-  {
-    "id": 10,
-    "category": "How-To & Tutorials",
-    "search_intent": "Broad traffic",
-    "article_title": "How to Layer Colors with an Airbrush for Realistic Shading",
-    "target_keyword": "airbrush color layering shading",
     "priority": "Medium",
     "status": "Not started",
     "publish_date": "",
