@@ -116,8 +116,8 @@
     "article_title": "Common Beginner Airbrushing Mistakes (and How to Avoid Them)",
     "target_keyword": "beginner airbrushing mistakes",
     "priority": "Medium",
-    "status": "Not started",
-    "publish_date": "",
+    "status": "Published",
+    "publish_date": "2026-08-18",
     "notes": ""
   },
   {
@@ -129,7 +129,7 @@
     "priority": "High",
     "status": "Published",
     "publish_date": "2026-08-10",
-    "notes": "Title inferred \u2014 source row was missing this cell, please verify"
+    "notes": "Title inferred — source row was missing this cell, please verify"
   },
   {
     "id": 3,
@@ -217,7 +217,7 @@
     "priority": "Medium",
     "status": "Published",
     "publish_date": "2026-08-17",
-    "notes": "Already covered 3x over (freehand-airbrush-tips, mastering-freehand-airbrushing, airbrush-freehand-tips) \u2014 marked Published to block regeneration, not from the old sheet's own status"
+    "notes": "Already covered 3x over (freehand-airbrush-tips, mastering-freehand-airbrushing, airbrush-freehand-tips) — marked Published to block regeneration, not from the old sheet's own status"
   },
   {
     "id": 12,
@@ -228,7 +228,7 @@
     "priority": "Medium",
     "status": "Not started",
     "publish_date": "",
-    "notes": "Related to published clogging guide \u2014 link internally. Old sheet said Published but no matching article exists in articles.json, so treating as not started."
+    "notes": "Related to published clogging guide — link internally. Old sheet said Published but no matching article exists in articles.json, so treating as not started."
   },
   {
     "id": 14,
