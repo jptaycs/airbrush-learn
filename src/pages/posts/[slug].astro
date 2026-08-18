@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import ArticleSchema from '../../components/ArticleSchema.astro';
 import { categories } from '../../data/categories.js';
 import { estimateReadMinutes } from '../../lib/readTime.js';
+import { displayDate } from '../../lib/formatDate.js';
 import articles from '../../data/articles.json';
 
 export async function getStaticPaths() {
@@ -82,7 +83,7 @@ const shareItems = [
               {cat.label}
             </a>
           )}
-          <p class="text-muted text-[0.9rem] m-0">{article.published_date} &middot; {readMinutes} min read</p>
+          <p class="text-muted text-[0.9rem] m-0">{displayDate(article.published_date)} &middot; {readMinutes} min read</p>
         </div>
         <h1 class="font-serif max-[640px]:text-[1.7rem]">{article.title}</h1>
         <img

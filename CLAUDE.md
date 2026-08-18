@@ -40,7 +40,7 @@ Each article object in `src/data/articles.json` has these fields:
 | `content_html` | article body — inserted via `set:html` in `[slug].astro`. **This is the field the templates actually render.** |
 | `image_prompt` | the prompt used to generate the hero image; carried through for reference, not rendered anywhere |
 | `source_topic` | the target SEO keyword from the content brief; carried through for reference, not rendered anywhere |
-| `published_date` | sort order (newest first) and displayed date |
+| `published_date` | sort order (newest first) and displayed date. Format is `YYYY-MM-DD` (n8n-generated entries) or `YYYY-MM-DDTHH:mm` (admin's edit form uses a `datetime-local` input, so a manual edit can add a time) — both sort correctly as plain strings. The public site (`src/lib/formatDate.js`'s `displayDate()`) always renders date-only regardless of which format is stored; only `/admin`'s own article table and edit form show the time when present. |
 | `category` | category badge, `/category/<slug>` archive-page membership, mega-menu counts — one of 10 fixed slugs (see `src/data/categories.js`); missing/unrecognized values are treated as uncategorized |
 | `status` | `"draft"` or `"published"`. A missing/absent field is treated as `"published"` — no migration was needed when this field was introduced. Drafts are filtered out of the homepage, category pages, and the sitemap, but still get a `noindex`'d `/posts/<slug>` page so they're directly previewable. See `/admin` below. |
 

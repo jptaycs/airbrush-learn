@@ -4,6 +4,7 @@ import ArticleCard from '../components/ArticleCard.astro';
 import { categories } from '../data/categories.js';
 import { estimateReadMinutes } from '../lib/readTime.js';
 import { sortArticlesNewestFirst } from '../lib/sortArticles.js';
+import { displayDate } from '../lib/formatDate.js';
 import articles from '../data/articles.json';
 import gallery from '../data/gallery.json';
 import { SHOW_GALLERY } from '../lib/featureFlags.js';
@@ -91,7 +92,7 @@ const homeGalleryTiles = [
             <div class="pt-4 px-1">
               {featuredCat && <span class="block text-[0.7rem] text-muted uppercase tracking-[0.05em] font-bold mb-1.5">{featuredCat.label}</span>}
               <h2 class="font-serif text-ink text-[1.15rem] leading-snug">{featured.title}</h2>
-              <span class="block mt-2 text-[0.78rem] text-muted">{featured.published_date} · {featuredReadMinutes} min read</span>
+              <span class="block mt-2 text-[0.78rem] text-muted">{displayDate(featured.published_date)} · {featuredReadMinutes} min read</span>
             </div>
           </div>
         </a>
