@@ -440,6 +440,17 @@
     "notes": ""
   },
   {
+    "id": 42,
+    "category": "Beginner",
+    "search_intent": "Comparison traffic",
+    "article_title": "Airbrush vs Spray Can: Which Should Beginners Use?",
+    "target_keyword": "airbrush vs spray can",
+    "priority": "Medium",
+    "status": "Not started",
+    "publish_date": "",
+    "notes": ""
+  },
+  {
     "id": 38,
     "category": "Cosplay & Body Art",
     "search_intent": "High purchase intent",
@@ -467,17 +478,6 @@
     "search_intent": "Long-tail, low competition",
     "article_title": "How Much Does It Cost to Start Airbrushing?",
     "target_keyword": "cost to start airbrushing",
-    "priority": "Medium",
-    "status": "Not started",
-    "publish_date": "",
-    "notes": ""
-  },
-  {
-    "id": 42,
-    "category": "Beginner",
-    "search_intent": "Comparison traffic",
-    "article_title": "Airbrush vs Spray Can: Which Should Beginners Use?",
-    "target_keyword": "airbrush vs spray can",
     "priority": "Medium",
     "status": "Not started",
     "publish_date": "",
