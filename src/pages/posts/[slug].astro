@@ -45,6 +45,7 @@ const shareItems = [
   canonicalPath={`/posts/${article.slug}`}
   ogImage={`/images/${article.slug}.png`}
   noindex={article.status === 'draft'}
+  ogType="article"
 >
   <Fragment slot="head">
     <ArticleSchema
@@ -56,7 +57,7 @@ const shareItems = [
     />
   </Fragment>
 
-  <div data-progress-bar class="fixed top-0 inset-x-0 h-[3px] bg-accent origin-left scale-x-0 z-50" aria-hidden="true"></div>
+  <div data-reading-progress-bar class="fixed top-0 inset-x-0 h-[3px] bg-accent origin-left scale-x-0 z-50" aria-hidden="true"></div>
 
   <article class="pt-6 pb-16 mx-auto max-w-wide px-5">
     <div class="lg:grid lg:grid-cols-[56px_760px] lg:justify-center lg:gap-10">

@@ -11,9 +11,10 @@ interface Props {
   canonicalPath: string; // e.g. "/" or "/posts/my-slug"
   ogImage?: string; // absolute path e.g. "/images/my-slug.png"
   noindex?: boolean;
+  ogType?: string; // only actual articles should pass "article" — everything else is "website"
 }
 
-const { title, description, canonicalPath, ogImage, noindex } = Astro.props;
+const { title, description, canonicalPath, ogImage, noindex, ogType = 'website' } = Astro.props;
 const siteUrl = Astro.site?.origin ?? 'https://airbrush.gallery';
 const canonicalUrl = new URL(canonicalPath, siteUrl).toString();
 const imageUrl = ogImage ? new URL(ogImage, siteUrl).toString() : new URL('/logo.png', siteUrl).toString();
@@ -36,7 +37,7 @@ const imageUrl = ogImage ? new URL(ogImage, siteUrl).toString() : new URL('/logo
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
   <!-- Open Graph -->
-  <meta property="og:type" content="article" />
+  <meta property="og:type" content={ogType} />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:url" content={canonicalUrl} />

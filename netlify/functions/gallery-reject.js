@@ -1,4 +1,5 @@
 import { getStore } from '@netlify/blobs';
+import { updateGalleryIndex } from './lib/galleryIndex.js';
 
 export default async (req) => {
   if (req.headers.get('x-admin-password') !== process.env.ADMIN_PASSWORD) {
@@ -13,8 +14,7 @@ export default async (req) => {
   const store = getStore({ name: 'gallery-pending', consistency: 'strong' });
   await store.delete(`${id}/meta`);
   await store.delete(`${id}/image`);
-  const index = (await store.get('index', { type: 'json' })) || [];
-  await store.setJSON('index', index.filter((x) => x !== id));
+  await updateGalleryIndex(store, (index) => index.filter((x) => x !== id));
 
   return new Response(JSON.stringify({ ok: true }), {
     headers: { 'content-type': 'application/json' },

@@ -18,6 +18,12 @@ export default async (req) => {
   }
 
   const data = await res.json();
+  // GitHub's Contents API omits `content` (and sends `download_url` instead)
+  // once a file crosses ~1MB — without this check, Buffer.from(undefined, ...)
+  // throws and the function 500s with no actionable message.
+  if (!data.content) {
+    return new Response('articles.json is too large for the GitHub Contents API to return inline', { status: 502 });
+  }
   const articles = JSON.parse(Buffer.from(data.content, 'base64').toString('utf-8'));
 
   return new Response(JSON.stringify({ articles, sha: data.sha }), {

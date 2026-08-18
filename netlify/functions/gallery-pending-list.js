@@ -8,7 +8,10 @@ export default async (req) => {
   const store = getStore({ name: 'gallery-pending', consistency: 'strong' });
   const index = (await store.get('index', { type: 'json' })) || [];
 
-  const MAX_RETURNED = 10;
+  // Must match gallery-submit.js's MAX_PENDING — otherwise a backlog beyond
+  // this cap is invisible to the admin until the front of the queue clears,
+  // even though the queue can hold more than this.
+  const MAX_RETURNED = 50;
   const submissions = [];
   for (const id of index.slice(0, MAX_RETURNED)) {
     const meta = await store.get(`${id}/meta`, { type: 'json' });

@@ -1,5 +1,6 @@
 import { getStore } from '@netlify/blobs';
 import { galleryCategories } from '../../src/data/galleryCategories.js';
+import { updateGalleryIndex } from './lib/galleryIndex.js';
 
 const VALID_DISCIPLINES = galleryCategories.map((c) => c.slug);
 const VALID_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -69,9 +70,7 @@ export default async (req) => {
     contentType: image.type,
   });
 
-  const index = (await store.get('index', { type: 'json' })) || [];
-  index.push(id);
-  await store.setJSON('index', index);
+  await updateGalleryIndex(store, (index) => [...index, id]);
 
   return okResponse();
 };
