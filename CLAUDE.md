@@ -41,7 +41,7 @@ Each article object in `src/data/articles.json` has these fields:
 | `image_prompt` | the prompt used to generate the hero image; carried through for reference, not rendered anywhere |
 | `source_topic` | the target SEO keyword from the content brief; carried through for reference, not rendered anywhere |
 | `published_date` | sort order (newest first) and displayed date |
-| `category` | category badge, `/category/<slug>` archive-page membership, mega-menu counts — one of 9 fixed slugs (see `src/data/categories.js`); missing/unrecognized values are treated as uncategorized |
+| `category` | category badge, `/category/<slug>` archive-page membership, mega-menu counts — one of 10 fixed slugs (see `src/data/categories.js`); missing/unrecognized values are treated as uncategorized |
 | `status` | `"draft"` or `"published"`. A missing/absent field is treated as `"published"` — no migration was needed when this field was introduced. Drafts are filtered out of the homepage, category pages, and the sitemap, but still get a `noindex`'d `/posts/<slug>` page so they're directly previewable. See `/admin` below. |
 
 The n8n workflow's `Publish Guard (block fallback)` node is what decides whether an article reaches the commit step at all; nothing here re-checks that. The n8n workflow does **not** currently set `status: "draft"` on new entries (see To Do below) — until it does, every article it commits is immediately live, same as before `status` existed.
@@ -62,7 +62,7 @@ The n8n content pipeline's topic queue and publish-status tracker — added 2026
 
 ```
 src/data/articles.json       # real content, committed directly by n8n via the GitHub API
-src/data/categories.js       # fixed 9-category taxonomy (label/description) — not from n8n
+src/data/categories.js       # fixed 10-category taxonomy (label/description) — not from n8n
 src/data/gallery.json        # curated gallery pieces (slug/title/category/image/credit) — not from n8n
 src/data/galleryCategories.js # fixed gallery discipline taxonomy (slug/label) — separate from article categories.js
 src/data/topics.json         # n8n's topic queue/status tracker, replacing Google Sheets — managed via /admin's Topics tab
