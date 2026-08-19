@@ -4,6 +4,7 @@ import ArticleSchema from '../../components/ArticleSchema.astro';
 import { categories } from '../../data/categories.js';
 import { estimateReadMinutes } from '../../lib/readTime.js';
 import { displayDate } from '../../lib/formatDate.js';
+import { addFootnotes } from '../../lib/citations.js';
 import articles from '../../data/articles.json';
 
 export async function getStaticPaths() {
@@ -17,6 +18,7 @@ const { article } = Astro.props;
 const siteUrl = Astro.site?.origin ?? 'https://airbrush.gallery';
 const cat = categories.find((c) => c.slug === article.category);
 const readMinutes = estimateReadMinutes(article.content_html);
+const contentWithFootnotes = addFootnotes(article.content_html);
 const pageUrl = `${siteUrl}/posts/${article.slug}`;
 const shareLinks = {
   x: `https://twitter.com/intent/tweet?url=${encodeURIComponent(pageUrl)}&text=${encodeURIComponent(article.title)}`,
@@ -93,7 +95,7 @@ const shareItems = [
           width="1536"
           height="1024"
         />
-        <div set:html={article.content_html} />
+        <div set:html={contentWithFootnotes} />
       </div>
     </div>
   </article>
