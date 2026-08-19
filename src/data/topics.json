@@ -121,6 +121,17 @@
     "notes": ""
   },
   {
+    "id": 4,
+    "category": "Buying Guides",
+    "search_intent": "High purchase intent",
+    "article_title": "Gravity Feed vs Siphon Feed Airbrush: Which Is Right for You?",
+    "target_keyword": "gravity feed vs siphon feed airbrush",
+    "priority": "Medium",
+    "status": "Not started",
+    "publish_date": "",
+    "notes": ""
+  },
+  {
     "id": 8,
     "category": "How-To & Tutorials",
     "search_intent": "Broad traffic",
@@ -159,17 +170,6 @@
     "search_intent": "High purchase intent",
     "article_title": "Best Airbrush for Miniature Painting Under $150",
     "target_keyword": "best airbrush for miniatures",
-    "priority": "Medium",
-    "status": "Not started",
-    "publish_date": "",
-    "notes": ""
-  },
-  {
-    "id": 4,
-    "category": "Buying Guides",
-    "search_intent": "High purchase intent",
-    "article_title": "Gravity Feed vs Siphon Feed Airbrush: Which Is Right for You?",
-    "target_keyword": "gravity feed vs siphon feed airbrush",
     "priority": "Medium",
     "status": "Not started",
     "publish_date": "",
