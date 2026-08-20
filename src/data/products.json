@@ -1,0 +1,275 @@
+[
+  {
+    "name": "GSI Creos Mr. Airbrush Procon Boy PS-268A 0.4mm Single Action",
+    "type": "airbrush",
+    "price": 75,
+    "budgetTier": "budget",
+    "subjects": ["miniatures", "scale-models"],
+    "experience": ["beginner"],
+    "blurb": "A compact 73g single-action gravity-feed airbrush with a 0.4mm nozzle, built for lightweight comfort during long painting sessions.",
+    "url": "https://spraygunner.com/products/gsi-creos-mr-airbrush-procon-boy-ps-268ar-0-4-single-action?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "GSI Creos Mr. Procon Boy LSA 0.4mm Single-Action Airbrush",
+    "type": "airbrush",
+    "price": 90,
+    "budgetTier": "budget",
+    "subjects": ["automotive", "scale-models"],
+    "experience": ["intermediate", "advanced"],
+    "blurb": "A 0.4mm single-action airbrush with broad coverage suited to primers, surfacers, and base coats.",
+    "url": "https://spraygunner.com/products/gsi-creos-mr-procon-boy-lsa-0-4mm-airbrush-ps272?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "GSI Creos Mr. Airbrush Procon Boy PS-289 0.3mm No Package",
+    "type": "airbrush",
+    "price": 87,
+    "budgetTier": "budget",
+    "subjects": ["miniatures", "scale-models"],
+    "experience": ["beginner", "intermediate"],
+    "blurb": "A made-in-Japan double-action gravity-feed airbrush with a 0.3mm nozzle for smooth control and consistent atomization across modeling and illustration work.",
+    "url": "https://spraygunner.com/products/gsi-creos-mr-airbrush-procon-boy-ps-289-0-3mm-no-package?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "Badger Patriot 105-1 Fine Gravity Airbrush",
+    "type": "airbrush",
+    "price": 120,
+    "budgetTier": "mid",
+    "subjects": ["scale-models", "miniatures"],
+    "experience": ["beginner", "intermediate"],
+    "blurb": "A dual-action, gravity-feed airbrush with a versatile 0.5mm needle/nozzle setup that handles detail work, smooth fades, and broader coverage.",
+    "url": "https://spraygunner.com/products/badger-patriot-105-1-fine-gravity-airbrush?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "GSI Creos Mr. Airbrush Custom PS-771 0.18mm",
+    "type": "airbrush",
+    "price": 175,
+    "budgetTier": "mid",
+    "subjects": ["miniatures", "fine-art"],
+    "experience": ["advanced"],
+    "blurb": "A top-tier double-action airbrush with a 0.18mm ultra-fine nozzle built for crisp micro-detail, tight lines, and smooth fades.",
+    "url": "https://spraygunner.com/products/ps771-gsi-creos-mr-airbrush-custom-0-18mm?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "Harder & Steenbeck Giraldez Infinity MkII Solo Airbrush",
+    "type": "airbrush",
+    "price": 255,
+    "budgetTier": "mid",
+    "subjects": ["miniatures"],
+    "experience": ["advanced"],
+    "blurb": "A signature collaboration airbrush with a 0.25mm stainless-steel SuperFine head and titanium UberDetail nozzle system for sharp detail and exceptional control on miniatures.",
+    "url": "https://spraygunner.com/products/harder-steenbeck-giraldez-infinity-mkii-solo?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "Harder & Steenbeck Infinity 2024 CRplus 2in1 Airbrush",
+    "type": "airbrush",
+    "price": 300,
+    "budgetTier": "pro",
+    "subjects": ["miniatures", "automotive"],
+    "experience": ["advanced"],
+    "blurb": "A professional-grade airbrush with groundbreaking titanium nozzle technology engineered for ultra-fine detail, robustness, and durability on intricate work.",
+    "url": "https://spraygunner.com/products/harder-steenbeck-infinity-2024-crplus-2-in-1-airbrush?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "GAAHLERI Ambition Series GTS-06 Serenair Mini Compressor",
+    "type": "kit",
+    "price": 80,
+    "budgetTier": "budget",
+    "experience": ["beginner", "intermediate"],
+    "blurb": "A compact mini compressor bundled with an airbrush, hose, and two airbrush holders so you can get started right away.",
+    "url": "https://spraygunner.com/products/gaahleri-ambition-series-gts-06-serenair-mini-compressor-us-ver?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "Tooty Airbrush Compressor by NO-NAME Brand",
+    "type": "compressor",
+    "price": 100,
+    "budgetTier": "mid",
+    "experience": ["beginner", "intermediate", "advanced"],
+    "blurb": "An oil-free compressor with a 3L air tank and auto shut-off/start, a long-running best-seller for steady studio airflow.",
+    "url": "https://spraygunner.com/products/tooty-airbrush-compressor-by-no-name-brand?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "Compact Master Blaster Airbrush Compressor by NO-NAME Brand",
+    "type": "compressor",
+    "price": 120,
+    "budgetTier": "mid",
+    "experience": ["beginner", "intermediate", "advanced"],
+    "blurb": "A compact dual-air-outlet compressor that lets two airbrushes run simultaneously, built for reliable airflow across cosmetics, nail art, and scale modeling.",
+    "url": "https://spraygunner.com/products/compact-master-blaster-airbrush-compressor-by-no-name-brand?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "Master Blaster Airbrush Compressor by NO-NAME Brand",
+    "type": "compressor",
+    "price": 165,
+    "budgetTier": "mid",
+    "experience": ["beginner", "intermediate", "advanced"],
+    "blurb": "A compact, metal-cased compressor with suction-cup stability, built for durability and affordability across hobbyist and professional airbrushing.",
+    "url": "https://spraygunner.com/products/master-blaster-airbrush-compressor-by-no-name-brand?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "Master Blaster II Airbrush Compressor by NO-NAME Brand",
+    "type": "compressor",
+    "price": 222,
+    "budgetTier": "mid",
+    "experience": ["intermediate", "advanced"],
+    "blurb": "An oil-free compressor with a 3.5L tank, auto shut-off/start, and an 'overclock' mode pushing pressure up to 6 bar for demanding studio use.",
+    "url": "https://spraygunner.com/products/master-blaster-ii-airbrush-compressor-by-no-name-brand?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "Silent Storm Airbrush Compressor by NO-NAME",
+    "type": "compressor",
+    "price": 350,
+    "budgetTier": "pro",
+    "experience": ["intermediate", "advanced"],
+    "blurb": "A quiet, powerful compressor built for distraction-free painting sessions with no extra accessories.",
+    "url": "https://spraygunner.com/products/silent-compressor-for-airbrush-silent-storm?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "Iwata-Medea Airbrush Cleaner",
+    "type": "accessory",
+    "price": 6,
+    "budgetTier": "budget",
+    "experience": ["beginner", "intermediate", "advanced"],
+    "blurb": "A mild, general-purpose airbrush cleaner formulated for acrylics, watercolors, gouache, inks, and dyes.",
+    "url": "https://spraygunner.com/products/medea-airbrush-cleaner?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "Iwata Airbrush Cleaning Kit",
+    "type": "accessory",
+    "price": 28,
+    "budgetTier": "budget",
+    "experience": ["beginner", "intermediate", "advanced"],
+    "blurb": "A complete cleaning kit with Medea cleaner, thread sealer, small brushes, pipe cleaners, a nozzle wrench, LED magnifier, and premium lubricant.",
+    "url": "https://spraygunner.com/products/iwata-airbrush-cleaning-kit?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "Createx 4008 Restorer 16oz.",
+    "type": "accessory",
+    "price": 17,
+    "budgetTier": "budget",
+    "experience": ["beginner", "intermediate", "advanced"],
+    "blurb": "A water-based, biodegradable soaking cleaner that dissolves dried paint from airbrush and spray-gun parts for easy clean-up.",
+    "url": "https://spraygunner.com/products/createx-4008-restorer-16oz?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "Iwata Professional Airbrush Maintenance Tools",
+    "type": "accessory",
+    "price": 72,
+    "budgetTier": "budget",
+    "experience": ["intermediate", "advanced"],
+    "blurb": "A comprehensive maintenance kit designed to clean, care for, and prolong the life of an airbrush for consistent results.",
+    "url": "https://spraygunner.com/products/iwata-professional-airbrush-maintenance-tools?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "Mack 15 Piece Spray Gun Cleaning Kit",
+    "type": "accessory",
+    "price": 36,
+    "budgetTier": "budget",
+    "experience": ["intermediate", "advanced"],
+    "blurb": "A 15-piece brush set in multiple sizes and bristle types for cleaning spray guns, air caps, air passages, and fluid nozzles.",
+    "url": "https://spraygunner.com/products/mack-15-piece-spray-gun-cleaning-kit?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "NO-NAME Brand Essential Maintenance Kit",
+    "type": "accessory",
+    "price": 50,
+    "budgetTier": "budget",
+    "experience": ["beginner", "intermediate", "advanced"],
+    "blurb": "An all-in-one cleaning and maintenance set including a glass cleaning pot, built to deep-clean and protect airbrush equipment long-term.",
+    "url": "https://spraygunner.com/products/no-name-brand-essential-maintenance-kit?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "Createx Airbrush Colors Opaque White 5212",
+    "type": "paint",
+    "price": 4,
+    "budgetTier": "budget",
+    "experience": ["beginner", "intermediate", "advanced"],
+    "blurb": "A water-based acrylic airbrush paint delivering opaque coverage in just 2-3 coats with lightfast pigments.",
+    "url": "https://spraygunner.com/products/createx-airbrush-colors-opaque-white-5212?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "Createx Airbrush Colors Opaque Black 5211",
+    "type": "paint",
+    "price": 4,
+    "budgetTier": "budget",
+    "experience": ["beginner", "intermediate", "advanced"],
+    "blurb": "A water-based acrylic airbrush paint with opaque, vibrant coverage in 2-3 coats and a soft hand feel on fabric.",
+    "url": "https://spraygunner.com/products/createx-airbrush-colors-opaque-black-5211?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "Createx Airbrush Colors Fluorescent Yellow 5405",
+    "type": "paint",
+    "price": 4,
+    "budgetTier": "budget",
+    "experience": ["intermediate", "advanced"],
+    "blurb": "A vibrant, highly transparent water-based fluorescent neon color best applied over a white base for maximum glow.",
+    "url": "https://spraygunner.com/products/createx-airbrush-colors-fluorescent-yellow-5405?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "Createx Airbrush Colors Pearl White 5310",
+    "type": "paint",
+    "price": 4,
+    "budgetTier": "budget",
+    "experience": ["intermediate", "advanced"],
+    "blurb": "A water-based acrylic color formulated with pearlescent powders for a shimmering, semi-gloss finish.",
+    "url": "https://spraygunner.com/products/createx-airbrush-colors-pearl-white-5310?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "ChromaAir Metallic Paint: Aluminum Super Fine",
+    "type": "paint",
+    "price": 12,
+    "budgetTier": "budget",
+    "experience": ["intermediate", "advanced"],
+    "blurb": "A super-fine water-based metallic paint offering strong coverage as a base color for candy finishes on scale models and automotive projects.",
+    "url": "https://spraygunner.com/products/chromaair-metallic-paint-aluminum-super-fine?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "Harder & Steenbeck ULTRA 2024 Airbrush",
+    "type": "airbrush",
+    "price": 110,
+    "budgetTier": "mid",
+    "subjects": ["miniatures", "scale-models"],
+    "experience": ["beginner", "intermediate"],
+    "blurb": "An entry-level airbrush designed to help new users learn airbrushing while remaining useful as their skills grow.",
+    "url": "https://spraygunner.com/products/harder-steenbeck-new-ultra-2024-airbrush?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "Cordless Airbrush Battery-Powered Compressor Kit",
+    "type": "kit",
+    "price": 85,
+    "budgetTier": "budget",
+    "subjects": ["cosplay", "body-art"],
+    "experience": ["beginner"],
+    "blurb": "A portable, battery-powered cordless compressor bundled with a BD-180 airbrush and two rechargeable batteries for on-the-go setups.",
+    "url": "https://spraygunner.com/products/cordless-airbrush-battery-powered-compressor-with-airbrush-kit?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "NEO for Iwata CN Gravity Feed Dual Action Airbrush",
+    "type": "airbrush",
+    "price": 79,
+    "budgetTier": "budget",
+    "subjects": ["miniatures", "scale-models"],
+    "experience": ["beginner", "intermediate", "advanced"],
+    "blurb": "A versatile, easy-to-use dual-action gravity-feed airbrush that delivers soft, effortless coverage at low air pressures.",
+    "url": "https://spraygunner.com/products/neo-for-iwata-cn-gravity-feed-dual-action-airbrush?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "Iwata Revolution HP-CR Gravity Feed Dual Action Airbrush",
+    "type": "airbrush",
+    "price": 106,
+    "budgetTier": "mid",
+    "subjects": ["miniatures", "scale-models"],
+    "experience": ["beginner", "intermediate"],
+    "blurb": "A versatile, high-performance dual-action airbrush built for smooth coverage, precision control, and long-lasting reliability.",
+    "url": "https://spraygunner.com/products/iwata-revolution-hp-cr?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  },
+  {
+    "name": "GAAHLERI Premium Series GHPM-Mobius 0.3mm Airbrush",
+    "type": "airbrush",
+    "price": 61,
+    "budgetTier": "budget",
+    "subjects": ["miniatures", "nail-art"],
+    "experience": ["intermediate", "advanced"],
+    "blurb": "A premium 0.3mm airbrush with a spiral MAC nozzle and ultra mirror-level cup, built for stable atomization and easy cleanup.",
+    "url": "https://spraygunner.com/products/gaahleri-premium-series-ghpm-mobius-0-3mm?utm_source=airbrushlearn&utm_medium=gear-advisor"
+  }
+]
