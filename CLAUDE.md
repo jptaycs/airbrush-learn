@@ -58,6 +58,17 @@ The n8n content pipeline's topic queue and publish-status tracker — added 2026
 
 **As of 2026-08-18, n8n's workflow has not yet been updated to use this** — it still points at the old Google Sheet. Wiring it up means replacing `Get row(s) in sheet` with an HTTP Request node calling `topics-list` (with an `x-admin-password` header, same secret as everything else in `/admin`), and replacing `Update row in sheet` with an HTTP Request node calling `topics-save` with the topic's updated `status`/`publish_date`. The WordPress-posting branch (`Upload Featured Media to WordPress` → `Create WordPress Draft Post`) was intentionally left untouched during this migration — it's known dead weight (see Known gaps below) but wiring topics.json in didn't require touching it.
 
+### `src/data/products.json`
+
+A curated reference list of real SprayGunner products, unified 2026-08-21 from what was previously a separate `gearAdvisor.json` placeholder file (see the closed "Swap in real Gear Advisor data" To Do item below). It serves two consumers: the `/gear-advisor` quiz (`src/components/GearAdvisor.astro`, imported directly at build time) and the n8n content pipeline (via `netlify/functions/products-list.js`, a read-only endpoint), which prefers linking a specific product from this list over the generic `spraygunner.com` root. Each entry: `{ name, type, price, budgetTier, subjects, experience, blurb, url }`.
+
+- `type` — one of `airbrush`, `compressor`, `kit`, `accessory`, or `paint`. Only the first four are reachable by the quiz's scoring logic in `GearAdvisor.astro` (`isAirbrushOrKit()` matches `airbrush`/`kit`, and separate filters match `compressor` and `accessory` directly); `paint` is a fifth value used only by the content pipeline for linking and is deliberately invisible to the quiz — it never appears in any of `scoreGear()`'s filters.
+- `budgetTier` — `budget` (under $100), `mid` ($100–300), or `pro` ($300+). The $300 boundary is ambiguous by that description (it satisfies both "$100–300" and "$300+"); the convention used here is that an item priced at exactly $300 is tagged `pro`.
+- `subjects` — an array of slugs from `src/data/galleryCategories.js` (**not** `categories.js`). Only set for `airbrush`/`kit` items; omitted entirely for `compressor`/`accessory`/`paint` items, which the quiz's scoring treats as suiting any subject.
+- `url` — a real spraygunner.com product URL tagged `?utm_source=airbrushlearn&utm_medium=gear-advisor`. This URL is shared between the quiz and the (not-yet-live) content pipeline; it's currently tagged for the quiz since that's the only live consumer today — revisit the `utm_medium` attribution if/when the pipeline starts rendering these links in production.
+
+This file is a curated snapshot sourced from spraygunner.com's live Shopify collection feeds, not a live sync — prices and availability may drift over time; see `docs/superpowers/specs/2026-08-21-spraygunner-product-reference-design.md` for the full sourcing process if it ever needs refreshing.
+
 ## Project structure
 
 ```
@@ -100,7 +111,7 @@ Netlify, connected to this repo. Build command `astro build`, output directory `
 
 **Runtime environment variables (required for `/admin` and gallery submissions to work, not for the build):** set in Netlify's site settings, not this repo.
 - `GITHUB_PAT` — a GitHub Personal Access Token with write access to this repo, used inside `netlify/functions/admin-*.js` and `gallery-approve.js` to commit changes via the Contents API. Never exposed client-side.
-- `ADMIN_PASSWORD` — the shared password gating `/admin` (its Articles, Gallery Submissions, and Topics tabs), and also the credential n8n is expected to send as `x-admin-password` when it calls `topics-list`/`topics-save`. This is the actual write-access boundary (there's no per-user auth), so it should be long and random, not memorable — treat it like the GitHub token itself, not a login password.
+- `ADMIN_PASSWORD` — the shared password gating `/admin` (its Articles, Gallery Submissions, and Topics tabs), and also the credential n8n is expected to send as `x-admin-password` when it calls `topics-list`/`topics-save`/`products-list`. This is the actual write-access boundary (there's no per-user auth), so it should be long and random, not memorable — treat it like the GitHub token itself, not a login password.
 
 Pending gallery submissions (`gallery-submit.js`, `gallery-pending-list.js`) are stored in Netlify Blobs (`@netlify/blobs`), not git — this needs no separate credential or environment variable; it's automatically available to Netlify Functions on this site, and emulated locally with zero setup by `netlify-cli dev`.
 
