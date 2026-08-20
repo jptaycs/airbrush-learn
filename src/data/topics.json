@@ -226,8 +226,8 @@
     "article_title": "How to Clean Airbrush Needles and Nozzles Properly",
     "target_keyword": "how to clean airbrush needle",
     "priority": "Medium",
-    "status": "Not started",
-    "publish_date": "",
+    "status": "Published",
+    "publish_date": "2026-08-20",
     "notes": "Related to published clogging guide — link internally. Old sheet said Published but no matching article exists in articles.json, so treating as not started."
   },
   {
