@@ -151,7 +151,7 @@
     "source_topic": "airbrush color layering shading",
     "published_date": "2026-08-19",
     "category": "how-to",
-    "status": "published"
+    "status": "draft"
   },
   {
     "slug": "gravity-feed-vs-siphon-feed-airbrush",
@@ -162,7 +162,7 @@
     "source_topic": "gravity feed vs siphon feed airbrush",
     "published_date": "2026-08-19",
     "category": "buying-guides",
-    "status": "published"
+    "status": "draft"
   },
   {
     "slug": "single-action-vs-dual-action-airbrush",
@@ -173,7 +173,7 @@
     "source_topic": "single action vs dual action airbrush",
     "published_date": "2026-08-19",
     "category": "buying-guides",
-    "status": "published"
+    "status": "draft"
   },
   {
     "slug": "airbrush-kits-for-cake-decorating",
@@ -195,7 +195,7 @@
     "source_topic": "how to set up airbrush compressor",
     "published_date": "2026-08-18T00:00",
     "category": "how-to",
-    "status": "published"
+    "status": "draft"
   },
   {
     "slug": "thin-paint-for-airbrushing",
@@ -206,7 +206,7 @@
     "source_topic": "how to thin paint for airbrush",
     "published_date": "2026-08-18",
     "category": "how-to",
-    "status": "published"
+    "status": "draft"
   },
   {
     "slug": "airbrush-nail-art",
@@ -216,7 +216,7 @@
     "image_prompt": "Editorial hero image for a blog post titled: Airbrush Nail Art: Techniques & Trends for 2026. Clean, professional, conceptual workspace scene with soft natural lighting. No text, no logos, no watermarks.",
     "source_topic": "airbrush nail art",
     "published_date": "2026-08-18",
-    "status": "published",
+    "status": "draft",
     "category": "trending-niche"
   },
   {
@@ -228,7 +228,7 @@
     "source_topic": "airbrush cosplay armor metallic",
     "published_date": "2026-08-18",
     "category": "cosplay-body-art",
-    "status": "published"
+    "status": "draft"
   },
   {
     "slug": "master-airbrush-cosplay-armor",
@@ -239,7 +239,7 @@
     "source_topic": "airbrush cosplay armor metallic",
     "published_date": "2026-08-18",
     "category": "cosplay-body-art",
-    "status": "published"
+    "status": "draft"
   },
   {
     "slug": "airbrushing-for-beginners",
@@ -250,7 +250,7 @@
     "source_topic": "airbrushing for beginners",
     "published_date": "2026-08-18",
     "category": "beginner",
-    "status": "published"
+    "status": "draft"
   },
   {
     "slug": "beginner-airbrushing-mistakes",
@@ -261,7 +261,7 @@
     "source_topic": "beginner airbrushing mistakes",
     "published_date": "2026-08-18",
     "category": "beginner",
-    "status": "published"
+    "status": "draft"
   },
   {
     "slug": "airbrushing-miniatures-guide",
@@ -272,7 +272,7 @@
     "source_topic": "airbrushing miniatures for beginners",
     "published_date": "2026-08-17",
     "category": "miniatures",
-    "status": "published"
+    "status": "draft"
   },
   {
     "slug": "best-airbrush-compressor-for-beginners",
@@ -282,7 +282,8 @@
     "image_prompt": "Editorial hero image for a blog post titled: Top Airbrush Compressors for Beginners. Clean, professional, conceptual workspace scene with soft natural lighting. No text, no logos, no watermarks.",
     "source_topic": "best airbrush compressor for beginners",
     "published_date": "2026-08-17",
-    "category": "buying-guides"
+    "category": "buying-guides",
+    "status": "draft"
   },
   {
     "slug": "freehand-airbrush-tips",
@@ -293,7 +294,7 @@
     "source_topic": "how to airbrush freehand",
     "published_date": "2026-08-17",
     "category": "how-to",
-    "status": "published"
+    "status": "draft"
   },
   {
     "slug": "createx-vs-badger-airbrush-paint",
@@ -304,7 +305,7 @@
     "source_topic": "createx vs badger airbrush paint",
     "published_date": "2026-08-17",
     "category": "reviews",
-    "status": "published"
+    "status": "draft"
   },
   {
     "slug": "airbrush-spitting-paint",
@@ -315,7 +316,7 @@
     "source_topic": "airbrush spitting paint fix",
     "published_date": "2026-08-17",
     "category": "troubleshooting",
-    "status": "published"
+    "status": "draft"
   },
   {
     "slug": "airbrush-paint-colors-skin-tones",
@@ -326,7 +327,7 @@
     "source_topic": "best airbrush paint skin tones",
     "published_date": "2026-08-17",
     "category": "paints-colors",
-    "status": "published"
+    "status": "draft"
   },
   {
     "slug": "master-airbrush-flames",
@@ -337,7 +338,7 @@
     "source_topic": "how to airbrush flames on car",
     "published_date": "2026-08-17",
     "category": "automotive",
-    "status": "published"
+    "status": "draft"
   },
   {
     "slug": "airbrush-cosplay-armor",
@@ -348,6 +349,6 @@
     "source_topic": "airbrush cosplay armor metallic",
     "published_date": "2026-08-17",
     "category": "cosplay-body-art",
-    "status": "published"
+    "status": "draft"
   }
 ]
