@@ -107,7 +107,11 @@ public/                      # logo.png, favicon.ico, apple-touch-icon.png, robo
 
 ## Deployment
 
-Netlify, connected to this repo. Build command `astro build`, output directory `dist` (see `netlify.toml`). No environment variables are required for the build itself. Every push to `main` — from n8n's automated commits or a manual commit — triggers a deploy; there is no manual "export" step. Domain: `airbrush.gallery` (currently WordPress; cut over only after verifying a build on the Netlify preview URL).
+Netlify, connected to this repo. Build command `astro build`, output directory `dist` (see `netlify.toml`). No environment variables are required for the build itself. Every push to `main` — from n8n's automated commits or a manual commit — triggers a deploy; there is no manual "export" step.
+
+**Project ownership:** the Netlify project (`airbrush-learn`, Project ID `d940f5a2-a30f-4ba2-904e-36bfec706f87`) was transferred 2026-08-21 from the operator's personal Netlify team to the client's own team, **NOBS-team** (Artem's org) — confirmed both `GITHUB_PAT`/`ADMIN_PASSWORD` env vars and the live site itself survived the transfer intact.
+
+**Domain:** `beginnerairbrush.com` is live and connected to this project (confirmed 2026-08-21, freshly registered via Namecheap, resolves `200 OK`). `airbrush.gallery` — the domain referenced elsewhere in this file and in the "Cut over the live domain" To Do item below — still points at the old WordPress site as of 2026-08-21. **Not yet clarified:** whether `beginnerairbrush.com` is replacing `airbrush.gallery` as the intended production domain, whether both are meant to end up pointing here, or whether `airbrush.gallery`'s cutover is simply superseded — needs a direct answer from Artem before treating either domain's status as final.
 
 **Runtime environment variables (required for `/admin` and gallery submissions to work, not for the build):** set in Netlify's site settings, not this repo.
 - `GITHUB_PAT` — a GitHub Personal Access Token with write access to this repo, used inside `netlify/functions/admin-*.js` and `gallery-approve.js` to commit changes via the Contents API. Never exposed client-side.
@@ -154,7 +158,7 @@ Per Artem's direct feedback, these take priority over everything else below — 
 
 - [x] ~~Verify `/gallery/submit` → `gallery-approve` against a real GitHub API round-trip before relying on it.~~ Done 2026-08-18: ran the full flow locally against `netlify-cli dev` with a real `GITHUB_PAT`/`ADMIN_PASSWORD` — submitted a test piece, approved it via the pending-list/approve functions, confirmed two real commits landed on `main` (image + `gallery.json` append), confirmed the pending queue cleared, and confirmed the piece rendered on both `/gallery` and its discipline page after a build. Reverted both test commits afterward (`81ba312`, `567a584`) so nothing test-only stayed live. The flow works as designed end to end.
 
-- [ ] **Cut over the live domain.** `airbrush.gallery` currently still points at the old WordPress site. Cut over to this Netlify-hosted site only after verifying a build on the Netlify preview URL (see "Deployment" above).
+- [ ] **Cut over the live domain — and get clarity on which domain that actually means now.** `airbrush.gallery` currently still points at the old WordPress site. A second domain, `beginnerairbrush.com`, was registered and connected directly to this Netlify project 2026-08-21 (see "Deployment" above) — whether that's meant to replace `airbrush.gallery`, run alongside it, or was a stopgap pending the real cutover isn't confirmed yet. Get that answered before doing anything else here; only cut over `airbrush.gallery` (if that's still the plan) after verifying a build on the Netlify preview URL.
 
 - [ ] **Get a decision on Facebook/X auto-posting.** Proposed adding a step to the end of the n8n publish pipeline to auto-post each new article to Facebook and/or X. Facebook just needs a Page + long-lived access token; X now requires a paid API tier to post (the free tier is read-only), so that half has a real ongoing cost. Awaiting a yes/no from ownership before building either side.
 
