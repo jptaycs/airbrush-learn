@@ -152,6 +152,21 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
                 <option value="draft">Draft</option>
               </select>
             </label>
+            <div class="block">
+              <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Hero image</span>
+              <img data-hero-image class="w-full max-w-sm rounded-lg border border-border object-cover aspect-[3/2]" alt="Hero image preview" />
+              <div class="mt-3">
+                <button type="button" data-regen-image-btn class="rounded-full border border-border px-4 py-2 text-[0.85rem] font-semibold hover:bg-bg transition-colors">Regenerate Image</button>
+                <div data-regen-panel class="hidden mt-3 grid gap-2 max-w-sm">
+                  <textarea data-regen-prompt rows="4" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 text-[0.85rem] focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow" placeholder="Image prompt"></textarea>
+                  <div class="flex gap-2">
+                    <button type="button" data-regen-generate-btn class="rounded-full bg-accent text-white px-4 py-2 text-[0.85rem] font-semibold hover:opacity-90 transition-opacity">Generate</button>
+                    <button type="button" data-regen-cancel-btn class="rounded-full border border-border px-4 py-2 text-[0.85rem] font-semibold hover:bg-bg transition-colors">Cancel</button>
+                  </div>
+                  <p data-regen-status class="text-[0.8rem] text-muted"></p>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="grid gap-5 lg:grid-cols-2">
             <label class="block">
@@ -254,6 +269,13 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
   const cancelEditBtn = document.querySelector('[data-cancel-edit]');
   const previewTitle = document.querySelector('[data-preview-title]');
   const previewBody = document.querySelector('[data-preview-body]');
+  const heroImage = document.querySelector('[data-hero-image]');
+  const regenImageBtn = document.querySelector('[data-regen-image-btn]');
+  const regenPanel = document.querySelector('[data-regen-panel]');
+  const regenPrompt = document.querySelector('[data-regen-prompt]');
+  const regenGenerateBtn = document.querySelector('[data-regen-generate-btn]');
+  const regenCancelBtn = document.querySelector('[data-regen-cancel-btn]');
+  const regenStatus = document.querySelector('[data-regen-status]');
   const tabButtons = document.querySelectorAll('[data-tab-btn]');
   const tabPanels = document.querySelectorAll('[data-tab-panel]');
   const headerControls = document.querySelectorAll('[data-header-control]');
@@ -830,6 +852,98 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
     return value.includes('T') ? value : `${value}T00:00`;
   };
 
+  // Guards against a poll loop from a previous article still running after
+  // the admin switches to editing a different one, or cancels out entirely.
+  let regenPollTimer = null;
+  let regenSlug = null;
+  const stopRegenPolling = () => {
+    clearTimeout(regenPollTimer);
+    regenPollTimer = null;
+  };
+  const resetRegenPanel = () => {
+    stopRegenPolling();
+    regenPanel.classList.add('hidden');
+    regenImageBtn.classList.remove('hidden');
+    regenImageBtn.disabled = false;
+    regenGenerateBtn.disabled = false;
+    regenStatus.textContent = '';
+  };
+
+  const POLL_INTERVAL_MS = 3000;
+  const POLL_MAX_ATTEMPTS = 40; // ~2 minutes
+
+  const pollRegenStatus = async (slug, attempt = 1) => {
+    if (regenSlug !== slug) return; // a newer regen (or a panel switch) superseded this poll
+    const res = await api(`image-regen-status?slug=${encodeURIComponent(slug)}`);
+    if (!res.ok) {
+      regenStatus.textContent = await res.text();
+      regenGenerateBtn.disabled = false;
+      return;
+    }
+    const record = await res.json();
+
+    if (record.status === 'done') {
+      heroImage.src = `data:image/png;base64,${record.imageBase64}`;
+      const article = currentArticles.find((a) => a.slug === slug);
+      if (article) article.image_prompt = record.imagePrompt;
+      regenStatus.textContent = record.promptSaveFailed
+        ? 'Image committed, but saving the prompt text failed — re-open this article and try again if you want it saved.'
+        : 'Done — new image committed. It will appear on the live site after the next deploy.';
+      regenGenerateBtn.disabled = false;
+      return;
+    }
+
+    if (record.status === 'error') {
+      regenStatus.textContent = `Failed: ${record.error || 'unknown error'}`;
+      regenGenerateBtn.disabled = false;
+      return;
+    }
+
+    if (attempt >= POLL_MAX_ATTEMPTS) {
+      regenStatus.textContent = 'Taking longer than expected — it may still finish in the background. Check back shortly.';
+      regenGenerateBtn.disabled = false;
+      return;
+    }
+
+    regenPollTimer = setTimeout(() => pollRegenStatus(slug, attempt + 1), POLL_INTERVAL_MS);
+  };
+
+  regenImageBtn.addEventListener('click', () => {
+    const slug = editForm.querySelector('[data-field="slug"]').value;
+    const article = currentArticles.find((a) => a.slug === slug);
+    regenPrompt.value = article?.image_prompt || '';
+    regenImageBtn.classList.add('hidden');
+    regenPanel.classList.remove('hidden');
+    regenStatus.textContent = '';
+  });
+
+  regenCancelBtn.addEventListener('click', () => {
+    resetRegenPanel();
+  });
+
+  regenGenerateBtn.addEventListener('click', async () => {
+    const slug = editForm.querySelector('[data-field="slug"]').value;
+    const prompt = regenPrompt.value.trim();
+    if (!prompt) {
+      regenStatus.textContent = 'Prompt cannot be empty.';
+      return;
+    }
+    stopRegenPolling();
+    regenSlug = slug;
+    regenGenerateBtn.disabled = true;
+    regenStatus.textContent = 'Generating… this can take up to a minute.';
+    const res = await api('image-regen-run-background', {
+      method: 'POST',
+      body: JSON.stringify({ slug, prompt }),
+    });
+    if (!res.ok) {
+      regenStatus.textContent = await res.text();
+      regenGenerateBtn.disabled = false;
+      return;
+    }
+    pollRegenStatus(slug);
+  });
+
   const openEdit = (slug) => {
     const article = currentArticles.find((a) => a.slug === slug);
     if (!article) return;
@@ -840,6 +954,9 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
     editForm.querySelector('[data-field="category"]').value = article.category || '';
     editForm.querySelector('[data-field="status"]').value = article.status === 'draft' ? 'draft' : 'published';
     editForm.querySelector('[data-field="content_html"]').value = article.content_html || '';
+    heroImage.src = `/images/${article.slug}.png?t=${Date.now()}`;
+    regenSlug = null;
+    resetRegenPanel();
     editError.classList.add('hidden');
     editPanel.classList.remove('hidden');
     editPanel.scrollIntoView({ behavior: 'smooth' });
@@ -850,6 +967,8 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
   editForm.querySelector('[data-field="content_html"]').addEventListener('input', updatePreview);
 
   cancelEditBtn.addEventListener('click', () => {
+    regenSlug = null;
+    stopRegenPolling();
     editPanel.classList.add('hidden');
   });
 
