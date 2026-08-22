@@ -522,5 +522,16 @@
     "published_date": "2026-08-21",
     "category": "miniatures",
     "status": "draft"
+  },
+  {
+    "slug": "zzz-admin-verification-test-delete-me",
+    "title": "ZZZ Admin Verification Test - Safe to Delete",
+    "excerpt": "Temporary test article created to verify admin-save against real GitHub, per CLAUDE.md's To Do list. Safe to delete.",
+    "content_html": "<p>This is a temporary test article. It will be deleted immediately after verification.</p>",
+    "image_prompt": "",
+    "source_topic": "admin verification test",
+    "published_date": "2026-08-22",
+    "category": "beginner",
+    "status": "draft"
   }
 ]
