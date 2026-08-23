@@ -127,3 +127,13 @@ So around **~7-12.5 hrs** by my estimate — but I'd rather you tell me what you
 Where to give input for the blog writer: the **Topics** tab in `/admin` — that's the actual queue the automation reads from before writing each article. Add, edit, reorder, or delete a topic there and it directly controls what gets written next (keyword, category, priority, notes). No code or n8n access needed — that tab is exactly built for this.
 
 Happy to walk through any of this in more detail if useful, Sir.
+
+---
+
+Hi Sir Artem, just noticed a Netlify error today, flagging it now.
+
+Site's still live, but Netlify's paused new deploys — team ran out of monthly credits. Checked why: almost all of it (2.8K of 3,000) got burned by production builds on Aug 21-22, since that's when we were pushing tons of small individual commits during the big bug-fix cleanup. Every push = a full deploy = credits, so it added up fast.
+
+Nothing broken, nothing to worry about on the "Agent Runners" part either (that's just paused along with it, wasn't actually being used). Just means my two latest fixes are stuck pending until this clears.
+
+Needs whoever handles billing to top up or add a payment method, or we just wait for it to reset on Sep 19. I'll also batch commits better going forward so this doesn't happen again. Let me know how you want to handle it, Sir.
