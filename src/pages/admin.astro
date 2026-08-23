@@ -811,7 +811,15 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
       sessionStorage.setItem(PASSWORD_KEY, passwordInput.value);
       const res = await api('admin-list');
       if (!res.ok) {
-        loginError.textContent = 'Wrong password.';
+        if (res.status === 429) {
+          const retryAfterSec = Number(res.headers.get('Retry-After'));
+          const retryMsg = Number.isFinite(retryAfterSec) && retryAfterSec > 0
+            ? ` Try again in ${Math.ceil(retryAfterSec / 60)} min.`
+            : ' Try again later.';
+          loginError.textContent = `Too many failed attempts.${retryMsg}`;
+        } else {
+          loginError.textContent = 'Wrong password.';
+        }
         loginError.classList.remove('hidden');
         sessionStorage.removeItem(PASSWORD_KEY);
         return;

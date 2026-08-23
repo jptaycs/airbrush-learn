@@ -1,4 +1,5 @@
 import { getStore } from '@netlify/blobs';
+import { checkAdminAuth } from './lib/adminAuth.js';
 
 // Background functions get their response discarded and always return 202 to
 // the caller regardless of what this handler returns — status updates only
@@ -97,8 +98,9 @@ async function savePromptField(slug, prompt, attempt = 1) {
   }
 }
 
-export default async (req) => {
-  if (req.headers.get('x-admin-password') !== process.env.ADMIN_PASSWORD) {
+export default async (req, context) => {
+  const auth = await checkAdminAuth(req, context);
+  if (!auth.ok) {
     // Response is discarded either way (background function), so there's
     // nothing useful to return here — just don't do the work.
     return;

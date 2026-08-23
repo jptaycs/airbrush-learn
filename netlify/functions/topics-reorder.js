@@ -1,10 +1,11 @@
+import { checkAdminAuth } from './lib/adminAuth.js';
+
 const REPO = 'jptaycs/airbrush-learn';
 const FILE_PATH = 'src/data/topics.json';
 
-export default async (req) => {
-  if (req.headers.get('x-admin-password') !== process.env.ADMIN_PASSWORD) {
-    return new Response('Unauthorized', { status: 401 });
-  }
+export default async (req, context) => {
+  const auth = await checkAdminAuth(req, context);
+  if (!auth.ok) return auth.response;
 
   const { order, sha } = await req.json();
   if (!Array.isArray(order) || order.length === 0) {

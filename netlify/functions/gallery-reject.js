@@ -1,10 +1,10 @@
 import { getStore } from '@netlify/blobs';
 import { updateGalleryIndex } from './lib/galleryIndex.js';
+import { checkAdminAuth } from './lib/adminAuth.js';
 
-export default async (req) => {
-  if (req.headers.get('x-admin-password') !== process.env.ADMIN_PASSWORD) {
-    return new Response('Unauthorized', { status: 401 });
-  }
+export default async (req, context) => {
+  const auth = await checkAdminAuth(req, context);
+  if (!auth.ok) return auth.response;
 
   const { id } = await req.json();
   if (!id) {
