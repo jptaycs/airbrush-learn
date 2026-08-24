@@ -127,3 +127,15 @@ So around **~7-12.5 hrs** by my estimate — but I'd rather you tell me what you
 Where to give input for the blog writer: the **Topics** tab in `/admin` — that's the actual queue the automation reads from before writing each article. Add, edit, reorder, or delete a topic there and it directly controls what gets written next (keyword, category, priority, notes). No code or n8n access needed — that tab is exactly built for this.
 
 Happy to walk through any of this in more detail if useful, Sir.
+
+---
+
+Hi Sir Artem, quick rundown of what's done since the last update:
+
+- **Admin password rate limiting** — done. 5 wrong password attempts now locks out for 15 min, tested and working.
+- **Real Terms of Use / Privacy Policy** — done. Replaced the placeholder text with real copy covering what the gallery submission form actually collects and how it's used.
+- **That "mystery content" page from before** — turned out not to be a bug at all, just a citation/footnotes feature working as designed. Tracked it down and confirmed.
+- **beginnerairbrush.com is now fully live on HTTPS** — the domain, DNS, and SSL cert are all sorted. No more "Not Secure" warning, site loads clean.
+- **Figured out the Netlify credit issue** — turned out to be from pushing tons of small commits during the big bug-fix cleanup, each one triggering a full site rebuild. Traced it, documented it so it doesn't happen again.
+
+Still open, same as before: re-importing the automation fixes into live n8n (needs your n8n login), and the OpenAI key for the Regenerate Image tool. Let me know if you want to tackle either of those next, Sir.
