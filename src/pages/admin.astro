@@ -120,9 +120,14 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
       </div>
     </div>
 
-    <div data-edit-panel class="hidden mt-10">
-      <div class="rounded-xl border border-border bg-bg-alt/40 p-6 sm:p-8">
-        <h2 class="font-serif text-ink text-[1.3rem] mb-6">Edit article</h2>
+    <div data-edit-panel class="hidden fixed inset-0 z-50 overflow-y-auto bg-ink/50 p-4 sm:p-8">
+      <div class="mx-auto max-w-4xl rounded-xl border border-border bg-bg shadow-2xl p-6 sm:p-8">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="font-serif text-ink text-[1.3rem]">Edit article</h2>
+          <button type="button" data-close-edit-x aria-label="Close" class="rounded-full p-1.5 text-muted hover:bg-bg-alt hover:text-ink transition-colors">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
         <form data-edit-form class="grid gap-5">
           <input type="hidden" data-field="slug" />
           <div class="grid gap-5 max-w-2xl">
@@ -267,6 +272,7 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
   const editForm = document.querySelector('[data-edit-form]');
   const editError = document.querySelector('[data-edit-error]');
   const cancelEditBtn = document.querySelector('[data-cancel-edit]');
+  const closeEditXBtn = document.querySelector('[data-close-edit-x]');
   const previewTitle = document.querySelector('[data-preview-title]');
   const previewBody = document.querySelector('[data-preview-body]');
   const heroImage = document.querySelector('[data-hero-image]');
@@ -952,6 +958,17 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
     pollRegenStatus(slug);
   });
 
+  // Shared close path for the edit dialog (Cancel button, × button, backdrop
+  // click, Escape key, and a successful save) — every one of these needs to
+  // stop any in-flight regen poll and release the body scroll lock openEdit
+  // sets, so centralizing it here means a new close trigger can't forget one.
+  const closeEditPanel = () => {
+    regenSlug = null;
+    stopRegenPolling();
+    editPanel.classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+  };
+
   const openEdit = (slug) => {
     const article = currentArticles.find((a) => a.slug === slug);
     if (!article) return;
@@ -967,17 +984,26 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
     resetRegenPanel();
     editError.classList.add('hidden');
     editPanel.classList.remove('hidden');
-    editPanel.scrollIntoView({ behavior: 'smooth' });
+    editPanel.scrollTop = 0;
+    document.body.classList.add('overflow-hidden');
     updatePreview();
   };
 
   editForm.querySelector('[data-field="title"]').addEventListener('input', updatePreview);
   editForm.querySelector('[data-field="content_html"]').addEventListener('input', updatePreview);
 
-  cancelEditBtn.addEventListener('click', () => {
-    regenSlug = null;
-    stopRegenPolling();
-    editPanel.classList.add('hidden');
+  cancelEditBtn.addEventListener('click', closeEditPanel);
+  closeEditXBtn.addEventListener('click', closeEditPanel);
+
+  // Click on the backdrop itself (not any element inside the dialog box)
+  // closes it — checking e.target === editPanel excludes clicks that
+  // bubbled up from the dialog box or its children.
+  editPanel.addEventListener('click', (e) => {
+    if (e.target === editPanel) closeEditPanel();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !editPanel.classList.contains('hidden')) closeEditPanel();
   });
 
   rowsBody.addEventListener('click', async (e) => {
@@ -1051,7 +1077,7 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
         editError.classList.remove('hidden');
         return;
       }
-      editPanel.classList.add('hidden');
+      closeEditPanel();
       await loadArticles();
     });
   });
