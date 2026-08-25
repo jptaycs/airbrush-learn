@@ -330,23 +330,23 @@
     "notes": "Already covered 3x over (freehand-airbrush-tips, mastering-freehand-airbrushing, airbrush-freehand-tips) — marked Published to block regeneration, not from the old sheet's own status"
   },
   {
-    "id": 34,
-    "category": "Miniatures",
-    "search_intent": "Broad traffic",
-    "article_title": "Zenithal Priming with an Airbrush: Step-by-Step",
-    "target_keyword": "zenithal priming airbrush",
-    "priority": "Medium",
-    "status": "Not started",
-    "publish_date": "2026-08-21",
-    "notes": "Reset 2026-08-24 — the generated draft article was deleted without being published; re-queued for the pipeline to try again."
-  },
-  {
     "id": 26,
     "category": "Paints & Colors",
     "search_intent": "Long-tail, low competition",
     "article_title": "How Long Does Airbrush Paint Last Once Mixed?",
     "target_keyword": "how long does airbrush paint last",
     "priority": "Low",
+    "status": "Not started",
+    "publish_date": "2026-08-21",
+    "notes": "Reset 2026-08-24 — the generated draft article was deleted without being published; re-queued for the pipeline to try again."
+  },
+  {
+    "id": 34,
+    "category": "Miniatures",
+    "search_intent": "Broad traffic",
+    "article_title": "Zenithal Priming with an Airbrush: Step-by-Step",
+    "target_keyword": "zenithal priming airbrush",
+    "priority": "Medium",
     "status": "Not started",
     "publish_date": "2026-08-21",
     "notes": "Reset 2026-08-24 — the generated draft article was deleted without being published; re-queued for the pipeline to try again."
