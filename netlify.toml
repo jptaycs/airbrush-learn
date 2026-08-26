@@ -1,6 +1,17 @@
 [build]
   command = "astro build"
   publish = "dist"
+  # src/data/topics.json is never imported by any Astro page — only read/written
+  # at runtime by netlify/functions/topics-*.js via the GitHub API — so a commit
+  # that touches ONLY that file can't change the build output at all. n8n's topic
+  # queue reports its outcome (published/blocked/skipped) via a separate commit
+  # roughly every 20 minutes around the clock, which was triggering ~30 wasted
+  # full-site rebuild+deploys a night before this was added (2026-08-26; see the
+  # Netlify build-credit incidents documented in CLAUDE.md). Skip the build when
+  # the diff excluding topics.json is empty; otherwise (any real content/code
+  # change, alone or alongside a topics.json change) build normally. Netlify's
+  # convention: `ignore` exit 0 = skip the build, exit 1 = proceed.
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ':(exclude)src/data/topics.json'"
 
 [functions]
   directory = "netlify/functions"
@@ -9,4 +20,5 @@
 # articles (src/data/articles.json) and their hero images (public/images/) directly
 # to this repo via the GitHub API as its last step, so by the time a build runs,
 # the content is already sitting in the repo. Every push to `main` — whether from
-# n8n or a manual commit — triggers this build automatically.
+# n8n or a manual commit — triggers this build automatically (except a topics.json-
+# only commit, which is skipped — see `ignore` above).
