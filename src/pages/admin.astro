@@ -118,6 +118,12 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
           </div>
         </div>
       </div>
+
+      {/* Single shared status menu, positioned at the clicked row's button.
+          Lives outside the table because the table's overflow-x-auto wrapper
+          would clip a menu rendered inside a row, and because the rows are
+          re-rendered wholesale via innerHTML on every load. */}
+      <div data-topic-status-menu class="hidden fixed z-50 min-w-[11rem] rounded-lg border border-border bg-bg shadow-xl py-1" role="menu"></div>
     </div>
 
     <div data-edit-panel class="hidden fixed inset-0 z-50 overflow-y-auto bg-ink/50 p-4 sm:p-8">
@@ -199,10 +205,23 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
       </div>
     </div>
 
-    <div data-topic-edit-panel class="hidden mt-10">
-      <div class="rounded-xl border border-border bg-bg-alt/40 p-6 sm:p-8">
-        <h2 class="font-serif text-ink text-[1.3rem] mb-6">Edit topic</h2>
-        <form data-topic-edit-form class="grid gap-5 max-w-2xl">
+    <div data-topic-edit-panel class="hidden fixed inset-0 z-50 overflow-y-auto bg-ink/50 p-4 sm:p-8">
+      <div class="mx-auto max-w-2xl rounded-xl border border-border bg-bg shadow-2xl p-6 sm:p-8">
+        <div class="flex items-center justify-between mb-6 gap-4">
+          <h2 class="font-serif text-ink text-[1.3rem]">Edit topic</h2>
+          <div class="flex items-center gap-2">
+            <button type="submit" form="edit-topic-form" class="rounded-full bg-accent text-white px-5 py-2 text-[0.85rem] font-semibold hover:opacity-90 transition-opacity">Save</button>
+            <button type="button" data-cancel-topic-edit class="rounded-full border border-border px-4 py-2 text-[0.85rem] font-semibold hover:bg-bg transition-colors">Cancel</button>
+            <button type="button" data-close-topic-edit-x aria-label="Close" class="rounded-full p-1.5 text-muted hover:bg-bg-alt hover:text-ink transition-colors">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+        <form data-topic-edit-form id="edit-topic-form" class="grid gap-5">
+          {/* Status is set from the row's status button, not here — this hidden
+              field just round-trips the topic's existing status through a save
+              so editing any other field can't silently reset it. */}
+          <input type="hidden" data-tfield="status" />
           <label class="block">
             <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">#</span>
             <input type="number" data-tfield="id" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow" required />
@@ -230,14 +249,6 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
               <option value="High">High</option>
               <option value="Medium">Medium</option>
               <option value="Low">Low</option>
-            </select>
-          </label>
-          <label class="block">
-            <span class="block text-[0.8rem] font-semibold text-ink mb-1.5">Status</span>
-            <select data-tfield="status" class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-shadow">
-              <option value="Not started">Not started</option>
-              <option value="Published">Published</option>
-              <option value="Blocked">Blocked</option>
             </select>
           </label>
           <label class="block">
@@ -304,7 +315,11 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
   const topicEditPanel = document.querySelector('[data-topic-edit-panel]');
   const topicEditForm = document.querySelector('[data-topic-edit-form]');
   const topicEditError = document.querySelector('[data-topic-edit-error]');
-  const cancelTopicEditBtn = document.querySelector('[data-cancel-topic-edit]');
+  // Two Cancel buttons now (dialog header and form footer), same as the
+  // article dialog — querySelectorAll so neither one goes unwired.
+  const cancelTopicEditBtns = document.querySelectorAll('[data-cancel-topic-edit]');
+  const closeTopicEditXBtn = document.querySelector('[data-close-topic-edit-x]');
+  const topicStatusMenu = document.querySelector('[data-topic-status-menu]');
 
   let currentSha = null;
   let currentArticles = [];
@@ -518,7 +533,10 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
           <td class="py-3 px-4 max-w-[280px] truncate" title="${escapeHtml(t.article_title)}">${escapeHtml(t.article_title)}</td>
           <td class="py-3 px-4 text-muted">${escapeHtml(t.priority || '—')}</td>
           <td class="py-3 px-4">
-            <span class="text-[0.7rem] font-semibold uppercase px-2 py-0.5 rounded-full ${statusClass(t.status)}">${escapeHtml(t.status || 'Not started')}</span>
+            <button type="button" data-topic-status-btn="${t.id}" aria-haspopup="true" aria-expanded="false" title="Change status" class="inline-flex items-center gap-1 text-[0.7rem] font-semibold uppercase px-2 py-0.5 rounded-full hover:ring-2 hover:ring-accent/40 transition-shadow ${statusClass(t.status)}">
+              <span>${escapeHtml(t.status || 'Not started')}</span>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
           </td>
           <td class="py-3 px-4 text-muted whitespace-nowrap">${escapeHtml(t.publish_date || '—')}</td>
           <td class="py-3 px-4">
@@ -638,18 +656,131 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
     topicEditForm.querySelector('[data-tfield="notes"]').value = topic.notes || '';
     topicEditError.classList.add('hidden');
     topicEditPanel.classList.remove('hidden');
-    topicEditPanel.scrollIntoView({ behavior: 'smooth' });
+    topicEditPanel.scrollTop = 0;
+    document.body.classList.add('overflow-hidden');
+  };
+
+  // Mirrors closeEditPanel for the article dialog: one shared close path so
+  // the body scroll lock openTopicEdit sets can't be left on by a new
+  // close trigger that forgets to release it.
+  const closeTopicEditPanel = () => {
+    topicEditPanel.classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
   };
 
   addTopicBtn.addEventListener('click', () => openTopicEdit(null));
 
-  cancelTopicEditBtn.addEventListener('click', () => {
-    topicEditPanel.classList.add('hidden');
+  cancelTopicEditBtns.forEach((btn) => btn.addEventListener('click', closeTopicEditPanel));
+  closeTopicEditXBtn.addEventListener('click', closeTopicEditPanel);
+
+  // Backdrop click closes — e.target === topicEditPanel excludes clicks that
+  // bubbled up from the dialog box or its children.
+  topicEditPanel.addEventListener('click', (e) => {
+    if (e.target === topicEditPanel) closeTopicEditPanel();
   });
+
+  // The three values n8n's filtering logic matches on, case-sensitively
+  // (see the topics.json data contract in CLAUDE.md) — the menu offers
+  // exactly these so a typo can't take a topic out of the pipeline's reach.
+  const TOPIC_STATUSES = ['Not started', 'Published', 'Blocked'];
+
+  const closeTopicStatusMenu = () => {
+    topicStatusMenu.classList.add('hidden');
+    document
+      .querySelectorAll('[data-topic-status-btn][aria-expanded="true"]')
+      .forEach((b) => b.setAttribute('aria-expanded', 'false'));
+  };
+
+  const openTopicStatusMenu = (btn) => {
+    const id = Number(btn.dataset.topicStatusBtn);
+    const topic = currentTopics.find((t) => t.id === id);
+    if (!topic) return;
+    const current = topic.status || 'Not started';
+
+    topicStatusMenu.innerHTML = TOPIC_STATUSES.map(
+      (s) => `
+        <button type="button" role="menuitem" data-topic-status-pick="${s}" class="flex w-full items-center gap-2 px-3 py-2 text-left text-[0.85rem] hover:bg-bg-alt transition-colors ${s === current ? 'font-semibold text-ink' : 'text-muted'}">
+          <span class="w-3.5 shrink-0">${s === current ? '&#10003;' : ''}</span>
+          <span>${s}</span>
+        </button>`
+    ).join('');
+
+    // Anchored to the button in viewport coordinates (the menu is
+    // position:fixed), then nudged back inside if it would overflow the
+    // right or bottom edge on a narrow window.
+    topicStatusMenu.dataset.topicId = String(id);
+    topicStatusMenu.classList.remove('hidden');
+    const r = btn.getBoundingClientRect();
+    const m = topicStatusMenu.getBoundingClientRect();
+    const left = Math.min(r.left, window.innerWidth - m.width - 8);
+    const top = r.bottom + m.height > window.innerHeight ? r.top - m.height - 4 : r.bottom + 4;
+    topicStatusMenu.style.left = `${Math.max(8, left)}px`;
+    topicStatusMenu.style.top = `${Math.max(8, top)}px`;
+    btn.setAttribute('aria-expanded', 'true');
+  };
+
+  topicStatusMenu.addEventListener('click', async (e) => {
+    const pick = e.target.closest('[data-topic-status-pick]');
+    if (!pick) return;
+    const status = pick.dataset.topicStatusPick;
+    const id = Number(topicStatusMenu.dataset.topicId);
+    const topic = currentTopics.find((t) => t.id === id);
+    closeTopicStatusMenu();
+    if (!topic || (topic.status || 'Not started') === status) return;
+
+    // Saves the whole topic with just status swapped, reusing the same
+    // topics-save + sha-retry path as the edit dialog rather than adding a
+    // second write endpoint that could drift from it.
+    const updated = { ...topic, status };
+    // A status that isn't Published has no publish date to report; leaving a
+    // stale one behind is what made the blocked topics look published.
+    if (status !== 'Published') updated.publish_date = '';
+    await withContainerLoading(document.querySelector('[data-tab-panel="topics"]'), async () => {
+      const res = await withShaRetry('topics', () =>
+        api('topics-save', { method: 'POST', body: JSON.stringify({ topic: updated, sha: currentTopicsSha }) })
+      );
+      if (!res.ok) {
+        alert(await res.text());
+        return;
+      }
+      await loadTopics();
+    });
+  });
+
+  // Any click outside the menu dismisses it. Registered on document in the
+  // capture phase so it still fires for clicks inside the topic dialog,
+  // which stops propagation of its own backdrop handling.
+  document.addEventListener(
+    'click',
+    (e) => {
+      if (topicStatusMenu.classList.contains('hidden')) return;
+      if (e.target.closest('[data-topic-status-menu]')) return;
+      if (e.target.closest('[data-topic-status-btn]')) return;
+      closeTopicStatusMenu();
+    },
+    true
+  );
+
+  // A scroll would leave the fixed menu detached from its row.
+  window.addEventListener('scroll', () => closeTopicStatusMenu(), true);
+  window.addEventListener('resize', () => closeTopicStatusMenu());
 
   topicRows.addEventListener('click', async (e) => {
     const editId = e.target.closest('[data-topic-edit]')?.dataset.topicEdit;
     const deleteBtn = e.target.closest('[data-topic-delete]');
+    const statusBtn = e.target.closest('[data-topic-status-btn]');
+
+    if (statusBtn) {
+      // Clicking the button whose menu is already open closes it, rather than
+      // re-rendering the same menu in place (the outside-click handler
+      // deliberately ignores clicks on a status button, so it can't do this).
+      const alreadyOpen =
+        !topicStatusMenu.classList.contains('hidden') &&
+        topicStatusMenu.dataset.topicId === statusBtn.dataset.topicStatusBtn;
+      if (alreadyOpen) closeTopicStatusMenu();
+      else openTopicStatusMenu(statusBtn);
+      return;
+    }
 
     if (editId) {
       openTopicEdit(Number(editId));
@@ -754,12 +885,11 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
         topicEditError.classList.remove('hidden');
         return;
       }
-      topicEditPanel.classList.add('hidden');
+      closeTopicEditPanel();
       // A saved topic can land outside the currently-active status filter
-      // (a new topic defaults to "Not started"; an edit can change the
-      // status entirely) — without resetting the filter, the row the admin
-      // just touched would silently vanish from the list with nothing on
-      // screen to say the save actually succeeded.
+      // (a new topic defaults to "Not started") — without resetting the
+      // filter, the row the admin just touched would silently vanish from
+      // the list with nothing on screen to say the save actually succeeded.
       topicStatusFilter = 'all';
       topicStatusFilterSelect.value = 'all';
       await loadTopics();
@@ -1008,8 +1138,17 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
     if (e.target === editPanel) closeEditPanel();
   });
 
+  // Escape unwinds one layer at a time, innermost first: the status menu sits
+  // on top of the topic dialog, so closing the dialog out from under an open
+  // menu would strand the menu floating over the table.
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !editPanel.classList.contains('hidden')) closeEditPanel();
+    if (e.key !== 'Escape') return;
+    if (!topicStatusMenu.classList.contains('hidden')) {
+      closeTopicStatusMenu();
+      return;
+    }
+    if (!editPanel.classList.contains('hidden')) closeEditPanel();
+    if (!topicEditPanel.classList.contains('hidden')) closeTopicEditPanel();
   });
 
   rowsBody.addEventListener('click', async (e) => {
