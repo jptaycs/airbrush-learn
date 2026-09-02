@@ -217,7 +217,7 @@
     "priority": "Medium",
     "status": "Published",
     "publish_date": "2026-08-26",
-    "notes": "Reset 2026-08-24 — the generated draft article was deleted without being published; re-queued for the pipeline to try again."
+    "notes": "Reset 2026-08-24 — the generated draft article was deleted without being published; re-queued for the pipeline to try again. [ignore-rule test 2026-09-03 — verifying should-ignore-build.sh actually skips a topics.json-only commit; safe to revert.]"
   },
   {
     "id": 33,
