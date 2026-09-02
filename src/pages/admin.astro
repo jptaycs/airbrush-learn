@@ -267,6 +267,16 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
         </form>
       </div>
     </div>
+
+    <!-- Deploys are batched to once daily (see CLAUDE.md's "Once-daily
+         batched deploys") -- a save here lands in the repo immediately but
+         isn't live on the public site until that night's scheduled deploy.
+         showDeployToast() below surfaces that after every successful write
+         so a save never silently looks like nothing happened. -->
+    <div data-deploy-toast class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2.5 rounded-full bg-ink text-white pl-4 pr-5 py-3 shadow-[0_12px_32px_rgba(0,0,0,0.25)] text-[0.85rem] font-semibold">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent shrink-0"><path d="M20 6 9 17l-5-5"/></svg>
+      <span data-deploy-toast-text>Saved — goes live at tonight's deploy.</span>
+    </div>
   </section>
 </BaseLayout>
 
@@ -401,6 +411,24 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
     } finally {
       overlay.remove();
     }
+  };
+
+  // Deploys are batched to once daily now (see CLAUDE.md's "Once-daily
+  // batched deploys") -- every write endpoint here commits to the repo
+  // immediately, but none of it is live on the public site until that
+  // night's scheduled deploy. Call this after every successful write so
+  // that isn't silently confusing. Auto-dismisses; re-triggering resets
+  // the timer rather than stacking toasts, since several writes can
+  // happen in quick succession (e.g. approving a few gallery pieces).
+  const deployToast = document.querySelector('[data-deploy-toast]');
+  const deployToastText = document.querySelector('[data-deploy-toast-text]');
+  let deployToastTimer = null;
+  const showDeployToast = (message = "Saved — goes live at tonight's deploy.") => {
+    if (!deployToast) return;
+    deployToastText.textContent = message;
+    deployToast.classList.remove('hidden');
+    clearTimeout(deployToastTimer);
+    deployToastTimer = setTimeout(() => deployToast.classList.add('hidden'), 4000);
   };
 
   // Every write endpoint (admin-save/delete, topics-save/delete/reorder)
@@ -619,6 +647,7 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
           alert(await res.text());
           return;
         }
+        showDeployToast("Approved — appears in the gallery at tonight's deploy.");
         await loadPendingSubmissions();
       });
       return;
@@ -1038,7 +1067,7 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
       if (article) article.image_prompt = record.imagePrompt;
       regenStatus.textContent = record.promptSaveFailed
         ? 'Image committed, but saving the prompt text failed — re-open this article and try again if you want it saved.'
-        : 'Done — new image committed. It will appear on the live site after the next deploy.';
+        : "Done — new image committed. It will appear on the live site at tonight's deploy.";
       regenGenerateBtn.disabled = false;
       return;
     }
@@ -1174,6 +1203,11 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
           statusMsg.textContent = await res.text();
           return;
         }
+        showDeployToast(
+          updated.status === 'published'
+            ? "Publishing — goes live at tonight's deploy."
+            : "Unpublished — comes down from the live site at tonight's deploy."
+        );
         await loadArticles();
       });
       return;
@@ -1181,6 +1215,7 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
 
     if (deleteBtn) {
       const deleteSlug = deleteBtn.dataset.delete;
+      const wasPublished = currentArticles.find((a) => a.slug === deleteSlug)?.status !== 'draft';
       if (!confirm(`Delete "${deleteSlug}"? This cannot be undone from here (use git revert to recover).`)) return;
       await withButtonLoading(deleteBtn, async () => {
         const res = await withShaRetry('articles', () =>
@@ -1190,6 +1225,9 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
           statusMsg.textContent = await res.text();
           return;
         }
+        showDeployToast(
+          wasPublished ? "Deleted — comes down from the live site at tonight's deploy." : 'Draft deleted.'
+        );
         await loadArticles();
       });
     }
@@ -1223,6 +1261,9 @@ import { SHOW_GALLERY } from '../lib/featureFlags.js';
         return;
       }
       closeEditPanel();
+      showDeployToast(
+        merged.status === 'draft' ? 'Draft saved.' : "Saved — live changes appear at tonight's deploy."
+      );
       await loadArticles();
     });
   });
