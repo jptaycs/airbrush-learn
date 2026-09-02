@@ -4,22 +4,16 @@
   # fails the build itself, so this is safe even if it errors internally.
   command = "node scripts/generate-webp.mjs && astro build"
   publish = "dist"
-  # src/data/topics.json is never imported by any Astro page — only read/written
-  # at runtime by netlify/functions/topics-*.js via the GitHub API — so a commit
-  # that touches ONLY that file can't change the build output at all. n8n's topic
-  # queue reports its outcome (published/blocked/skipped) via a separate commit
-  # roughly every 20 minutes around the clock, which was triggering ~30 wasted
-  # full-site rebuild+deploys a night before this was added (2026-08-26; see the
-  # Netlify build-credit incidents documented in CLAUDE.md). Skip the build when
-  # the diff excluding topics.json is empty; otherwise (any real content/code
-  # change, alone or alongside a topics.json change) build normally. Netlify's
-  # convention: `ignore` exit 0 = skip the build, exit 1 = proceed.
-  #
-  # This used to be a one-line `git diff --quiet ...` here directly. Confirmed
-  # 2026-09-03 against the real Deploys list that it silently never actually
-  # skipped anything in production (a real topics-only commit built as a full
-  # deploy 36 minutes after this rule first went live) — see
-  # scripts/should-ignore-build.sh for the fix and the full story.
+  # v2 (2026-09-03): batches ALL deploys to once daily instead of once per
+  # push. Every ordinary git push -- n8n, /admin, gallery approvals -- is
+  # skipped unconditionally; only the scheduled Netlify Build Hook
+  # (.github/workflows/daily-deploy.yml, ~midnight America/New_York) is
+  # allowed to actually build, and only if something changed. See
+  # scripts/should-ignore-build.sh for the full mechanism and CLAUDE.md's
+  # "Once-daily batched deploys" section for the reasoning and tradeoffs.
+  # (v1, 2026-08-26, only skipped topics.json-only commits and turned out
+  # not to work in production at all -- see git history / CLAUDE.md.)
+  # Netlify convention: `ignore` exit 0 = skip the build, exit 1 = proceed.
   ignore = "bash scripts/should-ignore-build.sh"
 
 [functions]
@@ -28,6 +22,6 @@
 # There is no prebuild fetch step. The n8n content pipeline commits finished
 # articles (src/data/articles.json) and their hero images (public/images/) directly
 # to this repo via the GitHub API as its last step, so by the time a build runs,
-# the content is already sitting in the repo. Every push to `main` — whether from
-# n8n or a manual commit — triggers this build automatically (except a topics.json-
-# only commit, which is skipped — see `ignore` above).
+# the content is already sitting in the repo. As of 2026-09-03, a push to `main`
+# no longer triggers a build directly — see `ignore` above: only the once-daily
+# scheduled Build Hook does, batching whatever's accumulated since the last one.

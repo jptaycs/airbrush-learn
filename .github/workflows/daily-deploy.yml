@@ -1,0 +1,40 @@
+name: Daily Netlify deploy
+
+# Batches all of a day's commits (n8n publishes, /admin edits, gallery
+# approvals) into a single Netlify production deploy instead of one per
+# push -- see scripts/should-ignore-build.sh and CLAUDE.md's "Once-daily
+# batched deploys" section for the full reasoning.
+#
+# Requires a repo secret NETLIFY_BUILD_HOOK_URL (Settings > Secrets and
+# variables > Actions) pointing at a Netlify build hook created for this
+# site's `main` branch (Netlify: Project configuration > Build & deploy >
+# Continuous deployment > Build hooks > Add build hook). Netlify sets
+# INCOMING_HOOK_TITLE for hook-triggered builds, which
+# should-ignore-build.sh checks for -- this workflow should be the ONLY
+# thing that ever calls that hook, so a real deploy only ever happens
+# once a day, on schedule.
+
+on:
+  schedule:
+    # ~00:10 America/New_York. GitHub Actions cron is always UTC and
+    # doesn't shift for DST -- 05:10 UTC is 00:10 EST (winter) / 01:10 EDT
+    # (summer). Picked a fixed UTC time rather than chasing DST twice a
+    # year; being off by an hour for half the year doesn't matter for a
+    # once-daily batch deploy.
+    - cron: '10 5 * * *'
+  workflow_dispatch: {} # manual "Run workflow" button -- for testing, or an urgent same-day deploy
+
+jobs:
+  trigger-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Netlify build hook
+        run: |
+          if [ -z "${NETLIFY_BUILD_HOOK_URL:-}" ]; then
+            echo "::error::NETLIFY_BUILD_HOOK_URL secret is not set -- see this file's header comment for setup." >&2
+            exit 1
+          fi
+          curl -sf -X POST -d '{}' \
+            "${NETLIFY_BUILD_HOOK_URL}?trigger_title=daily-batched-deploy"
+        env:
+          NETLIFY_BUILD_HOOK_URL: ${{ secrets.NETLIFY_BUILD_HOOK_URL }}
