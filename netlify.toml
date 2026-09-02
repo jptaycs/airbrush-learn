@@ -1,5 +1,8 @@
 [build]
-  command = "astro build"
+  # scripts/generate-webp.mjs runs first to produce WebP siblings for hero/
+  # gallery images (see that file and src/lib/optimizedImage.js) — it never
+  # fails the build itself, so this is safe even if it errors internally.
+  command = "node scripts/generate-webp.mjs && astro build"
   publish = "dist"
   # src/data/topics.json is never imported by any Astro page — only read/written
   # at runtime by netlify/functions/topics-*.js via the GitHub API — so a commit
@@ -11,7 +14,13 @@
   # the diff excluding topics.json is empty; otherwise (any real content/code
   # change, alone or alongside a topics.json change) build normally. Netlify's
   # convention: `ignore` exit 0 = skip the build, exit 1 = proceed.
-  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ':(exclude)src/data/topics.json'"
+  #
+  # This used to be a one-line `git diff --quiet ...` here directly. Confirmed
+  # 2026-09-03 against the real Deploys list that it silently never actually
+  # skipped anything in production (a real topics-only commit built as a full
+  # deploy 36 minutes after this rule first went live) — see
+  # scripts/should-ignore-build.sh for the fix and the full story.
+  ignore = "bash scripts/should-ignore-build.sh"
 
 [functions]
   directory = "netlify/functions"

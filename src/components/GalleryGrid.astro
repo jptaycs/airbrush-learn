@@ -1,6 +1,7 @@
 ---
 // src/components/GalleryGrid.astro
 import { galleryCategories } from '../data/galleryCategories.js';
+import { webpSrcFor } from '../lib/optimizedImage.js';
 
 interface Props {
   pieces: Array<{
@@ -53,7 +54,10 @@ const categoryLabel = (slug: string) =>
     <div data-reveal-group class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-3.5">
       {pieces.map((piece) => (
         <div data-reveal class="relative rounded-xl overflow-hidden bg-bg flex flex-col justify-end aspect-[4/3] p-4 transition-transform duration-300 hover:scale-[1.03]">
-          <img src={`/images/gallery/${piece.image}`} alt={piece.title} loading="lazy" class="absolute inset-0 w-full h-full object-cover" />
+          <picture>
+            {webpSrcFor(`images/gallery/${piece.image}`) && <source srcset={webpSrcFor(`images/gallery/${piece.image}`)} type="image/webp" />}
+            <img src={`/images/gallery/${piece.image}`} alt={piece.title} loading="lazy" class="absolute inset-0 w-full h-full object-cover" />
+          </picture>
           <span class="absolute top-3 left-3 text-[0.65rem] text-white uppercase tracking-[0.05em] font-bold bg-black/75 rounded-full px-2.5 py-1">
             {categoryLabel(piece.category)}
           </span>

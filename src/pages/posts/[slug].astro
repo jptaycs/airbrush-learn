@@ -5,6 +5,7 @@ import { categories } from '../../data/categories.js';
 import { estimateReadMinutes } from '../../lib/readTime.js';
 import { displayDate } from '../../lib/formatDate.js';
 import { addFootnotes } from '../../lib/citations.js';
+import { webpSrcFor } from '../../lib/optimizedImage.js';
 import articles from '../../data/articles.json';
 
 export async function getStaticPaths() {
@@ -19,6 +20,7 @@ const siteUrl = Astro.site?.origin ?? 'https://airbrush.gallery';
 const cat = categories.find((c) => c.slug === article.category);
 const readMinutes = estimateReadMinutes(article.content_html);
 const contentWithFootnotes = addFootnotes(article.content_html);
+const heroWebp = webpSrcFor(`images/${article.slug}.png`);
 const pageUrl = `${siteUrl}/posts/${article.slug}`;
 const shareLinks = {
   x: `https://twitter.com/intent/tweet?url=${encodeURIComponent(pageUrl)}&text=${encodeURIComponent(article.title)}`,
@@ -88,13 +90,16 @@ const shareItems = [
           <p class="text-muted text-[0.9rem] m-0">{displayDate(article.published_date)} &middot; {readMinutes} min read</p>
         </div>
         <h1 class="font-serif max-[640px]:text-[1.7rem]">{article.title}</h1>
-        <img
-          class="w-full max-h-[420px] object-cover rounded mt-6 mb-2"
-          src={`/images/${article.slug}.png`}
-          alt={article.title}
-          width="1536"
-          height="1024"
-        />
+        <picture>
+          {heroWebp && <source srcset={heroWebp} type="image/webp" />}
+          <img
+            class="w-full max-h-[420px] object-cover rounded mt-6 mb-2"
+            src={`/images/${article.slug}.png`}
+            alt={article.title}
+            width="1536"
+            height="1024"
+          />
+        </picture>
         <div set:html={contentWithFootnotes} />
       </div>
     </div>

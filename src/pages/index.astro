@@ -8,6 +8,7 @@ import { displayDate } from '../lib/formatDate.js';
 import articles from '../data/articles.json';
 import gallery from '../data/gallery.json';
 import { SHOW_GALLERY } from '../lib/featureFlags.js';
+import { webpSrcFor } from '../lib/optimizedImage.js';
 
 const published = articles.filter((a) => a.status !== 'draft');
 const sorted = sortArticlesNewestFirst(published);
@@ -15,6 +16,7 @@ const sorted = sortArticlesNewestFirst(published);
 const featured = sorted[0];
 const featuredCat = featured ? categories.find((c) => c.slug === featured.category) : null;
 const featuredReadMinutes = featured ? estimateReadMinutes(featured.content_html) : 0;
+const featuredWebp = featured ? webpSrcFor(`images/${featured.slug}.png`) : null;
 const latestArticles = sorted.slice(0, 3);
 
 const byCategory = (slug) => sorted.filter((a) => a.category === slug);
@@ -87,7 +89,10 @@ const homeGalleryTiles = [
           <div class="rotate-2 bg-white p-3 pb-5 rounded shadow-[0_20px_50px_rgba(0,0,0,0.4)] transition-transform duration-300 hover:rotate-0 hover:-translate-y-1.5 hover:scale-[1.02]">
             <div class="relative overflow-hidden rounded-sm">
               <span class="absolute top-3 left-3 z-10 text-[0.65rem] text-white uppercase tracking-[0.05em] font-bold bg-accent rounded-full px-2.5 py-1">Featured</span>
-              <img src={`/images/${featured.slug}.png`} alt={featured.title} width="600" height="400" class="aspect-[3/2] object-cover w-full transition-transform duration-500 ease-out hover:scale-125" />
+              <picture>
+                {featuredWebp && <source srcset={featuredWebp} type="image/webp" />}
+                <img src={`/images/${featured.slug}.png`} alt={featured.title} width="600" height="400" class="aspect-[3/2] object-cover w-full transition-transform duration-500 ease-out hover:scale-125" />
+              </picture>
             </div>
             <div class="pt-4 px-1">
               {featuredCat && <span class="block text-[0.7rem] text-muted uppercase tracking-[0.05em] font-bold mb-1.5">{featuredCat.label}</span>}
@@ -276,7 +281,10 @@ const homeGalleryTiles = [
         <div data-reveal-group class="grid grid-cols-4 [grid-template-rows:repeat(3,1fr)] aspect-[21/8] gap-3.5 max-[768px]:grid-cols-2 max-[768px]:aspect-auto max-[768px]:[grid-template-rows:none]">
           {homeGalleryTiles.map((tile) => (
             <a href={`/gallery/${tile.slug}`} data-reveal class={`relative rounded-xl overflow-hidden bg-bg flex items-end p-4 transition-transform duration-300 hover:scale-[1.03] hover:no-underline ${tile.class} max-[768px]:col-span-1 max-[768px]:row-span-1 max-[768px]:col-start-auto max-[768px]:row-start-auto max-[768px]:aspect-[4/3]`}>
-              <img src={`/images/gallery/${tile.slug}.jpg`} alt={tile.label} loading="lazy" class="absolute inset-0 w-full h-full object-cover" />
+              <picture>
+                {webpSrcFor(`images/gallery/${tile.slug}.jpg`) && <source srcset={webpSrcFor(`images/gallery/${tile.slug}.jpg`)} type="image/webp" />}
+                <img src={`/images/gallery/${tile.slug}.jpg`} alt={tile.label} loading="lazy" class="absolute inset-0 w-full h-full object-cover" />
+              </picture>
               <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent"></div>
               <span class="relative text-[0.85rem] font-semibold text-white">{tile.label}</span>
             </a>
